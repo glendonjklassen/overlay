@@ -1,0 +1,9 @@
+dist-newstyle/
+.stack-work/
+data/
+.claude/
+*.hi
+*.o
+*~
+.ghc.environment.*
+stack.yaml.lock

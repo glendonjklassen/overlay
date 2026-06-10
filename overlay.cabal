@@ -1,0 +1,95 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           overlay
+version:        0.1.0.0
+synopsis:       KJV 1769 reader with signed text patches and Strong's lookup
+build-type:     Simple
+
+library
+  exposed-modules:
+      Overlay
+      Overlay.Canon
+      Overlay.Corpus
+      Overlay.Import
+      Overlay.Patch
+      Overlay.ReaderView
+      Overlay.Strongs
+  other-modules:
+      Paths_overlay
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  build-depends:
+      aeson
+    , base >=4.18 && <5
+    , bytestring
+    , containers
+    , crypton
+    , data-default
+    , directory
+    , filepath
+    , lens
+    , monomer
+    , ram
+    , tagsoup
+    , text
+    , time
+    , vector
+  default-language: GHC2021
+
+executable overlay
+  main-is: Main.hs
+  other-modules:
+      Paths_overlay
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.18 && <5
+    , bytestring
+    , containers
+    , overlay
+    , text
+    , vector
+  default-language: GHC2021
+
+executable overlay-import
+  main-is: Import.hs
+  other-modules:
+      Paths_overlay
+  hs-source-dirs:
+      tools
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -threaded
+  build-depends:
+      aeson
+    , base >=4.18 && <5
+    , bytestring
+    , containers
+    , overlay
+    , text
+    , vector
+  default-language: GHC2021
+
+test-suite overlay-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_overlay
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -threaded
+  build-depends:
+      aeson
+    , base >=4.18 && <5
+    , bytestring
+    , containers
+    , hspec
+    , overlay
+    , text
+    , vector
+  default-language: GHC2021

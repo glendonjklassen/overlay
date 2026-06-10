@@ -1,0 +1,7 @@
+# hlint configuration for overlay.
+# Run with: hlint src app tools test
+#
+# The codebase is expected to be hint-clean; add targeted ignores here with a
+# justification rather than restructuring clear code to satisfy a hint.
+
+# (no ignores currently)
