@@ -48,6 +48,7 @@ data RTok = RTok
     , rtRef   :: !(Text, Int, Int)
     , rtIx    :: !Int               -- ^ index into the verse's token list
     , rtPatch :: !(Maybe PatchInfo)
+    , rtMark  :: !Bool              -- ^ highlighted (thread membership)
     } deriving (Eq, Show)
 
 data RVerse = RVerse
@@ -112,6 +113,10 @@ numColor = rgbHex "#6E6B66"
 noteColor = rgbHex "#8A8273"
 underlineColor = rgbHex "#7FB4E6"
 selColor = rgbHex "#2F4156"
+
+-- soft warm wash behind words that belong to the open thread
+markColor :: Color
+markColor = rgbHex "#3B331D"
 
 patchColor, patchWarnColor, sbTrackColor, sbThumbColor :: Color
 patchColor = rgbHex "#D9A95B"
@@ -283,10 +288,9 @@ makeReader cfg state = widget
 
         onAltClick p = do
             rt <- hitWord p
-            -- editing an already-patched word isn't supported yet
-            if isJust (rtPatch rt)
-                then Just (resultNode node)
-                else Just (resultEvts node [rcOnWordAlt cfg rt])
+            -- patched words too: the app decides what editing one means
+            -- (rule hits offer exclusion; patch hits explain themselves)
+            Just (resultEvts node [rcOnWordAlt cfg rt])
 
     render wenv node renderer = do
         let style = currentStyle wenv node
@@ -304,6 +308,11 @@ makeReader cfg state = widget
             let lineTop = cy + rlY ln - offset
                 baseY = lineTop + rlBase ln
             forM_ (zip [0 ..] (rlWords ln)) $ \(wi, pw) -> do
+                when (maybe False rtMark (pwTok pw)) $
+                    drawRect renderer
+                        (Rect (cx + pwX pw - 1) (lineTop + 1)
+                            (pwWidth pw + 3) (rlH ln - 2))
+                        (Just markColor) Nothing
                 when (selected pw) $
                     drawRect renderer
                         (Rect (cx + pwX pw - 1) (lineTop + 1)

@@ -58,5 +58,6 @@ tests:
     dependencies:
       - overlay
       - hspec
+      - filepath
     ghc-options:
       - -threaded

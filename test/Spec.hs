@@ -9,6 +9,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.Vector as V
+import System.FilePath ((</>))
 import Test.Hspec
 
 import Overlay (toRVerse)
@@ -16,7 +17,9 @@ import Overlay.Corpus
 import Overlay.Import (parseBlock, tokenize)
 import Overlay.Patch
 import Overlay.ReaderView (RTok (..), RVerse (..))
+import Overlay.Rule
 import Overlay.Strongs (occurrenceIndex, refLabel)
+import Overlay.Thread
 import qualified Data.Map.Strict as M
 
 -- ── helpers ─────────────────────────────────────────────────────────────────
@@ -50,6 +53,21 @@ mkLoaded :: FilePath -> Text -> (Int, Int) -> [Text] -> [Text] -> PatchStatus ->
 mkLoaded f created span_ orig repl = LoadedPatch f
     unsignedPatch { pSpan = span_, pOriginal = orig, pReplacement = repl
                   , pCreated = created }
+
+unsignedRule :: Rule
+unsignedRule = Rule
+    { rTokVersion = "test-tok1"
+    , rMatch = ["the"]
+    , rReplacement = ["thee"]
+    , rExclude = [("Gen", 1, 2)]
+    , rNote = Nothing
+    , rAuthor = "ab", rCreated = "2026-01-01T00:00:00Z", rSig = ""
+    }
+
+mkLR :: FilePath -> [Text] -> [Text] -> [(Text, Int, Int)] -> PatchStatus -> LoadedRule
+mkLR f match repl excl st = LoadedRule f
+    unsignedRule { rMatch = match, rReplacement = repl, rExclude = excl }
+    st 0
 
 -- ── tests ───────────────────────────────────────────────────────────────────
 
@@ -224,7 +242,7 @@ main = hspec $ do
                     , pSpan = (1, 1)
                     , pOriginal = ["fourscore"], pReplacement = ["eighty"]
                     } POwn
-                rv = toRVerse "me" [lp] [] verse
+                rv = toRVerse "me" [lp] [] [] [] verse
                 ws = rvTokens rv
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
             tokPost (rtTok (ws !! 1)) `shouldBe` ","
@@ -241,12 +259,165 @@ main = hspec $ do
                     , pOriginal = ["fourscore", "years"]
                     , pReplacement = ["eighty", "long", "years"]
                     } POwn
-                rv = toRVerse "me" [lp] [] verse
+                rv = toRVerse "me" [lp] [] [] [] verse
                 ws = rvTokens rv
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "long", "years"]
             -- punctuation of the original span ends up on the edges
             tokPost (rtTok (last ws)) `shouldBe` ""
             tokStrongs (rtTok (ws !! 1)) `shouldBe` ["H8084", "H8141"]
+
+        it "marks thread spans, leaving other words unmarked" $ do
+            let rv = toRVerse "me" [] [] [(1, 2)] [] verse
+            map rtMark (rvTokens rv) `shouldBe` [False, True, True]
+
+    describe "ref keys" $ do
+        it "encodes and parses canonical refs" $ do
+            refKey ("Gen", 1, 7) `shouldBe` "Gen 1:7"
+            parseRefKey "Gen 1:7" `shouldBe` Just ("Gen", 1, 7)
+            parseRefKey "1Sam 22:3" `shouldBe` Just ("1Sam", 22, 3)
+
+        it "rejects malformed refs" $ do
+            parseRefKey "Gen" `shouldBe` Nothing
+            parseRefKey "Gen 1" `shouldBe` Nothing
+            parseRefKey "Gen 1:x" `shouldBe` Nothing
+            parseRefKey "Gen 1:2:3" `shouldBe` Nothing
+
+    describe "rule signing" $ do
+        it "signs and verifies, and rejects tampering" $ do
+            keys <- generateKeys
+            r <- mkRule keys "test-tok1" ["spake"] ["spoke"] (Just "modern")
+            verifyRuleSig r `shouldBe` Right ()
+            verifyRuleSig r { rReplacement = ["said"] } `shouldSatisfy` isLeft
+            -- exclusions are part of the signed content
+            verifyRuleSig r { rExclude = [("Gen", 1, 1)] }
+                `shouldSatisfy` isLeft
+
+        it "re-signing after an exclusion keeps created and verifies" $ do
+            keys <- generateKeys
+            r <- mkRule keys "test-tok1" ["spake"] ["spoke"] Nothing
+            let r' = resignRule keys r { rExclude = [("Gen", 1, 2)] }
+            rCreated r' `shouldBe` rCreated r
+            verifyRuleSig r' `shouldBe` Right ()
+
+        it "signing bytes are frozen (golden)" $
+            ruleSigningBytes unsignedRule `shouldBe` TE.encodeUtf8
+                "overlay-rule-v1\n\
+                \tokenization:test-tok1\n\
+                \match:the\n\
+                \replacement:thee\n\
+                \exclude:Gen 1:2\n\
+                \note:\n\
+                \author:ab\n\
+                \created:2026-01-01T00:00:00Z"
+
+        it "JSON roundtrips rules, exclusions included" $ do
+            keys <- generateKeys
+            r <- mkRule keys "t" ["a", "b"] ["c"] (Just "why")
+            let r' = resignRule keys r { rExclude = [("Gen", 1, 2)] }
+            decode (encode r) `shouldBe` Just r
+            decode (encode r') `shouldBe` Just r'
+
+    describe "rule text checks" $ do
+        it "accepts a well-formed rule" $
+            checkRule testCorpus unsignedRule `shouldBe` Right ()
+
+        it "rejects tokenization mismatch" $
+            checkRule testCorpus unsignedRule { rTokVersion = "other-tok" }
+                `shouldSatisfy` isLeft
+
+        it "rejects empty match and empty replacement" $ do
+            checkRule testCorpus unsignedRule { rMatch = [] }
+                `shouldSatisfy` isLeft
+            checkRule testCorpus unsignedRule { rReplacement = [] }
+                `shouldSatisfy` isLeft
+
+        it "rejects exclusions pointing at missing verses" $
+            checkRule testCorpus
+                unsignedRule { rExclude = [("Gen", 9, 9)] }
+                `shouldSatisfy` isLeft
+
+    describe "rule matching" $ do
+        it "finds all occurrences of a word" $
+            matchSpans ["the"] [tok "the" [], tok "cat" [], tok "the" []]
+                `shouldBe` [(0, 0), (2, 2)]
+
+        it "finds multi-word sequences" $
+            matchSpans ["the", "cat"]
+                [tok "a" [], tok "the" [], tok "cat" []]
+                `shouldBe` [(1, 2)]
+
+        it "matches never overlap themselves" $
+            matchSpans ["a", "a"] [tok "a" [], tok "a" [], tok "a" []]
+                `shouldBe` [(0, 1)]
+
+        it "counts matches corpus-wide minus exclusions" $ do
+            -- "the" appears in Gen 1:1, Gen 1:2, Gen 2:1; Gen 1:2 is excluded
+            countRuleMatches testCorpus unsignedRule `shouldBe` 2
+            countRuleMatches testCorpus unsignedRule { rExclude = [] }
+                `shouldBe` 3
+
+        it "skips excluded verses" $ do
+            let lr = mkLR "r.json" ["the"] ["thee"] [("Gen", 1, 1)] POwn
+                v = Verse "Gen" 1 1 [tok "In" [], tok "the" [], tok "x" []]
+            ruleHitsForVerse [lr] [] v `shouldBe` []
+
+        it "yields to claimed spans (point patches win)" $ do
+            let lr = mkLR "r.json" ["the"] ["thee"] [] POwn
+                v = Verse "Gen" 1 1 [tok "In" [], tok "the" [], tok "x" []]
+            ruleHitsForVerse [lr] [(1, 1)] v `shouldBe` []
+            map snd (ruleHitsForVerse [lr] [(0, 0)] v) `shouldBe` [(1, 1)]
+
+        it "earlier rule wins overlapping matches" $ do
+            let a = mkLR "a.json" ["the", "beginning"] ["x"] [] POwn
+                b = mkLR "b.json" ["the"] ["y"] [] POwn
+                v = Verse "Gen" 1 1
+                    [tok "In" [], tok "the" [], tok "beginning" []]
+            map snd (ruleHitsForVerse [a, b] [] v) `shouldBe` [(1, 2)]
+
+        it "never applies invalid rules" $ do
+            let lr = mkLR "r.json" ["the"] ["thee"] [] (PInvalid "nope")
+                v = Verse "Gen" 1 1 [tok "the" []]
+            ruleHitsForVerse [lr] [] v `shouldBe` []
+
+    describe "rule overlay composition (toRVerse)" $ do
+        let verse = Verse "Gen" 47 28
+                [ tok "was" []
+                , tokP "fourscore" "," ["H8084"]
+                , tok "years" ["H8141"]
+                ]
+        it "rewrites matches with punctuation and Strong's intact" $ do
+            let lr = mkLR "r.json" ["fourscore"] ["eighty"] [] POwn
+                ws = rvTokens (toRVerse "me" [] [lr] [] [] verse)
+            map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
+            tokPost (rtTok (ws !! 1)) `shouldBe` ","
+            tokStrongs (rtTok (ws !! 1)) `shouldBe` ["H8084"]
+            map (void . rtPatch) ws
+                `shouldBe` [Nothing, Just (), Nothing]
+
+        it "a point patch beats a rule on the same span" $ do
+            let lp = LoadedPatch "p.json" unsignedPatch
+                    { pBook = "Gen", pChapter = 47, pVerse = 28
+                    , pSpan = (1, 1)
+                    , pOriginal = ["fourscore"], pReplacement = ["eighty"]
+                    } POwn
+                lr = mkLR "r.json" ["fourscore"] ["XXX"] [] POwn
+                ws = rvTokens (toRVerse "me" [lp] [lr] [] [] verse)
+            map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
+
+    describe "threads" $ do
+        it "JSON roundtrips threads with entries" $ do
+            let e = ThreadEntry ("Gen", 3, 15) (9, 11) ["her", "seed"]
+                    (Just "first promise") "2026-06-10T00:00:00Z"
+                t = Thread "Christ throughout the Bible" "test-tok1"
+                    "running notes here" [e] "2026-06-10T00:00:00Z"
+            decode (encode t) `shouldBe` Just t
+
+        it "derives stable slug filenames" $ do
+            threadFileFor "Christ throughout the Bible"
+                `shouldBe` ("threads" </> "christ-throughout-the-bible.json")
+            threadFileFor "  Hope! (2nd pass)  "
+                `shouldBe` ("threads" </> "hope-2nd-pass.json")
+            threadFileFor "???" `shouldBe` ("threads" </> "thread.json")
 
     describe "concordance index" $ do
         it "collects occurrences in canonical order" $ do

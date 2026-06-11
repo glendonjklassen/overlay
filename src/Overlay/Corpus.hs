@@ -23,6 +23,8 @@ module Overlay.Corpus
     , mkCorpus
     , chapterCount
     , chapterVerses
+    , refKey
+    , parseRefKey
     ) where
 
 import Data.Aeson
@@ -32,6 +34,7 @@ import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.Read as TR
 import Data.Vector (Vector)
 import qualified Data.Vector as V
 
@@ -154,6 +157,22 @@ mkCorpus tokv vs = Corpus
     indexed = zip [0 ..] (V.toList vs)
     -- fromListWith applies f new old; verses are contiguous per chapter
     merge (i2, n2) (i1, n1) = (min i1 i2, n1 + n2)
+
+-- | Compact canonical ref form, e.g. \"Gen 1:7\" — used by rule exclusions
+-- and thread entries, including inside signed bytes, so the format is frozen.
+refKey :: (Text, Int, Int) -> Text
+refKey (b, c, v) = b <> " " <> T.pack (show c) <> ":" <> T.pack (show v)
+
+parseRefKey :: Text -> Maybe (Text, Int, Int)
+parseRefKey t = case T.words (T.strip t) of
+    [b, cv] -> case T.splitOn ":" cv of
+        [c, v] -> (,,) b <$> readInt c <*> readInt v
+        _ -> Nothing
+    _ -> Nothing
+  where
+    readInt s = case TR.decimal s of
+        Right (n, rest) | T.null rest -> Just n
+        _ -> Nothing
 
 chapterCount :: Corpus -> Text -> Int
 chapterCount corpus bid = M.findWithDefault 1 bid (cChapters corpus)

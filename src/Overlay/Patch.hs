@@ -20,8 +20,11 @@ module Overlay.Patch
     , Keys (..)
     , patchesDir
     , loadOrCreateKeys
+    , loadTrustedKeys
     , generateKeys
     , fingerprint
+    , signBytes
+    , verifyBytes
     , mkPatch
     , savePatch
     , loadPatches
@@ -139,6 +142,26 @@ fromHex = convertFromBase Base16 . TE.encodeUtf8
 fingerprint :: Text -> Text
 fingerprint = T.take 8
 
+cryptoEither :: CE.CryptoFailable a -> Either String a
+cryptoEither r = case r of
+    CE.CryptoPassed a -> Right a
+    CE.CryptoFailed e -> Left (show e)
+
+-- | Sign raw bytes with the local key; hex-encoded signature.
+signBytes :: Keys -> ByteString -> Text
+signBytes keys = toHex . convert . Ed.sign (kSecret keys) (kPublic keys)
+
+-- | Verify a hex author/signature pair over raw bytes.
+verifyBytes :: Text -> Text -> ByteString -> Either String ()
+verifyBytes authorHex sigHex bs = do
+    pkRaw <- fromHex authorHex
+    sigRaw <- fromHex sigHex
+    pk <- cryptoEither (Ed.publicKey pkRaw)
+    sig <- cryptoEither (Ed.signature sigRaw)
+    if Ed.verify pk bs sig
+        then Right ()
+        else Left "signature does not verify"
+
 -- | The signed bytes. Frozen: any change breaks every existing signature.
 signingBytes :: Patch -> ByteString
 signingBytes p = TE.encodeUtf8 $ T.intercalate "\n"
@@ -182,9 +205,6 @@ loadOrCreateKeys = do
             pure (Right keys)
   where
     mkKeys sk = let pk = Ed.toPublic sk in Keys sk pk (toHex (convert pk))
-    cryptoEither r = case r of
-        CE.CryptoPassed a -> Right a
-        CE.CryptoFailed e -> Left (show e)
 
 -- | Fresh in-memory keypair (tests; no files touched).
 generateKeys :: IO Keys
@@ -220,8 +240,7 @@ mkPatch keys tokv (b, c, v) span_ orig repl note = do
         cleanNote = fmap (T.replace "\n" " ") note
         unsigned = Patch tokv b c v span_ orig repl cleanNote
             (kPubHex keys) created ""
-        sig = Ed.sign (kSecret keys) (kPublic keys) (signingBytes unsigned)
-    pure unsigned { pSig = toHex (convert sig) }
+    pure unsigned { pSig = signBytes keys (signingBytes unsigned) }
 
 savePatch :: Patch -> IO FilePath
 savePatch p = do
@@ -237,18 +256,7 @@ savePatch p = do
 -- ── loading and verification ────────────────────────────────────────────────
 
 verifySig :: Patch -> Either String ()
-verifySig p = do
-    pkRaw <- fromHex (pAuthor p)
-    sigRaw <- fromHex (pSig p)
-    pk <- cryptoEither (Ed.publicKey pkRaw)
-    sig <- cryptoEither (Ed.signature sigRaw)
-    if Ed.verify pk (signingBytes p) sig
-        then Right ()
-        else Left "signature does not verify"
-  where
-    cryptoEither r = case r of
-        CE.CryptoPassed a -> Right a
-        CE.CryptoFailed e -> Left (show e)
+verifySig p = verifyBytes (pAuthor p) (pSig p) (signingBytes p)
 
 checkAgainstText :: Corpus -> Patch -> Either String ()
 checkAgainstText corpus p = do
