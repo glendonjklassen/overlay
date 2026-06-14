@@ -218,7 +218,8 @@ data AppEvent
     | EvDeleteThreadEntry FilePath Int
     | EvThreadsLoaded [LoadedThread] Text
     -- panes
-    | EvSetPanes Int
+    | EvAddPane Int
+    | EvClosePane Int
     | EvPaneBook Int Text
     | EvPaneChapter Int Int
     | EvPanePrev Int
@@ -373,14 +374,7 @@ buildUI env _wenv model = widgetTree
     canLink = length (filter (not . null . _psSel) panes) >= 2
 
     header = hstack $
-        [ label ("panes " <> showt npanes) `styleBasic` [textSize 12, textColor gray] ]
-        <> [ button "－" (EvSetPanes (npanes - 1))
-                `styleBasic` [textSize 12, padding 2] | npanes > 1 ]
-        <> [ button "＋" (EvSetPanes (npanes + 1))
-                `styleBasic` [textSize 12, padding 2] | npanes < 4 ]
-        <>
-        [ spacer
-        , labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize 12]
+        [ labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize 12]
         , spacer
         , button ("patches (" <> showt (length patches + length rules) <> ")")
             EvTogglePatches `styleBasic` [textSize 12]
@@ -392,7 +386,7 @@ buildUI env _wenv model = widgetTree
             EvToggleWeaves `styleBasic` [textSize 12]
         ]
         <> (if canLink
-            then [ spacer, button "＋ link" EvLink
+            then [ spacer, button "+ link" EvLink
                     `styleBasic` [textSize 12, textColor (rgbHex "#C9A24B")] ]
             else [])
         <>
@@ -436,20 +430,25 @@ buildUI env _wenv model = widgetTree
         , a `Set.member` visibleRefs, b `Set.member` visibleRefs ]
 
     navStrip i p = hstack
-        [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
-            bookRow bookRow [onChange (EvPaneBook i)]
-            `styleBasic` [width 150, textSize 12]
-        , spacer
-        , dropdown_ (amPanes . singular (ix i) . psChapter)
-            [1 .. chapterCount corpus (_psBook p)] chRow chRow
-            [onChange (EvPaneChapter i)]
-            `styleBasic` [width 70, textSize 12]
-            `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook p)
-        , spacer
-        , button "‹" (EvPanePrev i) `styleBasic` [textSize 12, padding 2]
-        , button "›" (EvPaneNext i) `styleBasic` [textSize 12, padding 2]
-        , filler
-        ] `styleBasic` [padding 4, bgColor (rgbHex "#202225")]
+        ( [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
+                bookRow bookRow [onChange (EvPaneBook i)]
+                `styleBasic` [width 150, textSize 12]
+          , spacer
+          , dropdown_ (amPanes . singular (ix i) . psChapter)
+                [1 .. chapterCount corpus (_psBook p)] chRow chRow
+                [onChange (EvPaneChapter i)]
+                `styleBasic` [width 70, textSize 12]
+                `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook p)
+          , button "<" (EvPanePrev i) `styleBasic` [textSize 12, padding 2]
+          , button ">" (EvPaneNext i) `styleBasic` [textSize 12, padding 2]
+          , filler
+          , button "+ pane" (EvAddPane i)
+                `styleBasic` [textSize 11, padding 3]
+          ]
+          <> [ button "x" (EvClosePane i)
+                `styleBasic` [textSize 11, padding 3, textColor (rgbHex "#B07A7A")]
+             | npanes > 1 ]
+        ) `styleBasic` [padding 4, bgColor (rgbHex "#202225")]
 
     navRow = hgrid (zipWith navStrip [0 ..] panes)
 
@@ -809,7 +808,7 @@ weaveViewPanel model file =
         , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
             (label (refText b) `styleBasic` [textSize 11, textColor lightSkyBlue])
         , filler
-        , button "✕" (EvRemoveLink l) `styleBasic` [textSize 9, padding 2]
+        , button "x" (EvRemoveLink l) `styleBasic` [textSize 10, padding 2]
         ]
     combineSeg =
         [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
@@ -908,7 +907,8 @@ handleEvent env _wenv _node model evt = case evt of
     EvThreadsLoaded lts msg ->
         [Model (model & amThreads .~ lts & amPanel %~ adjustThreadPanel lts
             & amStatus .~ msg)]
-    EvSetPanes n -> [Model (setPaneCount n)]
+    EvAddPane i -> [Model (model & amPanes %~ insertPaneAfter i)]
+    EvClosePane i -> [Model (model & amPanes %~ closePane i)]
     EvPaneBook i b -> [Model (setPane i (\p ->
         p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ []))]
     EvPaneChapter i c -> [Model (setPane i (\p ->
@@ -1015,14 +1015,20 @@ handleEvent env _wenv _node model evt = case evt of
     setPane i f = model & amPanes %~ \ps ->
         [ if j == i then f p else p | (j, p) <- zip [0 ..] ps ]
 
-    setPaneCount k = model & amPanes %~ \ps ->
-        let k' = max 1 (min 4 k)
-            seed = case reverse ps of
-                (p : _) -> p { _psSel = [], _psAnchor = Nothing }
-                [] -> PaneState "Gen" 1 Nothing []
-        in if k' <= length ps
-            then take k' ps
-            else ps <> replicate (k' - length ps) seed
+    -- a new pane opens just after pane i, at the same place (then navigate it);
+    -- capped at four panes
+    insertPaneAfter i ps
+        | length ps >= 4 = ps
+        | otherwise =
+            let seed = case drop i ps of
+                    (p : _) -> p { _psSel = [], _psAnchor = Nothing }
+                    [] -> PaneState "Gen" 1 Nothing []
+                (before, after) = splitAt (i + 1) ps
+            in before <> [seed] <> after
+
+    closePane i ps
+        | length ps <= 1 = ps
+        | otherwise = [p | (j, p) <- zip [0 ..] ps, j /= i]
 
     stepPane i dir = setPane i $ \p ->
         let nch = chapterCount (envCorpus env) (_psBook p)

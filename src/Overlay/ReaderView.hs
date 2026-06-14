@@ -143,12 +143,16 @@ selColor = rgbHex "#2F4156"
 markColor :: Color
 markColor = rgbHex "#3B331D"
 
-patchColor, patchWarnColor, sbTrackColor, sbThumbColor, linkColor :: Color
+patchColor, patchWarnColor, sbTrackColor, sbThumbColor :: Color
 patchColor = rgbHex "#D9A95B"
 patchWarnColor = rgbHex "#D97C5B"
 sbTrackColor = rgbHex "#3A3A3A"
 sbThumbColor = rgbHex "#5C5C5C"
-linkColor = rgbHex "#C9A24B"   -- weave connector lines
+
+-- weave connector lines: translucent gold, brighter when a verse is hovered
+linkColorBase, linkColorHot :: Color
+linkColorBase = rgba 201 162 75 0.45
+linkColorHot = rgba 236 206 120 0.95
 
 cardBgColor, cardTextColor :: Color
 cardBgColor = rgbHex "#17191C"
@@ -211,7 +215,14 @@ makeReader cfg state = widget
         let fm = wenv ^. L.fontManager
             cfgs = rcColumns cfg
             n = max 1 (length cfgs)
-            cw = (w - fromIntegral (n - 1) * colGap) / fromIntegral n
+            rawW = (w - fromIntegral (n - 1) * colGap) / fromIntegral n
+            -- a single pane fills the width (ordinary reading); several panes
+            -- are capped to a readable measure and centred as a group, so the
+            -- text blocks sit close and the connector lines stay short
+            maxCW = maxTextW + gutterW + rightPad + 8
+            cw = if n == 1 then rawW else min rawW maxCW
+            groupW = fromIntegral n * cw + fromIntegral (n - 1) * colGap
+            leftPad = if n == 1 then 0 else max 0 ((w - groupW) / 2)
             old = rsCols st
             mk j (ColumnCfg key vs) =
                 let (lns, ch) = layoutVerses fm cw
@@ -220,7 +231,7 @@ makeReader cfg state = widget
                         (c : _) | clKey c == key -> clOffset c
                         _ -> 0
                 in ColState key (clampOffset ch h prevOff) lns ch
-                    (fromIntegral j * (cw + colGap)) cw
+                    (leftPad + fromIntegral j * (cw + colGap)) cw
             cols = zipWith mk [0 ..] cfgs
         in st { rsCols = cols, rsViewW = w, rsViewH = h
               , rsActive = min (rsActive st) (max 0 (n - 1)) }
@@ -351,7 +362,12 @@ makeReader cfg state = widget
         forM_ (zip [0 ..] (rsCols st)) $
             uncurry (renderColumn renderer cx cy chh st)
         -- weave connector lines, on top of the text
-        drawLinks renderer cx cy chh st (rcLinks cfg)
+        let hov = do
+                (ci, li, _) <- rsHover st
+                col <- listToMaybe (drop ci (rsCols st))
+                ln <- listToMaybe (drop li (clLines col))
+                lineVerse ln
+        drawLinks renderer cx cy chh st hov (rcLinks cfg)
         -- patch hover card, last so it sits above everything
         forM_ (rsHover st) $ \(ci, li, wi) ->
             forM_ (cardFor st ci li wi) $ \(col, pw, ln, pinfo) -> do
@@ -411,24 +427,25 @@ makeReader cfg state = widget
     -- draw a connector for every link whose endpoints fall in two different
     -- columns, from the right edge of the left verse to the left edge of the
     -- right verse (vertical centre of each verse's lines, clamped to view)
-    drawLinks renderer cx cy chh st links = do
+    drawLinks renderer cx cy chh st hov links = do
         let findIn ref = listToMaybe
-                [ (ci, col, yc) | (ci, col) <- zip [0 :: Int ..] (rsCols st)
-                , Just (top, bot) <- [M.lookup ref (verseBands col)]
-                , let yc = cy + (top + bot) / 2 - clOffset col ]
+                [ (col, cy + (top + bot) / 2 - clOffset col)
+                | col <- rsCols st
+                , Just (top, bot) <- [M.lookup ref (verseBands col)] ]
             clampY y = max (cy + 2) (min (cy + chh - 2) y)
         forM_ links $ \(a, b) -> case (findIn a, findIn b) of
-            (Just (ca, cola, ya), Just (cb, colb, yb)) | ca /= cb -> do
+            (Just (cola, ya), Just (colb, yb)) | clX cola /= clX colb -> do
                 let (lc, ly, rc, ry)
                         | clX cola <= clX colb = (cola, ya, colb, yb)
                         | otherwise = (colb, yb, cola, ya)
-                    x1 = cx + clX lc + clW lc - 8
-                    x2 = cx + clX rc + 6
-                beginPath renderer
-                setStrokeColor renderer linkColor
-                setStrokeWidth renderer 1.5
-                renderLine renderer (Point x1 (clampY ly)) (Point x2 (clampY ry))
-                stroke renderer
+                    hot = hov == Just a || hov == Just b
+                    col = if hot then linkColorHot else linkColorBase
+                    wdt = if hot then 2.4 else 1.3
+                    p1 = Point (cx + clX lc + clW lc - 14) (clampY ly)
+                    p2 = Point (cx + clX rc + 14) (clampY ry)
+                drawCurve renderer wdt col p1 p2
+                drawDot renderer col p1
+                drawDot renderer col p2
             _ -> pure ()
 
     cardFor st ci li wi = do
@@ -482,6 +499,32 @@ drawCard renderer fm (Rect cx cy cw chh) wordX baseY pinfo = do
         renderText renderer
             (Point (x + padX) (y + padY + fromIntegral i * lineH + 12))
             numFont cardSize def l
+
+-- | A smooth connector between two verses: a cubic that leaves the left verse
+-- and arrives at the right one horizontally (sampled as short segments), so a
+-- fan of links reads as gentle curves rather than crossing straight streaks.
+drawCurve :: Renderer -> Double -> Color -> Point -> Point -> IO ()
+drawCurve renderer lineW col p1@(Point x1 y1) (Point x2 y2) = do
+    let d = max 30 (abs (x2 - x1) * 0.5)
+        bx = x1 + d
+        cx2 = x2 - d
+        segs = 18 :: Int
+        cubic t =
+            let u = 1 - t
+            in Point
+                (u*u*u*x1 + 3*u*u*t*bx + 3*u*t*t*cx2 + t*t*t*x2)
+                (u*u*u*y1 + 3*u*u*t*y1 + 3*u*t*t*y2 + t*t*t*y2)
+        pts = [cubic (fromIntegral i / fromIntegral segs) | i <- [0 .. segs]]
+    beginPath renderer
+    setStrokeColor renderer col
+    setStrokeWidth renderer lineW
+    moveTo renderer p1
+    mapM_ (renderLineTo renderer) (drop 1 pts)
+    stroke renderer
+
+drawDot :: Renderer -> Color -> Point -> IO ()
+drawDot renderer col (Point x y) =
+    drawRect renderer (Rect (x - 2.5) (y - 2.5) 5 5) (Just col) Nothing
 
 clampOffset :: Double -> Double -> Double -> Double
 clampOffset contentH viewH = max 0 . min (max 0 (contentH - viewH))
