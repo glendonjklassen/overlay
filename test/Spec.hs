@@ -20,6 +20,7 @@ import Overlay.ReaderView (RTok (..), RVerse (..))
 import Overlay.Rule
 import Overlay.Strongs (occurrenceIndex, refLabel)
 import Overlay.Thread
+import Overlay.Weave
 import qualified Data.Map.Strict as M
 
 -- ── helpers ─────────────────────────────────────────────────────────────────
@@ -418,6 +419,47 @@ main = hspec $ do
             threadFileFor "  Hope! (2nd pass)  "
                 `shouldBe` ("threads" </> "hope-2nd-pass.json")
             threadFileFor "???" `shouldBe` ("threads" </> "thread.json")
+
+    describe "weaves" $ do
+        let vr = VerseRange "Gen" 1 1 1 ["In", "the"]
+            sampleWeave = Weave
+                { wName = "Test"
+                , wKind = Retelling
+                , wTokVersion = "test-tok1"
+                , wColumns = ["A", "B"]
+                , wRows = [WeaveRow (Just "r1") [WeaveCell [vr], WeaveCell []]]
+                , wNotes = "notes"
+                , wCreated = "2026-06-13T00:00:00Z"
+                }
+        it "JSON roundtrips weaves with rows and cells" $
+            decode (encode sampleWeave) `shouldBe` Just sampleWeave
+
+        it "round-trips every kind token" $
+            map (parseKind . kindToken) allKinds `shouldBe` map Just allKinds
+
+        it "addColumn grows every row by a blank cell" $ do
+            let w = addColumn "C" sampleWeave
+            wColumns w `shouldBe` ["A", "B", "C"]
+            map (length . wrCells) (wRows w) `shouldBe` [3]
+
+        it "appendRow pads cells to the column count" $ do
+            let w = appendRow Nothing [WeaveCell [VerseRange "Exod" 2 3 3 []]]
+                    sampleWeave
+            map (length . wrCells) (wRows w) `shouldBe` [2, 2]
+
+        it "appendRangeToCell adds a passage to one cell" $ do
+            let w = appendRangeToCell 0 1 (VerseRange "Exod" 2 3 5 []) sampleWeave
+                cell = wrCells (head (wRows w)) !! 1
+            map vrStart (wcRanges cell) `shouldBe` [3]
+
+        it "removeColumn drops the column and its cells" $ do
+            let w = removeColumn 0 sampleWeave
+            wColumns w `shouldBe` ["B"]
+            map (length . wrCells) (wRows w) `shouldBe` [1]
+
+        it "derives stable slug filenames" $
+            weaveFileFor "The Ten Commandments, twice"
+                `shouldBe` ("weaves" </> "the-ten-commandments-twice.json")
 
     describe "concordance index" $ do
         it "collects occurrences in canonical order" $ do

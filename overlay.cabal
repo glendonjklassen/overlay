@@ -20,6 +20,7 @@ library
       Overlay.Rule
       Overlay.Strongs
       Overlay.Thread
+      Overlay.Weave
   other-modules:
       Paths_overlay
   hs-source-dirs:

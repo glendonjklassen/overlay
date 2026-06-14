@@ -68,6 +68,9 @@ data ReaderCfg e = ReaderCfg
       -- ^ drag selection released: verse ref + inclusive token span
     , rcOnPrev       :: e           -- ^ Left arrow
     , rcOnNext       :: e           -- ^ Right arrow
+    , rcRangeSelect  :: Bool        -- ^ verse-range select mode (weave workbench)
+    , rcOnVerseClick :: (Text, Int, Int) -> Bool -> e
+      -- ^ in range-select mode: clicked verse ref + whether Shift was held
     }
 
 -- A word placed on a line. Verse numbers and note text are PWords without
@@ -239,6 +242,10 @@ makeReader cfg state = widget
         leftHeld = M.lookup BtnLeft
             (wenv ^. L.inputStatus . L.buttons) == Just BtnPressed
 
+        shiftHeld =
+            let km = wenv ^. L.inputStatus . L.keyMod
+            in km ^. L.leftShift || km ^. L.rightShift
+
         onMove p =
             let h = hitTest state carea p
                 dragSel = do
@@ -261,14 +268,20 @@ makeReader cfg state = widget
                 then Just (resultReqs (replace st node) [RenderOnce])
                 else Nothing
 
-        onPress p =
-            let anchor = do
-                    rt <- hitWord p
-                    if isJust (rtPatch rt) then Nothing
-                        else Just (rtRef rt, rtIx rt)
-                st = state { rsAnchor = anchor, rsSel = Nothing
-                           , rsDragged = False }
-            in Just (resultReqs (replace st node) [RenderOnce])
+        onPress p
+            -- range-select mode (weave workbench): no word-drag, so a plain
+            -- click is read as a verse pick by 'onClickWord'
+            | rcRangeSelect cfg = Just (resultReqs (replace
+                state { rsAnchor = Nothing, rsSel = Nothing, rsDragged = False }
+                node) [RenderOnce])
+            | otherwise =
+                let anchor = do
+                        rt <- hitWord p
+                        if isJust (rtPatch rt) then Nothing
+                            else Just (rtRef rt, rtIx rt)
+                    st = state { rsAnchor = anchor, rsSel = Nothing
+                               , rsDragged = False }
+                in Just (resultReqs (replace st node) [RenderOnce])
 
         onRelease = case (rsDragged state, rsSel state) of
             (True, Just (ref, s, e)) | e > s ->
@@ -282,15 +295,20 @@ makeReader cfg state = widget
 
         onClickWord p = do
             rt <- hitWord p
-            if null (tokStrongs (rtTok rt))
-                then Just (resultNode node)
-                else Just (resultEvts node [rcOnWordClick cfg rt])
+            if rcRangeSelect cfg
+                then Just (resultEvts node
+                    [rcOnVerseClick cfg (rtRef rt) shiftHeld])
+                else if null (tokStrongs (rtTok rt))
+                    then Just (resultNode node)
+                    else Just (resultEvts node [rcOnWordClick cfg rt])
 
-        onAltClick p = do
-            rt <- hitWord p
-            -- patched words too: the app decides what editing one means
-            -- (rule hits offer exclusion; patch hits explain themselves)
-            Just (resultEvts node [rcOnWordAlt cfg rt])
+        onAltClick p
+            | rcRangeSelect cfg = Nothing
+            | otherwise = do
+                rt <- hitWord p
+                -- patched words too: the app decides what editing one means
+                -- (rule hits offer exclusion; patch hits explain themselves)
+                Just (resultEvts node [rcOnWordAlt cfg rt])
 
     render wenv node renderer = do
         let style = currentStyle wenv node

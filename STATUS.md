@@ -38,10 +38,22 @@
   thread is open its passages get a soft highlight in the reader. Plain
   unsigned JSON (personal study data; doesn't alter rendered text);
   unreadable thread files are reported, never clobbered.
+- **Weaves** (`Overlay.Weave`, `weaves/*.json`, `overlay-weave-v1`): parallel
+  passages lined up in a grid — columns are witnesses (Matthew, Mark…), rows
+  are alignment groups, each cell a list of verse ranges (so one row can hold
+  scattered parallels, e.g. the Sermon on the Mount). A weave carries a `kind`
+  (retelling / type / prophecy / quotation). Opening one shows a **grid view**
+  (study) that replaces the chapter reader; the side panel manages columns,
+  kind, and notes. The **workbench** (`✎ workbench`) shows one reader pane per
+  column in verse-range select mode — click a verse, Shift-click to extend,
+  then `＋ link as row`; rows auto-sort into reading order by the leftmost
+  column. Cells render live through the patch/rule overlay. Plain unsigned
+  JSON (personal study data); ships with five stock examples. Open-weave
+  verses get a soft highlight in the normal reader.
 - **1769 margin notes**: toggle in header, rendered beneath verses.
 - **Settings**: `~/.config/overlay/config.json` — serif font paths,
   bodySize, lineSpacing. Bundled EB Garamond is the default.
-- **Quality**: 49 hspec tests green (`cabal test`); hlint clean
+- **Quality**: 56 hspec tests green (`cabal test`); hlint clean
   (`hlint src app tools test`, config in `.hlint.yaml`); `--check` renders
   a rule against the real corpus (unicorn → wild ox over 6 places, since
   removed) alongside the existing patch.
@@ -62,6 +74,12 @@
   thread.
 - Editor panel got taller (scope radios + thread section): check it fits
   at smaller window heights.
+- Weaves: open a stock weave (e.g. "The Ten Commandments, twice") → grid lines
+  the rows up, the differing Sabbath reason is visible side by side, ref labels
+  jump the reader. `✎ workbench`: pane book/chapter dropdowns work, click a
+  verse + Shift-click extends the highlight, `＋ link as row` adds a row that
+  sorts into place; open-weave verses highlight in the normal reader. Create a
+  weave, add columns, link rows; delete a row/column/weave; notes save.
 - Patch manager: delete restores text live; "go" jumps correctly.
 - Notes toggle layout at various sizes; note text wrapping.
 - EB Garamond rendering quality under llvmpipe (it's a variable font —

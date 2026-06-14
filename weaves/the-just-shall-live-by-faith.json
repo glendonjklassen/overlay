@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v1",
+  "name": "The just shall live by faith",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "columns": ["Habakkuk", "Romans", "Galatians", "Hebrews"],
+  "rows": [
+    { "label": "One line of Habakkuk, quoted by three epistles", "cells": [
+      [{"ref": "Hab 2:4", "end": 4}],
+      [{"ref": "Rom 1:17", "end": 17}],
+      [{"ref": "Gal 3:11", "end": 11}],
+      [{"ref": "Heb 10:38", "end": 38}] ] }
+  ],
+  "notes": "Habakkuk's “the just shall live by his faith” is taken up three times in the New Testament — Paul makes it the keynote of Romans and Galatians, and Hebrews sets it against drawing back.",
+  "created": "2026-06-13T00:00:00Z"
+}

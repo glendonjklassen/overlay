@@ -47,6 +47,31 @@ All source data is classic and freely licensed:
   verses (the original apparatus — literal Hebrew renderings and variants).
 - **patches (N)** opens the patch manager: jump to, or delete, any patch.
 
+## Weaves — parallel passages
+
+A **weave** lines passages up side by side: a Gospel harmony, a prophecy against
+its fulfillment, a type and its antitype, an OT verse against the NT that quotes
+it. It is a small table — **columns** are the witnesses (Matthew, Mark…),
+**rows** are alignment groups, and each cell holds one or more verse ranges
+(so a single row can gather scattered parallels). Each weave is tagged with a
+*kind*: `retelling`, `type`, `prophecy`, or `quotation`.
+
+- **weaves (N)** in the header opens the list; create one with a name and kind.
+- Opening a weave shows the **grid view** — rows lined up across columns, cells
+  rendered live (patches and rules show through). Click a cell's reference to
+  jump the normal reader there.
+- **`✎ workbench`** switches to authoring: one reader pane per column. Navigate
+  each pane (book/chapter), **click a verse and Shift-click another to select a
+  range**, then **`＋ link as row`**. Rows sort into reading order by the
+  leftmost column. The side panel adds/removes columns and edits the kind and
+  notes.
+- Open-weave verses get a soft highlight in the normal reader.
+
+Weaves are plain unsigned JSON under `weaves/` (personal study data — they never
+alter the text). The repo ships a few stock examples (the Decalogue in Exodus vs.
+Deuteronomy, the feeding of the five thousand across all four Gospels, the bronze
+serpent, Bethlehem in Micah and Matthew, "the just shall live by faith").
+
 ## Type and settings
 
 Scripture renders in EB Garamond (OFL, bundled under `assets/fonts/`).
