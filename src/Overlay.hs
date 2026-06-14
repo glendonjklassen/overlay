@@ -15,9 +15,10 @@ import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as BL
-import Data.List (elemIndex, find, findIndex, nub, sortOn)
+import Data.List (delete, elemIndex, find, findIndex, nub, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe, mapMaybe)
+import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time.Clock (getCurrentTime)
@@ -158,26 +159,21 @@ data PanelMode
     | PThreads
     | PThreadView FilePath
     | PWeaves
-    | PWeaveEdit  -- ^ editor for the open weave (file is in 'amWeaveOpen')
+    | PWeaveView FilePath       -- ^ inspect / edit one weave
     deriving (Eq, Show)
 
--- | Which face of an open weave the main reading area shows.
-data WeaveView = WGrid | WWorkbench
-    deriving (Eq, Show)
-
--- | A reader pane in the weave workbench: where it points, plus the verse
--- range selected there (anchored, so Shift-click extends from the anchor).
+-- | A reading pane: where it points, plus the verses currently selected there
+-- (anchored, so Shift-click extends from the anchor). One pane is ordinary
+-- reading; several are parallel passages.
 data PaneState = PaneState
     { _psBook    :: !Text
     , _psChapter :: !Int
-    , _psAnchor  :: !(Maybe Int)         -- ^ first verse clicked
-    , _psSel     :: !(Maybe (Int, Int))  -- ^ selected (start, end) verses
+    , _psAnchor  :: !(Maybe Int)  -- ^ last verse clicked, for Shift-extend
+    , _psSel     :: ![Int]        -- ^ selected verse numbers
     } deriving (Eq, Show)
 
 data AppModel = AppModel
-    { _amBook        :: Text
-    , _amChapter     :: Int
-    , _amPanel       :: PanelMode
+    { _amPanel       :: PanelMode
     , _amNotesOn     :: Bool
     , _amPatches     :: [LoadedPatch]
     , _amRules       :: [LoadedRule]
@@ -189,25 +185,21 @@ data AppModel = AppModel
     , _amThreadNew   :: Text  -- ^ new thread name typed in the editor
     , _amThreadNotes :: Text  -- ^ notes draft for the open thread
     , _amStatus      :: Text
-    -- weaves: parallel passages lined up in a grid
-    , _amWeaves     :: [LoadedWeave]
-    , _amWeaveOpen  :: Maybe FilePath  -- ^ active weave (highlight + workbench)
-    , _amWeaveView  :: WeaveView       -- ^ grid (study) vs workbench (compose)
-    , _amPanes      :: [PaneState]     -- ^ one reader pane per column (workbench)
-    , _amWeaveNew   :: Text            -- ^ new weave name typed in the list
-    , _amWeaveKind  :: WeaveKind       -- ^ kind for a new / the open weave
-    , _amWeaveCol   :: Text            -- ^ new column title input
-    , _amWeaveNotes :: Text            -- ^ notes draft for the open weave
+    -- weaves: a graph of verse links, shown across reading panes
+    , _amPanes       :: [PaneState]
+    , _amWeaves      :: [LoadedWeave]
+    , _amWeaveNew    :: Text       -- ^ new weave name
+    , _amWeaveKind   :: WeaveKind  -- ^ kind for new / linked / inspected weave
+    , _amWeaveNotes  :: Text       -- ^ notes draft for the inspected weave
+    , _amCombinePick :: Text       -- ^ weave to combine into the inspected one
     } deriving (Eq, Show)
 
 data AppEvent
     = EvInit
-    | EvBookChanged Text
-    | EvPrevChapter
-    | EvNextChapter
     | EvWordClicked RTok
     | EvWordAlt RTok
     | EvSpanSelected (Text, Int, Int) (Int, Int)
+    | EvVerseClicked Int (Text, Int, Int) Bool
     | EvGoRef Text Int
     | EvClosePanel
     | EvTogglePatches
@@ -225,28 +217,26 @@ data AppEvent
     | EvDeleteThread FilePath
     | EvDeleteThreadEntry FilePath Int
     | EvThreadsLoaded [LoadedThread] Text
-    | EvToggleWeaves
-    | EvShowWeaves
-    | EvOpenWeave FilePath
-    | EvCloseWeave
-    | EvCycleWeaveView
-    | EvNewWeave
-    | EvSetWeaveKind WeaveKind
-    | EvAddWeaveColumn
-    | EvRemoveWeaveColumn Int
-    | EvRemoveWeaveRow Int
-    | EvSaveWeaveNotes
-    | EvDeleteWeave FilePath
-    | EvWeavesLoaded [LoadedWeave] Text
-    -- weave workbench (parallel readers)
+    -- panes
+    | EvSetPanes Int
     | EvPaneBook Int Text
     | EvPaneChapter Int Int
     | EvPanePrev Int
     | EvPaneNext Int
-    | EvPaneVerseClick Int (Text, Int, Int) Bool
-    | EvLinkRow
-    | EvNoop
+    -- weaves
+    | EvToggleWeaves
+    | EvShowWeaves
+    | EvOpenWeave FilePath
+    | EvNewWeave
+    | EvLink
+    | EvSetWeaveKind WeaveKind
+    | EvSaveWeaveNotes
+    | EvRemoveLink Link
+    | EvCombineWeave Text
+    | EvDeleteWeave FilePath
+    | EvWeavesLoaded [LoadedWeave] Text
     | EvStatus Text
+    | EvNoop
     deriving (Eq, Show)
 
 makeLenses ''PaneState
@@ -265,7 +255,7 @@ refText (b, c, v) = displayName b <> " " <> showt c <> ":" <> showt v
 
 -- | Compose the patch and rule overlays over a verse, producing renderable
 -- tokens. Patches claim their spans first, so rules never override them.
--- @marks@ are word spans to highlight (the open thread's passages).
+-- @marks@ are word spans to highlight (thread passages / weave selection).
 toRVerse
     :: Text -> [LoadedPatch] -> [LoadedRule] -> [(Int, Int)] -> [Text]
     -> Verse -> RVerse
@@ -373,86 +363,106 @@ buildUI :: Env -> WidgetEnv AppModel AppEvent -> AppModel -> WidgetNode AppModel
 buildUI env _wenv model = widgetTree
   where
     corpus = envCorpus env
-    bid = model ^. amBook
-    ch = model ^. amChapter
-    nch = chapterCount corpus bid
+    own = kPubHex (envKeys env)
+    patches = model ^. amPatches
+    rules = model ^. amRules
+    threads = model ^. amThreads
+    panes = model ^. amPanes
+    npanes = length panes
 
-    header = hstack
-        [ dropdown_ amBook bookIds bookRow bookRow [onChange EvBookChanged]
-            `styleBasic` [width 240]
+    canLink = length (filter (not . null . _psSel) panes) >= 2
+
+    header = hstack $
+        [ label ("panes " <> showt npanes) `styleBasic` [textSize 12, textColor gray] ]
+        <> [ button "－" (EvSetPanes (npanes - 1))
+                `styleBasic` [textSize 12, padding 2] | npanes > 1 ]
+        <> [ button "＋" (EvSetPanes (npanes + 1))
+                `styleBasic` [textSize 12, padding 2] | npanes < 4 ]
+        <>
+        [ spacer
+        , labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize 12]
         , spacer
-        , dropdown amChapter [1 .. nch] chapterRow chapterRow
-            `styleBasic` [width 90]
-            `nodeKey` ("chapters_" <> bid)
-        , spacer
-        , button "<" EvPrevChapter
-        , spacer
-        , button ">" EvNextChapter
-        , spacer
-        , labeledCheckbox "1769 notes" amNotesOn
-            `styleBasic` [textSize 12]
-        , spacer
-        , button ("patches (" <> showt (length (model ^. amPatches)
-            + length (model ^. amRules)) <> ")")
+        , button ("patches (" <> showt (length patches + length rules) <> ")")
             EvTogglePatches `styleBasic` [textSize 12]
         , spacer
-        , button ("threads (" <> showt (length (model ^. amThreads)) <> ")")
+        , button ("threads (" <> showt (length threads) <> ")")
             EvToggleThreads `styleBasic` [textSize 12]
         , spacer
         , button ("weaves (" <> showt (length (model ^. amWeaves)) <> ")")
             EvToggleWeaves `styleBasic` [textSize 12]
-        , spacer
+        ]
+        <> (if canLink
+            then [ spacer, button "＋ link" EvLink
+                    `styleBasic` [textSize 12, textColor (rgbHex "#C9A24B")] ]
+            else [])
+        <>
+        [ spacer
         , label (model ^. amStatus) `styleBasic` [textSize 11, textColor gray]
         , filler
         , label "overlay" `styleBasic` [textColor gray, textSize 12]
         ]
-    bookRow b = label (displayName b)
-    chapterRow n = label (showt n)
+
+    bookRow b = label (displayName b) `styleBasic` [textSize 12]
+    chRow n = label (showt n) `styleBasic` [textSize 12]
 
     notesFor v = if model ^. amNotesOn
         then M.findWithDefault [] (vBook v, vChapter v, vVerse v) (envNotes env)
         else []
-    -- highlight the open thread's passages, or the open weave's cells
+
+    -- thread passages highlight while a thread is open
     threadMarks = case model ^. amPanel of
         PThreadView f -> M.fromListWith (<>)
             [ (teRef e, [teSpan e])
-            | lt <- model ^. amThreads
-            , ltFile lt == f
-            , e <- thEntries (ltThread lt)
-            ]
+            | lt <- threads, ltFile lt == f, e <- thEntries (ltThread lt) ]
         _ -> M.empty
-    weaveMarks = case model ^. amWeaveOpen of
-        Just f -> M.fromListWith (<>)
-            [ ((vrBook rng, vrChap rng, vn), [(0, maxBound)])
-            | lw <- model ^. amWeaves, lwFile lw == f
-            , row <- wRows (lwWeave lw)
-            , cell <- wrCells row
-            , rng <- wcRanges cell
-            , vn <- [vrStart rng .. vrEnd rng]
-            ]
-        Nothing -> M.empty
-    markSpans = M.unionWith (<>) threadMarks weaveMarks
 
-    rverses =
-        [ toRVerse (kPubHex (envKeys env)) (model ^. amPatches)
-            (model ^. amRules)
-            (M.findWithDefault [] (vBook v, vChapter v, vVerse v) markSpans)
-            (notesFor v) v
-        | v <- chapterVerses corpus bid ch
-        ]
+    marksFor p v =
+        let ref = (vBook v, vChapter v, vVerse v)
+            sel = [(0, maxBound) | vVerse v `elem` _psSel p]
+        in M.findWithDefault [] ref threadMarks <> sel
+
+    paneColumn i p = ColumnCfg
+        (showt i <> ":" <> _psBook p <> ":" <> showt (_psChapter p))
+        [ toRVerse own patches rules (marksFor p v) (notesFor v) v
+        | v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
+
+    -- ambient: every weave link whose verses are both visible in some pane
+    visibleRefs = Set.fromList
+        [ (_psBook p, _psChapter p, vVerse v)
+        | p <- panes, v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
+    ambientLinks = nub
+        [ (a, b)
+        | lw <- model ^. amWeaves, Link a b <- wLinks (lwWeave lw)
+        , a `Set.member` visibleRefs, b `Set.member` visibleRefs ]
+
+    navStrip i p = hstack
+        [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
+            bookRow bookRow [onChange (EvPaneBook i)]
+            `styleBasic` [width 150, textSize 12]
+        , spacer
+        , dropdown_ (amPanes . singular (ix i) . psChapter)
+            [1 .. chapterCount corpus (_psBook p)] chRow chRow
+            [onChange (EvPaneChapter i)]
+            `styleBasic` [width 70, textSize 12]
+            `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook p)
+        , spacer
+        , button "‹" (EvPanePrev i) `styleBasic` [textSize 12, padding 2]
+        , button "›" (EvPaneNext i) `styleBasic` [textSize 12, padding 2]
+        , filler
+        ] `styleBasic` [padding 4, bgColor (rgbHex "#202225")]
+
+    navRow = hgrid (zipWith navStrip [0 ..] panes)
 
     reader = readerView ReaderCfg
-        { rcKey = bid <> ":" <> showt ch
-        , rcVerses = rverses
+        { rcColumns = zipWith paneColumn [0 :: Int ..] panes
         , rcBodySize = sBodySize (envSettings env)
         , rcLineSpacing = sLineSpacing (envSettings env)
+        , rcLinks = ambientLinks
         , rcOnWordClick = EvWordClicked
         , rcOnWordAlt = EvWordAlt
         , rcOnSpanSelect = EvSpanSelected
-        , rcOnPrev = EvPrevChapter
-        , rcOnNext = EvNextChapter
-        , rcRangeSelect = False
-        , rcOnVerseClick = \_ _ -> EvNoop
+        , rcOnVerseClick = EvVerseClicked
+        , rcOnPaneNav = \c d -> if d < 0 then EvPanePrev c else EvPaneNext c
         } `nodeKey` "reader"
 
     sidePanel = case model ^. amPanel of
@@ -463,30 +473,20 @@ buildUI env _wenv model = widgetTree
         PThreads -> [threadsPanel model]
         PThreadView f -> [threadViewPanel model f]
         PWeaves -> [weavesPanel model]
-        PWeaveEdit -> [weaveEditPanel model]
+        PWeaveView f -> [weaveViewPanel model f]
 
-    -- an open weave takes over the main reading area — the grid to study it,
-    -- the workbench to compose it; otherwise the chapter reader shows
-    mainArea = case model ^. amWeaveOpen of
-        Just f -> case model ^. amWeaveView of
-            WGrid      -> weaveGrid env model f
-            WWorkbench -> weaveWorkbench env model f
-        Nothing -> reader
+    mainArea = vstack [navRow, reader]
 
     widgetTree = vstack
         [ header `styleBasic` [padding 10]
         , hstack (mainArea : sidePanel)
         ]
 
--- multiline label for panel body text; the explicit width lets the label
--- compute its wrapped height up front (see Label.getSizeReq), and
--- resizeFactorH 0 makes that height a fixed request — multiline labels
--- default to flex height, so a sibling vscroll (whose flex request is the
--- full content height) would otherwise squeeze them below their text
+-- multiline label for panel body text (see Label.getSizeReq); resizeFactorH 0
+-- fixes the wrapped height so a sibling vscroll can't squeeze it
 wrapLabel :: Text -> WidgetNode AppModel AppEvent
 wrapLabel t = label_ t [multiline, resizeFactorH 0]
 
--- small caption + multiline value
 captionField :: Text -> Maybe Text -> WidgetNode AppModel AppEvent
 captionField name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
     [ label name `styleBasic` [textSize 10, textColor gray]
@@ -494,7 +494,7 @@ captionField name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
     ]
 
 panelBox :: [WidgetNode AppModel AppEvent] -> WidgetNode AppModel AppEvent
-panelBox children = vstack_ [childSpacing_ 8] children
+panelBox items = vstack_ [childSpacing_ 8] items
     `styleBasic` [width panelW, padding 12, bgColor (rgbHex "#26282B")]
 
 panelHeader :: Text -> AppEvent -> WidgetNode AppModel AppEvent
@@ -516,10 +516,6 @@ strongsPanel env (word, ref) = panel
         (label (refLabel r) `styleBasic` [textSize 12, textColor lightSkyBlue])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
-    -- everything below the header shares one vscroll: the multiline entry
-    -- labels keep their full wrapped height instead of competing with the
-    -- occurrence list for the panel's fixed height (long entries like H6213
-    -- used to overflow and draw over the captions beneath them)
     panel = panelBox
         [ panelHeader (ref <> " — " <> word) EvClosePanel
         , vscroll $ vstack_ [childSpacing_ 8] $
@@ -733,113 +729,31 @@ threadViewPanel model file =
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
--- ── weaves ────────────────────────────────────────────────────────────────────
+-- ── weave panels ────────────────────────────────────────────────────────────
 
--- multiline label with an explicit width (the grid's columns are fixed-width,
--- so wrapped height can be computed up front; cf. 'wrapLabel')
-wrapLabelW :: Double -> Text -> WidgetNode AppModel AppEvent
-wrapLabelW w t = label_ t [multiline, resizeFactorH 0] `styleBasic` [width w]
-
-weaveColW :: Double
-weaveColW = 340
-
--- | The full-width grid: column headers across the top, alignment rows down,
--- each cell rendering its passages' live text (patches/rules show through).
-weaveGrid :: Env -> AppModel -> FilePath -> WidgetNode AppModel AppEvent
-weaveGrid env model file =
-    case find ((== file) . lwFile) (model ^. amWeaves) of
-        Nothing -> box (label "weave not found")
-        Just lw -> render (lwWeave lw)
-  where
-    render w = vstack
-        [ titleBar w
-        , scroll (vstack_ [childSpacing_ 0]
-            (headerRow w : zipWith (rowWidget w) [0 ..] (wRows w)))
-            `styleBasic` [padding 10]
-        ]
-    titleBar w = hstack
-        [ label (wName w) `styleBasic` [textSize 16]
-        , spacer
-        , label (kindLabel (wKind w))
-            `styleBasic` [ textSize 11, textColor lightGray, padding 3
-                         , bgColor (rgbHex "#2B2E33"), radius 4 ]
-        , filler
-        , button "✎ workbench" EvCycleWeaveView
-            `styleBasic` [textSize 11, padding 4]
-        , spacer
-        , button "✕ close" EvCloseWeave `styleBasic` [textSize 11, padding 4]
-        ] `styleBasic` [padding 10, bgColor (rgbHex "#26282B")]
-
-    headerRow w = hstack_ [childSpacing_ 0]
-        [ cellBox (label c `styleBasic` [textSize 13, textColor lightGray])
-        | c <- wColumns w ]
-
-    rowWidget w ri row = vstack_ [childSpacing_ 0]
-        [ hstack
-            [ label (fromMaybe ("row " <> showt (ri + 1)) (wrLabel row))
-                `styleBasic` [textSize 11, textColor (rgbHex "#9C8E6E")]
-            , filler
-            , button "remove row" (EvRemoveWeaveRow ri)
-                `styleBasic` [textSize 9, padding 2]
-            ] `styleBasic` [paddingV 4]
-        , hstack_ [childSpacing_ 0]
-            [ cellBox (cellWidget c)
-            | c <- padTo (length (wColumns w)) (wrCells row) ]
-        , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
-        ]
-
-    cellWidget (WeaveCell []) =
-        label "—" `styleBasic` [textSize 13, textColor (rgbHex "#55585C")]
-    cellWidget (WeaveCell rngs) =
-        vstack_ [childSpacing_ 6] (map rangeWidget rngs)
-
-    rangeWidget rng = vstack_ [childSpacing_ 2]
-        [ box_ [onClick (EvGoRef (vrBook rng) (vrChap rng)), alignLeft]
-            (label (rangeLabel rng)
-                `styleBasic` [textSize 11, textColor lightSkyBlue])
-            `styleHover` [bgColor (rgbHex "#3A3F45")]
-        , wrapLabelW (weaveColW - 24) (rangeText rng)
-            `styleBasic` [textSize 12]
-        ]
-
-    rangeLabel rng = refText (vrBook rng, vrChap rng, vrStart rng)
-        <> (if vrEnd rng > vrStart rng then "–" <> showt (vrEnd rng) else "")
-
-    rangeText rng =
-        let vs = [ v | v <- chapterVerses (envCorpus env) (vrBook rng) (vrChap rng)
-                     , vVerse v >= vrStart rng, vVerse v <= vrEnd rng ]
-            renderV v = showt (vVerse v) <> " " <> T.unwords
-                (map (renderToken . rtTok) (rvTokens
-                    (toRVerse (kPubHex (envKeys env)) (model ^. amPatches)
-                        (model ^. amRules) [] [] v)))
-        in if null vs
-            then T.unwords (vrText rng)   -- snapshot fallback if off-corpus
-            else T.intercalate "  " (map renderV vs)
-
-    cellBox c = c `styleBasic`
-        [width weaveColW, padding 8, border 1 (rgbHex "#33363A")]
-    padTo n cs = take n (cs <> repeat (WeaveCell []))
+kindRowW :: WeaveKind -> WidgetNode AppModel AppEvent
+kindRowW k = label (kindLabel k) `styleBasic` [textSize 12]
 
 weavesPanel :: AppModel -> WidgetNode AppModel AppEvent
 weavesPanel model = panelBox
     [ panelHeader "weaves" EvClosePanel
-    , label "lined-up parallel passages" `styleBasic` [textSize 10, textColor gray]
+    , label "parallel passages — links between verses, drawn across panes"
+        `styleBasic` [textSize 10, textColor gray]
     , if null lws
-        then wrapLabel ("none yet — create one below, then add columns and "
-                <> "passages")
+        then wrapLabel ("none yet — open two panes, select verses in each, "
+                <> "then \"＋ link\"")
             `styleBasic` [textSize 12, textColor gray, width panelInnerW]
         else vscroll (vstack_ [childSpacing_ 6] (map row lws))
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-    , label "new weave" `styleBasic` [textSize 10, textColor gray]
+    , label "kind for new links" `styleBasic` [textSize 10, textColor gray]
+    , dropdown amWeaveKind allKinds kindRowW kindRowW `styleBasic` [textSize 12]
+    , label "new empty weave" `styleBasic` [textSize 10, textColor gray]
     , textField_ amWeaveNew [placeholder "weave name"]
-    , label "kind" `styleBasic` [textSize 10, textColor gray]
-    , dropdown amWeaveKind allKinds kindRow kindRow `styleBasic` [textSize 12]
-    , box_ [alignLeft] (button "Create weave" EvNewWeave
+    , box_ [alignLeft] (button "Create" EvNewWeave
         `styleBasic` [textSize 11, padding 4])
     ]
   where
     lws = model ^. amWeaves
-    kindRow k = label (kindLabel k) `styleBasic` [textSize 12]
     row lw =
         let w = lwWeave lw
         in box_ [onClick (EvOpenWeave (lwFile lw)), alignLeft]
@@ -847,151 +761,71 @@ weavesPanel model = panelBox
                 [ label (wName w)
                     `styleBasic` [textSize 13, textColor lightSkyBlue]
                 , label (kindLabel (wKind w) <> " · "
-                    <> showt (length (wColumns w)) <> " cols · "
-                    <> showt (length (wRows w)) <> " rows")
+                    <> showt (length (wLinks w)) <> " links")
                     `styleBasic` [textSize 10, textColor gray]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
-weaveEditPanel :: AppModel -> WidgetNode AppModel AppEvent
-weaveEditPanel model =
-    case (model ^. amWeaveOpen) >>= \f ->
-            find ((== f) . lwFile) (model ^. amWeaves) of
+weaveViewPanel :: AppModel -> FilePath -> WidgetNode AppModel AppEvent
+weaveViewPanel model file =
+    case find ((== file) . lwFile) (model ^. amWeaves) of
         Nothing -> panelBox
-            [ panelHeader "weave" EvCloseWeave
+            [ panelHeader "weave" EvClosePanel
             , label "weave not found" `styleBasic` [textSize 12, textColor gray]
             ]
-        Just lw -> render (lwFile lw) (lwWeave lw)
+        Just lw -> render (lwWeave lw)
   where
-    kindRow k = label (kindLabel k) `styleBasic` [textSize 12]
-    render file w = panelBox $
-        [ panelHeader (wName w) EvCloseWeave
+    others = [wName (lwWeave o) | o <- model ^. amWeaves, lwFile o /= file]
+    render w = panelBox $
+        [ panelHeader (wName w) EvClosePanel
         , hstack
             [ button "← all weaves" EvShowWeaves
                 `styleBasic` [textSize 10, padding 3]
             , filler
-            , button (if model ^. amWeaveView == WGrid
-                then "✎ workbench" else "▦ grid")
-                EvCycleWeaveView `styleBasic` [textSize 10, padding 3]
+            , button "delete weave" (EvDeleteWeave file)
+                `styleBasic` [textSize 10, padding 3]
             ]
+        , wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
+            `styleBasic` [textSize 10, textColor gray, width panelInnerW]
         , label "kind" `styleBasic` [textSize 10, textColor gray]
-        , dropdown_ amWeaveKind allKinds kindRow kindRow [onChange EvSetWeaveKind]
+        , dropdown_ amWeaveKind allKinds kindRowW kindRowW [onChange EvSetWeaveKind]
             `styleBasic` [textSize 12]
+        , label "weave notes" `styleBasic` [textSize 10, textColor gray]
+        , textArea amWeaveNotes
+            `styleBasic` [textSize 12, height 110]
+            `nodeKey` "weaveNotes"
+        , box_ [alignLeft] (button "Save notes" EvSaveWeaveNotes
+            `styleBasic` [textSize 11, padding 4])
         , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-        , label ("columns (" <> showt (length (wColumns w)) <> ")")
+        , label (showt (length (wLinks w)) <> " links")
             `styleBasic` [textSize 10, textColor gray]
+        , vscroll (vstack_ [childSpacing_ 4] (map linkRow (wLinks w)))
         ]
-        <> [ hstack
-                [ label c `styleBasic` [textSize 12]
-                , filler
-                , button "✕" (EvRemoveWeaveColumn i)
-                    `styleBasic` [textSize 9, padding 2]
-                ]
-           | (i, c) <- zip [0 ..] (wColumns w) ]
-        <> [ hstack
-                [ textField_ amWeaveCol [placeholder "new column title"]
-                , spacer
-                , button "add" EvAddWeaveColumn `styleBasic` [textSize 11, padding 4]
-                ]
-           , wrapLabel ("rows are built in the workbench: \"✎ workbench\", "
-                <> "select a passage in each pane, then \"＋ link as row\"")
-                `styleBasic` [textSize 10, textColor gray, width panelInnerW]
-           , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-           , label "weave notes" `styleBasic` [textSize 10, textColor gray]
-           , textArea amWeaveNotes
-                `styleBasic` [textSize 12, height 120]
-                `nodeKey` "weaveNotes"
-           , box_ [alignLeft] (button "Save notes" EvSaveWeaveNotes
-                `styleBasic` [textSize 11, padding 4])
-           , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-           , box_ [alignLeft] (button "delete weave" (EvDeleteWeave file)
-                `styleBasic` [textSize 10, padding 3])
-           ]
-
-paneW :: Double
-paneW = 360
-
--- | The workbench: one reader pane per column, each in verse-range select
--- mode. Select a passage in each pane, then "link as row".
-weaveWorkbench :: Env -> AppModel -> FilePath -> WidgetNode AppModel AppEvent
-weaveWorkbench env model file =
-    case find ((== file) . lwFile) (model ^. amWeaves) of
-        Nothing -> box (label "weave not found")
-        Just lw -> render (lwWeave lw)
-  where
-    corpus = envCorpus env
-    panes = model ^. amPanes
-    render w = vstack
-        [ bar w
-        , scroll (hstack_ [childSpacing_ 0]
-            (zipWith3 paneCol [0 ..] (wColumns w)
-                (padPanes (length (wColumns w)))))
-        ]
-    bar w = hstack
-        [ label (wName w) `styleBasic` [textSize 16]
-        , spacer
-        , label (kindLabel (wKind w))
-            `styleBasic` [ textSize 11, textColor lightGray, padding 3
-                         , bgColor (rgbHex "#2B2E33"), radius 4 ]
+        <> combineSeg
+    linkRow l@(Link a b) = hstack
+        [ box_ [onClick (EvGoRef (fst3 a) (snd3 a)), alignLeft]
+            (label (refText a) `styleBasic` [textSize 11, textColor lightSkyBlue])
+        , label " ↔ " `styleBasic` [textSize 11, textColor gray]
+        , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
+            (label (refText b) `styleBasic` [textSize 11, textColor lightSkyBlue])
         , filler
-        , button "＋ link as row" EvLinkRow `styleBasic` [textSize 12, padding 4]
-        , spacer
-        , button "▦ grid" EvCycleWeaveView `styleBasic` [textSize 11, padding 4]
-        , spacer
-        , button "✕ close" EvCloseWeave `styleBasic` [textSize 11, padding 4]
-        ] `styleBasic` [padding 10, bgColor (rgbHex "#26282B")]
+        , button "✕" (EvRemoveLink l) `styleBasic` [textSize 9, padding 2]
+        ]
+    combineSeg =
+        [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
+        , label "combine another weave in (merge links)"
+            `styleBasic` [textSize 10, textColor gray]
+        , textDropdown amCombinePick others `styleBasic` [textSize 12]
+        , box_ [alignLeft] (button "Combine" (EvCombineWeave (model ^. amCombinePick))
+            `styleBasic` [textSize 11, padding 4])
+        ] `orEmpty` not (null others)
+    orEmpty xs cond = if cond then xs else []
 
-    padPanes n = take n
-        (panes <> repeat (PaneState (model ^. amBook) 1 Nothing Nothing))
+fst3 :: (a, b, c) -> a
+fst3 (a, _, _) = a
 
-    paneCol i title pane = vstack
-        [ paneNav i title pane
-        , readerPane i pane
-        ] `styleBasic` [width paneW]
-
-    paneNav i title pane = vstack_ [childSpacing_ 2]
-        [ label title `styleBasic` [textSize 12, textColor lightGray]
-        , hstack
-            [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
-                bookRow bookRow [onChange (EvPaneBook i)]
-                `styleBasic` [width 120, textSize 11]
-            , spacer
-            , dropdown_ (amPanes . singular (ix i) . psChapter)
-                [1 .. chapterCount corpus (_psBook pane)] chRow chRow
-                [onChange (EvPaneChapter i)]
-                `styleBasic` [width 64, textSize 11]
-                `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook pane)
-            , spacer
-            , button "‹" (EvPanePrev i) `styleBasic` [textSize 11, padding 2]
-            , button "›" (EvPaneNext i) `styleBasic` [textSize 11, padding 2]
-            ]
-        ] `styleBasic` [padding 6, bgColor (rgbHex "#202225")]
-    bookRow b = label (displayName b) `styleBasic` [textSize 11]
-    chRow n = label (showt n) `styleBasic` [textSize 11]
-
-    readerPane i pane =
-        let b = _psBook pane
-            ch = _psChapter pane
-            marks = maybe M.empty (\(s, e) -> M.fromList
-                [ ((b, ch, vn), [(0, maxBound)]) | vn <- [s .. e] ]) (_psSel pane)
-            rvs = [ toRVerse (kPubHex (envKeys env)) (model ^. amPatches)
-                        (model ^. amRules)
-                        (M.findWithDefault [] (vBook v, vChapter v, vVerse v) marks)
-                        [] v
-                  | v <- chapterVerses corpus b ch ]
-        in readerView ReaderCfg
-            { rcKey = "pane" <> showt i <> ":" <> b <> ":" <> showt ch
-            , rcVerses = rvs
-            , rcBodySize = sBodySize (envSettings env)
-            , rcLineSpacing = sLineSpacing (envSettings env)
-            , rcOnWordClick = const EvNoop
-            , rcOnWordAlt = const EvNoop
-            , rcOnSpanSelect = \_ _ -> EvNoop
-            , rcOnPrev = EvPanePrev i
-            , rcOnNext = EvPaneNext i
-            , rcRangeSelect = True
-            , rcOnVerseClick = EvPaneVerseClick i
-            } `nodeKey` ("pane" <> showt i)
+snd3 :: (a, b, c) -> b
+snd3 (_, b, _) = b
 
 -- ── events ──────────────────────────────────────────────────────────────────
 
@@ -1004,29 +838,23 @@ handleEvent
     -> [AppEventResponse AppModel AppEvent]
 handleEvent env _wenv _node model evt = case evt of
     EvInit -> [SetFocusOnKey "reader"]
-    EvBookChanged b ->
-        [ Model (model & amBook .~ b & amChapter .~ 1)
-        , SetFocusOnKey "reader"
-        ]
-    EvPrevChapter -> navTo (stepChapter (-1))
-    EvNextChapter -> navTo (stepChapter 1)
     EvWordClicked rt -> case tokStrongs (rtTok rt) of
         (r : _) -> [Model (model & amPanel .~ PStrongs (tokWord (rtTok rt)) r)]
         [] -> []
     EvWordAlt rt -> altClickAt (rtRef rt) (rtIx rt)
     EvSpanSelected ref span_ -> openEditor ref span_
+    EvVerseClicked i (_, _, v) shift ->
+        [Model (setPane i (verseClickPane v shift))]
     EvGoRef b c ->
-        [ Model (model & amBook .~ b & amChapter .~ c)
+        [ Model (setPane (0 :: Int) (\p -> p & psBook .~ b & psChapter .~ c
+            & psAnchor .~ Nothing & psSel .~ []))
         , SetFocusOnKey "reader"
         ]
     EvClosePanel ->
-        [ Model (model & amPanel .~ PNone)
-        , SetFocusOnKey "reader"
-        ]
+        [ Model (model & amPanel .~ PNone), SetFocusOnKey "reader" ]
     EvTogglePatches ->
-        [ Model (model & amPanel %~ \pm ->
-            if pm == PPatches then PNone else PPatches)
-        ]
+        [Model (model & amPanel %~ \pm ->
+            if pm == PPatches then PNone else PPatches)]
     EvSavePatch -> case model ^. amPanel of
         PEdit et ->
             let repl = T.words (T.strip (model ^. amReplace))
@@ -1040,16 +868,14 @@ handleEvent env _wenv _node model evt = case evt of
         _ -> []
     EvDeletePatch path -> [Task (deleteTask env path)]
     EvPatchesLoaded lps msg ->
-        [ Model (model & amPatches .~ lps
-            & amPanel %~ closeEditorOnly
+        [ Model (model & amPatches .~ lps & amPanel %~ closeEditorOnly
             & amStatus .~ msg)
         , SetFocusOnKey "reader"
         ]
     EvDeleteRule path -> [Task (deleteRuleTask env path)]
     EvExcludeRule path ref -> [Task (excludeRuleTask env path ref)]
     EvRulesLoaded lrs msg ->
-        [ Model (model & amRules .~ lrs
-            & amPanel %~ closeEditorOnly
+        [ Model (model & amRules .~ lrs & amPanel %~ closeEditorOnly
             & amStatus .~ msg)
         , SetFocusOnKey "reader"
         ]
@@ -1058,8 +884,7 @@ handleEvent env _wenv _node model evt = case evt of
     EvOpenThread file ->
         let notes = maybe "" (thNotes . ltThread)
                 (find ((== file) . ltFile) (model ^. amThreads))
-        in [ Model (model & amPanel .~ PThreadView file
-                & amThreadNotes .~ notes) ]
+        in [Model (model & amPanel .~ PThreadView file & amThreadNotes .~ notes)]
     EvAddToThread -> case model ^. amPanel of
         PEdit et ->
             let name = T.strip $ if T.null (T.strip (model ^. amThreadNew))
@@ -1069,8 +894,7 @@ handleEvent env _wenv _node model evt = case evt of
                        in if T.null n then Nothing else Just n
             in if T.null name
                 then [Model (model & amStatus .~ "name or pick a thread")]
-                else [Task (addThreadTask env (model ^. amThreads)
-                        name et note)]
+                else [Task (addThreadTask env (model ^. amThreads) name et note)]
         _ -> []
     EvSaveThreadNotes file ->
         case find ((== file) . ltFile) (model ^. amThreads) of
@@ -1082,71 +906,73 @@ handleEvent env _wenv _node model evt = case evt of
             Nothing -> [Model (model & amStatus .~ "thread not found")]
             Just lt -> [Task (deleteThreadEntryTask lt entryIx)]
     EvThreadsLoaded lts msg ->
-        [ Model (model & amThreads .~ lts
-            & amPanel %~ adjustThreadPanel lts
-            & amStatus .~ msg)
-        ]
+        [Model (model & amThreads .~ lts & amPanel %~ adjustThreadPanel lts
+            & amStatus .~ msg)]
+    EvSetPanes n -> [Model (setPaneCount n)]
+    EvPaneBook i b -> [Model (setPane i (\p ->
+        p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ []))]
+    EvPaneChapter i c -> [Model (setPane i (\p ->
+        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ []))]
+    EvPanePrev i -> [Model (stepPane i (-1))]
+    EvPaneNext i -> [Model (stepPane i 1)]
     EvToggleWeaves ->
         [Model (model & amPanel %~ \pm ->
             if pm == PWeaves then PNone else PWeaves)]
-    EvShowWeaves ->
-        [Model (model & amPanel .~ PWeaves & amWeaveOpen .~ Nothing)]
-    EvOpenWeave file ->
-        let mw = lwWeave <$> find ((== file) . lwFile) (model ^. amWeaves)
-        in [ Model (model
-                & amWeaveOpen ?~ file
-                & amWeaveView .~ WGrid
-                & amPanel .~ PWeaveEdit
-                & amPanes .~ maybe [] (\w -> syncPanes (model ^. amBook) w []) mw
-                & amWeaveNotes .~ maybe "" wNotes mw
-                & amWeaveKind .~ maybe Retelling wKind mw
-                & amWeaveCol .~ "") ]
-    EvCloseWeave ->
-        [ Model (model & amPanel .~ PNone & amWeaveOpen .~ Nothing)
-        , SetFocusOnKey "reader" ]
-    EvCycleWeaveView ->
-        [Model (model & amWeaveView %~ \v ->
-            if v == WGrid then WWorkbench else WGrid)]
+    EvShowWeaves -> [Model (model & amPanel .~ PWeaves)]
+    EvOpenWeave file -> case find ((== file) . lwFile) (model ^. amWeaves) of
+        Nothing -> [Model (model & amStatus .~ "weave not found")]
+        Just lw ->
+            let w = lwWeave lw
+                tracks = weaveTracks w
+                newPanes = [PaneState b c Nothing [] | (b, c) <- take 4 tracks]
+            in [Model (model
+                    & amPanel .~ PWeaveView file
+                    & amPanes .~ (if null newPanes then model ^. amPanes else newPanes)
+                    & amWeaveKind .~ wKind w
+                    & amWeaveNotes .~ wNotes w
+                    & amCombinePick .~ "")]
     EvNewWeave ->
         let name = T.strip (model ^. amWeaveNew)
         in if T.null name
             then [Model (model & amStatus .~ "name the weave")]
             else [Task (newWeaveTask name (model ^. amWeaveKind)
-                    (cTokVersion (envCorpus env)))]
-    EvSetWeaveKind k -> withOpenWeave $ \lw ->
+                    (cTokVersion (envCorpus env)) [])]
+    EvLink ->
+        let refsByPane = [[(_psBook p, _psChapter p, v) | v <- _psSel p]
+                         | p <- model ^. amPanes]
+            links = smartLinks refsByPane
+            selected = concat refsByPane
+            clear = model & amPanes %~ map (\p ->
+                        p & psSel .~ [] & psAnchor .~ Nothing)
+        in if null links
+            then [Model (model & amStatus .~ "select verses in two panes to link")]
+            else case find (\lw -> any (`elem` weaveVerses lw) selected)
+                    (model ^. amWeaves) of
+                Just lw ->
+                    [Model clear, Task (editWeaveTask lw (addLinks links)
+                        ("linked into " <> wName (lwWeave lw)))]
+                Nothing ->
+                    [Model clear, Task (newWeaveTask (autoName selected)
+                        (model ^. amWeaveKind) (cTokVersion (envCorpus env)) links)]
+    EvSetWeaveKind k -> withInspected $ \lw ->
         [Task (editWeaveTask lw (\w -> w { wKind = k }) "kind set")]
-    EvAddWeaveColumn ->
-        let c = T.strip (model ^. amWeaveCol)
-        in if T.null c
-            then [Model (model & amStatus .~ "column needs a title")]
-            else withOpenWeave $ \lw ->
-                [Task (editWeaveTask lw (addColumn c) ("added " <> c))]
-    EvRemoveWeaveColumn i -> withOpenWeave $ \lw ->
-        [Task (editWeaveTask lw (removeColumn i) "column removed")]
-    EvRemoveWeaveRow i -> withOpenWeave $ \lw ->
-        [Task (editWeaveTask lw (removeRow i) "row removed")]
-    EvSaveWeaveNotes -> withOpenWeave $ \lw ->
+    EvSaveWeaveNotes -> withInspected $ \lw ->
         [Task (editWeaveTask lw (\w -> w { wNotes = model ^. amWeaveNotes })
             "notes saved")]
+    EvRemoveLink l -> withInspected $ \lw ->
+        [Task (editWeaveTask lw (removeLink l) "link removed")]
+    EvCombineWeave name -> withInspected $ \lw ->
+        case find ((== name) . wName . lwWeave) (model ^. amWeaves) of
+            Nothing -> [Model (model & amStatus .~ "pick a weave to combine")]
+            Just other ->
+                [Task (editWeaveTask lw (combine (lwWeave other))
+                    ("combined " <> name))]
     EvDeleteWeave file -> [Task (deleteWeaveTask file)]
     EvWeavesLoaded lws msg ->
-        [ Model (model & amWeaves .~ lws
-            & amWeaveOpen %~ keepOpen lws
-            & amPanes %~ resyncPanes lws
-            & amPanel %~ adjustWeavePanel lws
-            & amStatus .~ msg) ]
-    EvPaneBook i b -> [Model (setPane i (\p ->
-        p & psBook .~ b & psChapter .~ 1
-          & psAnchor .~ Nothing & psSel .~ Nothing))]
-    EvPaneChapter i c -> [Model (setPane i (\p ->
-        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ Nothing))]
-    EvPanePrev i -> [Model (stepPane i (-1))]
-    EvPaneNext i -> [Model (stepPane i 1)]
-    EvPaneVerseClick i (_, _, v) shift ->
-        [Model (setPane i (verseClick v shift))]
-    EvLinkRow -> linkRow
-    EvNoop -> []
+        [Model (model & amWeaves .~ lws & amPanel %~ adjustWeavePanel lws
+            & amStatus .~ msg)]
     EvStatus t -> [Model (model & amStatus .~ t)]
+    EvNoop -> []
   where
     closeEditorOnly pm = case pm of
         PEdit _ -> PNone
@@ -1157,73 +983,58 @@ handleEvent env _wenv _node model evt = case evt of
         PThreadView _ -> PNone
         _ -> PThreads
 
-    -- after a thread reload: close the editor (an add just landed), and if
-    -- the open thread's file vanished (delete / rename), fall back to the list
     adjustThreadPanel lts pm = case pm of
         PEdit _ -> PNone
         PThreadView f | f `notElem` map ltFile lts -> PThreads
         other -> other
 
-    -- weave helpers ----------------------------------------------------------
-
-    openWeaveLoaded = (model ^. amWeaveOpen) >>= \f ->
-        find ((== f) . lwFile) (model ^. amWeaves)
-
-    withOpenWeave f =
-        maybe [Model (model & amStatus .~ "no weave open")] f openWeaveLoaded
-
-    -- drop the open file if it vanished (a delete just landed)
-    keepOpen lws mf = case mf of
-        Just f | f `elem` map lwFile lws -> Just f
-        _ -> Nothing
-
-    -- re-fit the workbench panes to the (reloaded) open weave's columns
-    resyncPanes lws ps = case (model ^. amWeaveOpen) >>= \f ->
-            find ((== f) . lwFile) lws of
-        Just lw -> syncPanes (model ^. amBook) (lwWeave lw) ps
-        Nothing -> ps
-
-    -- after a weave reload: if the open weave's file vanished, fall back to
-    -- the list; otherwise keep the editor
     adjustWeavePanel lws pm = case pm of
-        PWeaveEdit
-            | maybe True (`notElem` map lwFile lws) (model ^. amWeaveOpen) ->
-                PWeaves
+        PWeaveView f | f `notElem` map lwFile lws -> PWeaves
         other -> other
+
+    withInspected f = case model ^. amPanel of
+        PWeaveView file ->
+            maybe [Model (model & amStatus .~ "weave not found")] f
+                (find ((== file) . lwFile) (model ^. amWeaves))
+        _ -> []
+
+    weaveVerses lw = concatMap (\(Link a b) -> [a, b]) (wLinks (lwWeave lw))
+
+    autoName refs = case refs of
+        (r : _) -> "parallel: " <> refText r
+        [] -> "parallel"
+
+    -- distinct books among a weave's links, canon order, each at its first
+    -- linked chapter — used to point the panes at the weave's passages
+    weaveTracks w =
+        let refs = concatMap (\(Link a b) -> [a, b]) (wLinks w)
+            books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
+                (nub (map fst3 refs))
+        in [ (b, minimum [c | (bb, c, _) <- refs, bb == b]) | b <- books ]
 
     setPane i f = model & amPanes %~ \ps ->
         [ if j == i then f p else p | (j, p) <- zip [0 ..] ps ]
 
+    setPaneCount k = model & amPanes %~ \ps ->
+        let k' = max 1 (min 4 k)
+            seed = case reverse ps of
+                (p : _) -> p { _psSel = [], _psAnchor = Nothing }
+                [] -> PaneState "Gen" 1 Nothing []
+        in if k' <= length ps
+            then take k' ps
+            else ps <> replicate (k' - length ps) seed
+
     stepPane i dir = setPane i $ \p ->
         let nch = chapterCount (envCorpus env) (_psBook p)
         in p & psChapter %~ (\c -> max 1 (min nch (c + dir)))
-             & psAnchor .~ Nothing & psSel .~ Nothing
+             & psAnchor .~ Nothing & psSel .~ []
 
-    -- a plain click anchors a one-verse range; Shift-click extends it
-    verseClick v shift p = case (_psAnchor p, shift) of
-        (Just a, True) -> p & psSel ?~ (min a v, max a v)
-        _ -> p & psAnchor ?~ v & psSel ?~ (v, v)
+    -- plain click toggles a verse; Shift-click extends a contiguous run
+    verseClickPane v shift p = case (shift, _psAnchor p) of
+        (True, Just a) -> p & psSel %~ (\s -> nub (s <> [min a v .. max a v]))
+        _ -> p & psAnchor ?~ v
+                & psSel %~ (\s -> if v `elem` s then delete v s else s <> [v])
 
-    -- gather each pane's current selection into a row, sort into reading
-    -- order by the leftmost column, then clear the selections
-    linkRow = case openWeaveLoaded of
-        Nothing -> [Model (model & amStatus .~ "no weave open")]
-        Just lw ->
-            let cells =
-                    [ WeaveCell (maybe []
-                        (\(s, e) -> [mkRange env (_psBook p, _psChapter p, s) e])
-                        (_psSel p))
-                    | p <- model ^. amPanes ]
-            in if all (null . wcRanges) cells
-                then [Model (model & amStatus .~ "select a passage in a pane")]
-                else [ Model (model & amPanes %~ map
-                            (\p -> p & psAnchor .~ Nothing & psSel .~ Nothing))
-                     , Task (editWeaveTask lw
-                        (sortWeaveRows . appendRow Nothing cells) "row linked") ]
-
-    -- right-click: patched spans explain themselves, rule hits open the
-    -- editor over the whole matched span (with the exclusion affordance),
-    -- untouched words open a one-word editor
     altClickAt ref wordIx
         | any covers patchSpans =
             [Model (model & amStatus .~
@@ -1276,24 +1087,6 @@ handleEvent env _wenv _node model evt = case evt of
                 , SetFocusOnKey "replace"
                 ]
 
-    navTo (b, c) =
-        [ Model (model & amBook .~ b & amChapter .~ c)
-        , SetFocusOnKey "reader"
-        ]
-
-    -- steps across book boundaries: Gen 50 -> Exod 1, Exod 1 -> Gen 50
-    stepChapter dir
-        | ch < 1 && bIx > 0 =
-            let pb = bookIds !! (bIx - 1) in (pb, chapterCount corpus pb)
-        | ch > nch && bIx < length bookIds - 1 = (bookIds !! (bIx + 1), 1)
-        | otherwise = (bid, max 1 (min nch ch))
-      where
-        corpus = envCorpus env
-        bid = model ^. amBook
-        ch = model ^. amChapter + dir
-        nch = chapterCount corpus bid
-        bIx = fromMaybe 0 (elemIndex bid bookIds)
-
 -- | The canonical words under a span, straight from the corpus.
 spanWords :: Env -> (Text, Int, Int) -> (Int, Int) -> Maybe [Text]
 spanWords env ref (s, e) = do
@@ -1320,8 +1113,7 @@ saveTask env et repl note = do
         pure (lps, path)
     pure $ case r of
         Left (e :: SomeException) -> EvStatus ("save failed: " <> showt e)
-        Right (lps, path) ->
-            EvPatchesLoaded lps ("saved " <> T.pack path)
+        Right (lps, path) -> EvPatchesLoaded lps ("saved " <> T.pack path)
 
 deleteTask :: Env -> FilePath -> IO AppEvent
 deleteTask env path = do
@@ -1414,41 +1206,6 @@ deleteThreadEntryTask lt entryIx = do
 
 -- ── weave tasks ───────────────────────────────────────────────────────────────
 
--- | Build a verse range with a snapshot of its opening words.
-mkRange :: Env -> (Text, Int, Int) -> Int -> VerseRange
-mkRange env (b, c, startV) endV =
-    let vs = [ v | v <- chapterVerses (envCorpus env) b c
-                 , vVerse v >= startV, vVerse v <= endV ]
-        ws = take 12 (concatMap (map tokWord . vTokens) vs)
-    in VerseRange b c startV (max startV endV) ws
-
--- | The OSIS book id whose display name matches a column title, if any
--- (lets a workbench pane open to the right book when columns are named after
--- books — Matthew, Mark, …).
-bookByName :: Text -> Maybe Text
-bookByName t = find (\b -> displayName b == t) bookIds
-
--- | Fit the pane list to the weave's columns, reusing existing panes by
--- position and seeding new ones from the column title (or the fallback book).
-syncPanes :: Text -> Weave -> [PaneState] -> [PaneState]
-syncPanes fallbackBook w old =
-    [ if i < length old then old !! i else freshPane (wColumns w !! i)
-    | i <- [0 .. length (wColumns w) - 1] ]
-  where
-    freshPane title =
-        PaneState (fromMaybe fallbackBook (bookByName title)) 1 Nothing Nothing
-
--- | Sort a weave's rows into reading order by the leftmost (anchor) column's
--- first passage; rows with an empty anchor cell sink to the bottom.
-sortWeaveRows :: Weave -> Weave
-sortWeaveRows w = w { wRows = sortOn rowKey (wRows w) }
-  where
-    rowKey row = case wrCells row of
-        (WeaveCell (r : _) : _) ->
-            ( fromMaybe maxBound (elemIndex (vrBook r) bookIds)
-            , vrChap r, vrStart r )
-        _ -> (maxBound, maxBound, maxBound)
-
 reloadWeaves :: Text -> IO AppEvent
 reloadWeaves msg = do
     (lws, errs) <- loadWeaves
@@ -1458,16 +1215,18 @@ reloadWeaves msg = do
 weaveErrText :: [String] -> Text
 weaveErrText errs = showt (length errs) <> " weave file(s) unreadable"
 
-newWeaveTask :: Text -> WeaveKind -> Text -> IO AppEvent
-newWeaveTask name kind tokv = do
+-- | Create a weave (optionally seeded with links), then reload.
+newWeaveTask :: Text -> WeaveKind -> Text -> [Link] -> IO AppEvent
+newWeaveTask name kind tokv links = do
     now <- getCurrentTime
     let stamp = T.pack (formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%SZ" now)
         path = weaveFileFor name
+        w = addLinks links (emptyWeave name kind tokv stamp)
     exists <- doesFileExist path
     if exists
         then pure (EvStatus ("a weave file already exists: " <> T.pack path))
         else do
-            r <- try (writeWeave path (emptyWeave name kind tokv stamp))
+            r <- try (writeWeave path w)
             case r of
                 Left (e :: SomeException) ->
                     pure (EvStatus ("create failed: " <> showt e))
@@ -1514,9 +1273,8 @@ guiMain = do
     let status = T.intercalate " · " (filter (not . T.null)
             [ if null terrs then "" else threadErrText terrs
             , if null werrs then "" else weaveErrText werrs ])
-        model = AppModel "Gen" 1 PNone False patches rules threads
-            "" "" False "" "" "" status
-            weaves Nothing WGrid [] "" Retelling "" ""
+        model = AppModel PNone False patches rules threads "" "" False "" "" ""
+            status [PaneState "Gen" 1 Nothing []] weaves "" Retelling "" ""
         fontDir = "/usr/share/fonts/truetype/dejavu/"
         config =
             [ appWindowTitle "overlay — KJV 1769"
@@ -1530,7 +1288,7 @@ guiMain = do
             ]
     startApp model (handleEvent env) (buildUI env) config
 
--- | Headless sanity check of the data pipeline and patch layer (--check).
+-- | Headless sanity check of the data pipeline and overlays (--check).
 checkMain :: IO ()
 checkMain = do
     env <- loadEnv
@@ -1557,13 +1315,14 @@ checkMain = do
         isApplied = applied . lpStatus
         renderVerse v = T.unwords (map (renderToken . rtTok) (rvTokens
             (toRVerse (kPubHex (envKeys env)) patches rules [] [] v)))
-        rangeRender rng =
-            let rvs = [ v | v <- chapterVerses corpus (vrBook rng) (vrChap rng)
-                          , vVerse v >= vrStart rng, vVerse v <= vrEnd rng ]
-            in refKey (vrBook rng, vrChap rng, vrStart rng)
-                <> " → " <> T.intercalate " / " (map renderVerse rvs)
-        weaveCells = [ rng | lw <- weaves, row <- wRows (lwWeave lw)
-                           , cell <- wrCells row, rng <- wcRanges cell ]
+        renderRef ref = case M.lookup ref (cByRef corpus) of
+            Nothing -> "?"
+            Just i -> renderVerse (vs V.! i)
+        linkRender (Link a b) =
+            refKey a <> " ↔ " <> refKey b <> " — “"
+                <> T.take 28 (renderRef a) <> "…” ↔ “"
+                <> T.take 28 (renderRef b) <> "…”"
+        allLinks = [l | lw <- weaves, l <- wLinks (lwWeave lw)]
         patchedRender lp =
             let p = lpPatch lp
                 ref = (pBook p, pChapter p, pVerse p)
@@ -1606,13 +1365,14 @@ checkMain = do
              <> " passages)"
              <> (if null terrs then "" else " · " <> threadErrText terrs) ]
         <> [ "weaves:   " <> showt (length weaves) <> " ("
-             <> showt (sum [length (wRows (lwWeave lw)) | lw <- weaves])
-             <> " rows, " <> showt (length weaveCells) <> " cells)"
+             <> showt (length allLinks) <> " links, "
+             <> showt (sum [length (components (wLinks (lwWeave lw)))
+                           | lw <- weaves]) <> " groups)"
              <> (if null werrs then "" else " · " <> weaveErrText werrs) ]
         <> [ "  " <> wName (lwWeave lw) <> " — " <> kindLabel (wKind (lwWeave lw))
-             <> " · " <> showt (length (wColumns (lwWeave lw))) <> " cols"
+             <> " · " <> showt (length (wLinks (lwWeave lw))) <> " links"
            | lw <- weaves ]
-        <> [ "  " <> rangeRender rng | rng <- take 1 weaveCells ]
+        <> [ "  " <> linkRender l | l <- take 1 allLinks ]
         <> [ ""
            , "Gen 1:1   " <> render "Gen" 1 1
            , "Ps 3:1    " <> render "Ps" 3 1

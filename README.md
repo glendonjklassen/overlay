@@ -49,28 +49,38 @@ All source data is classic and freely licensed:
 
 ## Weaves — parallel passages
 
-A **weave** lines passages up side by side: a Gospel harmony, a prophecy against
+A **weave** ties parallel passages together: a Gospel harmony, a prophecy against
 its fulfillment, a type and its antitype, an OT verse against the NT that quotes
-it. It is a small table — **columns** are the witnesses (Matthew, Mark…),
-**rows** are alignment groups, and each cell holds one or more verse ranges
-(so a single row can gather scattered parallels). Each weave is tagged with a
-*kind*: `retelling`, `type`, `prophecy`, or `quotation`.
+it. Under the hood it is a **graph** — a set of links (edges) between single
+verses — tagged with a *kind*: `retelling`, `type`, `prophecy`, or `quotation`.
+Because it's a graph, a verse mapping to two (a 2-to-1 correspondence) is just
+two converging links, combining two weaves is the union of their links (so A↔B
+plus B↔C joins transitively), and a verse with no parallel simply has no link —
+it still reads in place.
 
-- **weaves (N)** in the header opens the list; create one with a name and kind.
-- Opening a weave shows the **grid view** — rows lined up across columns, cells
-  rendered live (patches and rules show through). Click a cell's reference to
-  jump the normal reader there.
-- **`✎ workbench`** switches to authoring: one reader pane per column. Navigate
-  each pane (book/chapter), **click a verse and Shift-click another to select a
-  range**, then **`＋ link as row`**. Rows sort into reading order by the
-  leftmost column. The side panel adds/removes columns and edits the kind and
-  notes.
-- Open-weave verses get a soft highlight in the normal reader.
+The reader shows **one to four panes** (one pane is ordinary reading; `＋`/`－`
+in the header add and remove panes). Reading two passages side by side is the
+normal way to use it.
+
+- **Links are ambient.** Point two panes at parallel passages and any weave that
+  connects them — yours or one that shipped — draws its connector lines across
+  the gap automatically. There's no weave "mode" to enter.
+- **Author inline while reading.** Click a verse number to select it, Shift-click
+  another to extend the run, then **`＋ link`** in the header. Equal-length
+  selections in two panes link 1:1 (verse 4↔8, 5↔9, …); anything else links
+  all-to-all (the 2-to-1 case). The links go into a weave the selected verses
+  already belong to, or a new one.
+- **weaves (N)** opens the list — browse, set the kind, edit notes, remove
+  individual links, **combine** another weave in (the transitive merge), or
+  delete. Clicking a weave points the panes at its passages.
+- Per pane: book/chapter dropdowns, `‹ ›`, and independent scroll. Word clicks
+  still open Strong's; right-click / drag still author patches.
 
 Weaves are plain unsigned JSON under `weaves/` (personal study data — they never
 alter the text). The repo ships a few stock examples (the Decalogue in Exodus vs.
 Deuteronomy, the feeding of the five thousand across all four Gospels, the bronze
-serpent, Bethlehem in Micah and Matthew, "the just shall live by faith").
+serpent, Bethlehem in Micah and Matthew, "the just shall live by faith"). Older
+`overlay-weave-v1` grid files are migrated to the graph model on load.
 
 ## Type and settings
 

@@ -421,41 +421,47 @@ main = hspec $ do
             threadFileFor "???" `shouldBe` ("threads" </> "thread.json")
 
     describe "weaves" $ do
-        let vr = VerseRange "Gen" 1 1 1 ["In", "the"]
-            sampleWeave = Weave
-                { wName = "Test"
-                , wKind = Retelling
-                , wTokVersion = "test-tok1"
-                , wColumns = ["A", "B"]
-                , wRows = [WeaveRow (Just "r1") [WeaveCell [vr], WeaveCell []]]
-                , wNotes = "notes"
-                , wCreated = "2026-06-13T00:00:00Z"
-                }
-        it "JSON roundtrips weaves with rows and cells" $
+        let sampleWeave = Weave "Test" Retelling "test-tok1" "notes"
+                "2026-06-14T00:00:00Z"
+                [canonLink ("Exod", 20, 4) ("Deut", 5, 8)]
+            emptyW = emptyWeave "x" Retelling "t" "now"
+
+        it "JSON roundtrips weaves with links" $
             decode (encode sampleWeave) `shouldBe` Just sampleWeave
 
         it "round-trips every kind token" $
             map (parseKind . kindToken) allKinds `shouldBe` map Just allKinds
 
-        it "addColumn grows every row by a blank cell" $ do
-            let w = addColumn "C" sampleWeave
-            wColumns w `shouldBe` ["A", "B", "C"]
-            map (length . wrCells) (wRows w) `shouldBe` [3]
+        it "canonicalises link endpoints into reading order" $ do
+            canonLink ("Deut", 5, 8) ("Exod", 20, 4)
+                `shouldBe` canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+            -- Exodus precedes Deuteronomy in canon order
+            lA (canonLink ("Deut", 5, 8) ("Exod", 20, 4))
+                `shouldBe` ("Exod", 20, 4)
 
-        it "appendRow pads cells to the column count" $ do
-            let w = appendRow Nothing [WeaveCell [VerseRange "Exod" 2 3 3 []]]
-                    sampleWeave
-            map (length . wrCells) (wRows w) `shouldBe` [2, 2]
+        it "addLinks dedups regardless of endpoint order" $ do
+            let w = addLinks [ canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+                             , canonLink ("Deut", 5, 8) ("Exod", 20, 4) ]
+                        sampleWeave
+            length (wLinks w) `shouldBe` 1
 
-        it "appendRangeToCell adds a passage to one cell" $ do
-            let w = appendRangeToCell 0 1 (VerseRange "Exod" 2 3 5 []) sampleWeave
-                cell = wrCells (head (wRows w)) !! 1
-            map vrStart (wcRanges cell) `shouldBe` [3]
+        it "combine is the transitive merge (A–B + B–C share a component)" $ do
+            let ab = addLinks [canonLink ("Matt", 1, 1) ("Mark", 1, 1)] emptyW
+                bc = addLinks [canonLink ("Mark", 1, 1) ("Luke", 1, 1)] emptyW
+                comps = components (wLinks (combine ab bc))
+            length comps `shouldBe` 1
+            length (head comps) `shouldBe` 3
 
-        it "removeColumn drops the column and its cells" $ do
-            let w = removeColumn 0 sampleWeave
-            wColumns w `shouldBe` ["B"]
-            map (length . wrCells) (wRows w) `shouldBe` [1]
+        it "smartLinks zips two equal-length selections 1:1" $
+            smartLinks [ [("Exod", 20, 4), ("Exod", 20, 5)]
+                       , [("Deut", 5, 8), ("Deut", 5, 9)] ]
+                `shouldBe` [ canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+                           , canonLink ("Exod", 20, 5) ("Deut", 5, 9) ]
+
+        it "smartLinks connects all-to-all on a count mismatch" $
+            length (smartLinks [ [("Exod", 20, 4), ("Exod", 20, 5)]
+                               , [("Deut", 5, 8)] ])
+                `shouldBe` 2
 
         it "derives stable slug filenames" $
             weaveFileFor "The Ten Commandments, twice"
