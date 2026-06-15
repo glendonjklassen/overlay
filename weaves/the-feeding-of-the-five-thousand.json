@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The feeding of the five thousand",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The only miracle in all four Gospels. The accounts run at different lengths, so this links a few shared moments rather than verse-for-verse: the withdrawal to a desert place, the five loaves and two fishes, and the twelve baskets taken up.",
+  "created": "2026-06-14T00:00:00Z",
+  "links": [
+    {"a": "Matt 14:13", "b": "Mark 6:32"},
+    {"a": "Matt 14:13", "b": "Luke 9:10"},
+    {"a": "Matt 14:13", "b": "John 6:1"},
+    {"a": "Matt 14:17", "b": "Mark 6:38"},
+    {"a": "Matt 14:17", "b": "Luke 9:13"},
+    {"a": "Matt 14:17", "b": "John 6:9"},
+    {"a": "Matt 14:20", "b": "Mark 6:43"},
+    {"a": "Matt 14:20", "b": "Luke 9:17"},
+    {"a": "Matt 14:20", "b": "John 6:13"}
+  ]
+}

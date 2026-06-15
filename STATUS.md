@@ -1,4 +1,4 @@
-# Status — 2026-06-10
+# Status — 2026-06-14
 
 ## Working (all verified headlessly; see Needs a hand-test)
 
@@ -38,10 +38,28 @@
   thread is open its passages get a soft highlight in the reader. Plain
   unsigned JSON (personal study data; doesn't alter rendered text);
   unreadable thread files are reported, never clobbered.
+- **Weaves** (`Overlay.Weave`, `weaves/*.json`, `overlay-weave-v2`): parallel
+  passages as a **graph of verse-to-verse links** — a weave is a set of
+  undirected edges between single verses (carrying a `kind`: retelling / type /
+  prophecy / quotation). Transitivity is free (combining A↔B with B↔C joins the
+  component); a 2-to-1 correspondence is two edges into one verse; an unmatched
+  verse is just an unlinked node, still shown in place. The reader is now
+  **1..N panes** (one pane = ordinary reading, the degenerate case; `＋`/`－`
+  in the header). Links are an **ambient overlay**: any weave whose two verses
+  are both visible across panes draws its connector lines automatically — no
+  "open a weave" mode. **Author inline**: click a verse number to select it,
+  Shift-click to extend, then `＋ link` joins the selection (zips 1:1 when two
+  equal-length selections, else all-to-all) into a weave (extends one the
+  verses already belong to, else creates one). The weaves panel browses /
+  renames kind / edits notes / removes links / **combines** weaves (the
+  transitive merge) / deletes; clicking a weave points the panes at its
+  passages. The custom multi-column `ReaderView` draws the lines across pane
+  gaps. Plain unsigned JSON; ships five stock examples; v1 grid files migrate
+  to v2 on load.
 - **1769 margin notes**: toggle in header, rendered beneath verses.
 - **Settings**: `~/.config/overlay/config.json` — serif font paths,
   bodySize, lineSpacing. Bundled EB Garamond is the default.
-- **Quality**: 49 hspec tests green (`cabal test`); hlint clean
+- **Quality**: 57 hspec tests green (`cabal test`); hlint clean
   (`hlint src app tools test`, config in `.hlint.yaml`); `--check` renders
   a rule against the real corpus (unicorn → wild ox over 6 places, since
   removed) alongside the existing patch.
@@ -62,6 +80,14 @@
   thread.
 - Editor panel got taller (scope radios + thread section): check it fits
   at smaller window heights.
+- Weaves: 1 pane reads normally (Strong's, patches, drag-to-patch unaffected).
+  `＋` to two panes; point one at Exodus 20 and the other at Deuteronomy 5 →
+  the stock weave's connector lines appear automatically across the gap, the
+  differing Sabbath verse (Exod 20:11 ↔ Deut 5:15) lines up, unmatched verses
+  still show. Click verse numbers to select, Shift-click to extend, `＋ link`
+  draws new lines (1:1 for equal selections, converging for a 2-to-1). Open a
+  stock weave from the list → panes jump to its passages. Combine two weaves →
+  their components join. Per-pane scroll, book/chapter nav, and `‹ ›` work.
 - Patch manager: delete restores text live; "go" jumps correctly.
 - Notes toggle layout at various sizes; note text wrapping.
 - EB Garamond rendering quality under llvmpipe (it's a variable font —

@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The just shall live by faith",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Habakkuk's one line is taken up three times in the New Testament — three links converging on the same verse. Paul makes it the keynote of Romans and Galatians, and Hebrews sets it against drawing back.",
+  "created": "2026-06-14T00:00:00Z",
+  "links": [
+    {"a": "Hab 2:4", "b": "Rom 1:17"},
+    {"a": "Hab 2:4", "b": "Gal 3:11"},
+    {"a": "Hab 2:4", "b": "Heb 10:38"}
+  ]
+}

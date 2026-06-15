@@ -1,0 +1,11 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Born in Bethlehem",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "When Herod demands where the Christ should be born, the chief priests answer from Micah, and Matthew quotes the prophet by name.",
+  "created": "2026-06-14T00:00:00Z",
+  "links": [
+    {"a": "Mic 5:2", "b": "Matt 2:6"}
+  ]
+}

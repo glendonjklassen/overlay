@@ -1,0 +1,26 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Ten Commandments, twice",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Deuteronomy 5 restates the Decalogue Moses received at Horeb, nearly verse for verse. The lines run straight across — except the sabbath, where Exodus 20:11 grounds the command in the creation rest and Deuteronomy 5:15 in the deliverance from Egypt.",
+  "created": "2026-06-14T00:00:00Z",
+  "links": [
+    {"a": "Exod 20:2", "b": "Deut 5:6"},
+    {"a": "Exod 20:3", "b": "Deut 5:7"},
+    {"a": "Exod 20:4", "b": "Deut 5:8"},
+    {"a": "Exod 20:5", "b": "Deut 5:9"},
+    {"a": "Exod 20:6", "b": "Deut 5:10"},
+    {"a": "Exod 20:7", "b": "Deut 5:11"},
+    {"a": "Exod 20:8", "b": "Deut 5:12"},
+    {"a": "Exod 20:9", "b": "Deut 5:13"},
+    {"a": "Exod 20:10", "b": "Deut 5:14"},
+    {"a": "Exod 20:11", "b": "Deut 5:15"},
+    {"a": "Exod 20:12", "b": "Deut 5:16"},
+    {"a": "Exod 20:13", "b": "Deut 5:17"},
+    {"a": "Exod 20:14", "b": "Deut 5:18"},
+    {"a": "Exod 20:15", "b": "Deut 5:19"},
+    {"a": "Exod 20:16", "b": "Deut 5:20"},
+    {"a": "Exod 20:17", "b": "Deut 5:21"}
+  ]
+}

@@ -20,6 +20,7 @@ import Overlay.ReaderView (RTok (..), RVerse (..))
 import Overlay.Rule
 import Overlay.Strongs (occurrenceIndex, refLabel)
 import Overlay.Thread
+import Overlay.Weave
 import qualified Data.Map.Strict as M
 
 -- ── helpers ─────────────────────────────────────────────────────────────────
@@ -418,6 +419,53 @@ main = hspec $ do
             threadFileFor "  Hope! (2nd pass)  "
                 `shouldBe` ("threads" </> "hope-2nd-pass.json")
             threadFileFor "???" `shouldBe` ("threads" </> "thread.json")
+
+    describe "weaves" $ do
+        let sampleWeave = Weave "Test" Retelling "test-tok1" "notes"
+                "2026-06-14T00:00:00Z"
+                [canonLink ("Exod", 20, 4) ("Deut", 5, 8)]
+            emptyW = emptyWeave "x" Retelling "t" "now"
+
+        it "JSON roundtrips weaves with links" $
+            decode (encode sampleWeave) `shouldBe` Just sampleWeave
+
+        it "round-trips every kind token" $
+            map (parseKind . kindToken) allKinds `shouldBe` map Just allKinds
+
+        it "canonicalises link endpoints into reading order" $ do
+            canonLink ("Deut", 5, 8) ("Exod", 20, 4)
+                `shouldBe` canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+            -- Exodus precedes Deuteronomy in canon order
+            lA (canonLink ("Deut", 5, 8) ("Exod", 20, 4))
+                `shouldBe` ("Exod", 20, 4)
+
+        it "addLinks dedups regardless of endpoint order" $ do
+            let w = addLinks [ canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+                             , canonLink ("Deut", 5, 8) ("Exod", 20, 4) ]
+                        sampleWeave
+            length (wLinks w) `shouldBe` 1
+
+        it "combine is the transitive merge (A–B + B–C share a component)" $ do
+            let ab = addLinks [canonLink ("Matt", 1, 1) ("Mark", 1, 1)] emptyW
+                bc = addLinks [canonLink ("Mark", 1, 1) ("Luke", 1, 1)] emptyW
+                comps = components (wLinks (combine ab bc))
+            length comps `shouldBe` 1
+            length (head comps) `shouldBe` 3
+
+        it "smartLinks zips two equal-length selections 1:1" $
+            smartLinks [ [("Exod", 20, 4), ("Exod", 20, 5)]
+                       , [("Deut", 5, 8), ("Deut", 5, 9)] ]
+                `shouldBe` [ canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+                           , canonLink ("Exod", 20, 5) ("Deut", 5, 9) ]
+
+        it "smartLinks connects all-to-all on a count mismatch" $
+            length (smartLinks [ [("Exod", 20, 4), ("Exod", 20, 5)]
+                               , [("Deut", 5, 8)] ])
+                `shouldBe` 2
+
+        it "derives stable slug filenames" $
+            weaveFileFor "The Ten Commandments, twice"
+                `shouldBe` ("weaves" </> "the-ten-commandments-twice.json")
 
     describe "concordance index" $ do
         it "collects occurrences in canonical order" $ do

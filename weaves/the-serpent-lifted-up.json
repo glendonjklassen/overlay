@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The serpent lifted up",
+  "kind": "type",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jesus draws the type himself: as Moses lifted up the serpent in the wilderness, so must the Son of man be lifted up. The looking that healed answers to the believing that gives eternal life.",
+  "created": "2026-06-14T00:00:00Z",
+  "links": [
+    {"a": "Num 21:8", "b": "John 3:14"},
+    {"a": "Num 21:9", "b": "John 3:15"}
+  ]
+}
