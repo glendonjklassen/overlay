@@ -1,0 +1,113 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Olivet discourse",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jesus' prophecy on the mount of Olives, given in all three synoptics. Matthew and Mark run closely in parallel through the whole discourse; Luke shares the opening structure but reworks the middle, replacing the abomination of desolation with Jerusalem compassed with armies and dropping the false-Christs warning and the fig-tree's heavenly signs that Matthew and Mark keep. Matthew's parables of 24:32 onward and much of the closing exhortation are his alone, so links thin out toward the end. Only beats with genuinely shared wording or content are linked; Luke's divergences are left unlinked.",
+  "created": "2026-06-14T00:00:00Z",
+  "approved": false,
+  "tension": "Luke replaces Matthew and Mark's \"abomination of desolation\" with \"Jerusalem compassed with armies\" (Luke 21:20), and \"This generation shall not pass\" (Matt 24:34) is read very differently by preterist and futurist interpreters.",
+  "links": [
+    {"a": "Matt 24:1", "b": "Mark 13:1"},
+    {"a": "Matt 24:1", "b": "Luke 21:5"},
+    {"a": "Mark 13:1", "b": "Luke 21:5"},
+
+    {"a": "Matt 24:2", "b": "Mark 13:2", "label": "one stone upon another, that shall not be thrown down"},
+    {"a": "Matt 24:2", "b": "Luke 21:6", "label": "one stone upon another, that shall not be thrown down"},
+    {"a": "Mark 13:2", "b": "Luke 21:6", "label": "one stone upon another, that shall not be thrown down"},
+
+    {"a": "Matt 24:3", "b": "Mark 13:4", "label": "when shall these things be"},
+    {"a": "Matt 24:3", "b": "Luke 21:7", "label": "when shall these things be"},
+    {"a": "Mark 13:4", "b": "Luke 21:7", "label": "when shall these things be"},
+
+    {"a": "Matt 24:4", "b": "Mark 13:5"},
+    {"a": "Matt 24:4", "b": "Luke 21:8"},
+    {"a": "Mark 13:5", "b": "Luke 21:8"},
+
+    {"a": "Matt 24:5", "b": "Mark 13:6", "label": "many shall come in my name, saying, I am Christ"},
+    {"a": "Matt 24:5", "b": "Luke 21:8", "label": "many shall come in my name, saying, I am Christ"},
+    {"a": "Mark 13:6", "b": "Luke 21:8", "label": "many shall come in my name, saying, I am Christ"},
+
+    {"a": "Matt 24:6", "b": "Mark 13:7", "label": "wars and rumours of wars"},
+    {"a": "Matt 24:6", "b": "Luke 21:9"},
+    {"a": "Mark 13:7", "b": "Luke 21:9"},
+
+    {"a": "Matt 24:7", "b": "Mark 13:8", "label": "rise against nation, and kingdom against kingdom"},
+    {"a": "Matt 24:7", "b": "Luke 21:10", "label": "rise against nation, and kingdom against kingdom"},
+    {"a": "Mark 13:8", "b": "Luke 21:10", "label": "rise against nation, and kingdom against kingdom"},
+    {"a": "Matt 24:7", "b": "Luke 21:11"},
+    {"a": "Mark 13:8", "b": "Luke 21:11"},
+
+    {"a": "Matt 24:8", "b": "Mark 13:8"},
+
+    {"a": "Matt 24:9", "b": "Mark 13:9"},
+    {"a": "Matt 24:9", "b": "Luke 21:12"},
+    {"a": "Mark 13:9", "b": "Luke 21:12"},
+
+    {"a": "Mark 13:11", "b": "Luke 21:14"},
+
+    {"a": "Matt 24:10", "b": "Mark 13:12"},
+    {"a": "Matt 24:10", "b": "Luke 21:16"},
+    {"a": "Mark 13:12", "b": "Luke 21:16"},
+
+    {"a": "Matt 24:13", "b": "Mark 13:13", "label": "he that shall endure unto the end, the same shall be saved"},
+
+    {"a": "Matt 24:9", "b": "Mark 13:13"},
+    {"a": "Matt 24:9", "b": "Luke 21:17"},
+    {"a": "Mark 13:13", "b": "Luke 21:17", "label": "ye shall be hated of all men for my name"},
+
+    {"a": "Matt 24:14", "b": "Mark 13:10"},
+
+    {"a": "Matt 24:15", "b": "Mark 13:14", "label": "the abomination of desolation, spoken of by Daniel the prophet"},
+    {"a": "Matt 24:16", "b": "Mark 13:14"},
+    {"a": "Matt 24:16", "b": "Luke 21:21"},
+    {"a": "Mark 13:14", "b": "Luke 21:21", "label": "flee to the mountains"},
+
+    {"a": "Matt 24:17", "b": "Mark 13:15"},
+    {"a": "Matt 24:18", "b": "Mark 13:16"},
+
+    {"a": "Matt 24:19", "b": "Mark 13:17", "label": "them that are with child, and to them that give suck"},
+    {"a": "Matt 24:19", "b": "Luke 21:23", "label": "woe unto them that are with child, and to them that give suck"},
+    {"a": "Mark 13:17", "b": "Luke 21:23", "label": "them that are with child, and to them that give suck"},
+
+    {"a": "Matt 24:20", "b": "Mark 13:18", "label": "pray ye that your flight be not in the winter"},
+
+    {"a": "Matt 24:21", "b": "Mark 13:19", "label": "such as was not"},
+    {"a": "Matt 24:22", "b": "Mark 13:20"},
+
+    {"a": "Matt 24:23", "b": "Mark 13:21", "label": "Lo, here is Christ"},
+    {"a": "Matt 24:24", "b": "Mark 13:22"},
+
+    {"a": "Matt 24:29", "b": "Mark 13:24", "label": "the moon shall not give her light"},
+    {"a": "Matt 24:29", "b": "Luke 21:25"},
+    {"a": "Mark 13:24", "b": "Luke 21:25"},
+    {"a": "Matt 24:29", "b": "Mark 13:25"},
+    {"a": "Matt 24:29", "b": "Luke 21:26"},
+    {"a": "Mark 13:25", "b": "Luke 21:26"},
+
+    {"a": "Matt 24:30", "b": "Mark 13:26", "label": "the Son of man coming in the clouds"},
+    {"a": "Matt 24:30", "b": "Luke 21:27", "label": "the Son of man coming"},
+    {"a": "Mark 13:26", "b": "Luke 21:27", "label": "the Son of man coming"},
+
+    {"a": "Matt 24:31", "b": "Mark 13:27", "label": "gather together his elect from the four winds"},
+
+    {"a": "Matt 24:32", "b": "Mark 13:28", "label": "learn a parable of the fig tree"},
+    {"a": "Matt 24:32", "b": "Luke 21:29", "label": "the fig tree"},
+    {"a": "Mark 13:28", "b": "Luke 21:29", "label": "the fig tree"},
+    {"a": "Matt 24:33", "b": "Mark 13:29"},
+    {"a": "Matt 24:33", "b": "Luke 21:31"},
+    {"a": "Mark 13:29", "b": "Luke 21:31"},
+
+    {"a": "Matt 24:34", "b": "Mark 13:30"},
+    {"a": "Matt 24:34", "b": "Luke 21:32", "label": "This generation shall not pass"},
+    {"a": "Mark 13:30", "b": "Luke 21:32"},
+
+    {"a": "Matt 24:35", "b": "Mark 13:31", "label": "my words shall not pass away"},
+    {"a": "Matt 24:35", "b": "Luke 21:33", "label": "my words shall not pass away"},
+    {"a": "Mark 13:31", "b": "Luke 21:33", "label": "my words shall not pass away"},
+
+    {"a": "Matt 24:36", "b": "Mark 13:32", "label": "knoweth no man"},
+
+    {"a": "Mark 13:33", "b": "Luke 21:36"}
+  ]
+}

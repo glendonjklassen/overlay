@@ -29,6 +29,7 @@ module Overlay.Weave
     , writeWeave
       -- graph ops
     , canonLink
+    , canonLinkL
     , addLinks
     , removeLink
     , combine
@@ -63,19 +64,28 @@ import Overlay.Corpus (parseRefKey, refKey)
 type VRef = (Text, Int, Int)
 
 -- | An undirected edge between two verses, stored canonically (lA <= lB in
--- reading order) so equal links compare equal.
-data Link = Link { lA :: !VRef, lB :: !VRef }
+-- reading order) so equal links compare equal. An edge may carry a label: the
+-- exact shared text it points at, so a many-to-many parallel (a name-list, say)
+-- reads as A —(Jim)→ B instead of a rats' nest. Two edges between the same pair
+-- of verses with different labels are distinct edges; an empty label is the
+-- plain, unlabelled case (and the only case older files produce).
+data Link = Link { lA :: !VRef, lB :: !VRef, lLabel :: !Text }
     deriving (Eq, Ord, Show)
 
 -- | Reading-order key for a verse (book in canon order, then chapter, verse).
 vrKey :: VRef -> (Int, Int, Int)
 vrKey (b, c, v) = (fromMaybe maxBound (elemIndex b bookIds), c, v)
 
--- | Build a link with its endpoints in reading order.
+-- | Build an unlabelled link with its endpoints in reading order.
 canonLink :: VRef -> VRef -> Link
-canonLink a b
-    | vrKey a <= vrKey b = Link a b
-    | otherwise          = Link b a
+canonLink a b = canonLinkL a b ""
+
+-- | Build a labelled link with its endpoints in reading order. The label is a
+-- property of the edge, so reordering the endpoints leaves it untouched.
+canonLinkL :: VRef -> VRef -> Text -> Link
+canonLinkL a b lbl
+    | vrKey a <= vrKey b = Link a b lbl
+    | otherwise          = Link b a lbl
 
 -- | What sort of parallel a weave records. Stored as a frozen token.
 data WeaveKind = Retelling | Typological | Prophecy | Quotation
@@ -107,15 +117,18 @@ parseKind t = case t of
     _           -> Nothing
 
 instance ToJSON Link where
-    toJSON (Link a b) = object ["a" .= refKey a, "b" .= refKey b]
+    toJSON (Link a b lbl) = object $
+        ["a" .= refKey a, "b" .= refKey b]
+        <> ["label" .= lbl | not (T.null lbl)]
 
 instance FromJSON Link where
     parseJSON = withObject "Link" $ \o -> do
         aT <- o .: "a"
         bT <- o .: "b"
+        lbl <- o .:? "label" .!= ""
         a <- maybe (fail ("bad link ref: " <> T.unpack aT)) pure (parseRefKey aT)
         b <- maybe (fail ("bad link ref: " <> T.unpack bT)) pure (parseRefKey bT)
-        pure (canonLink a b)
+        pure (canonLinkL a b lbl)
 
 data Weave = Weave
     { wName       :: !Text
@@ -124,18 +137,25 @@ data Weave = Weave
     , wNotes      :: !Text       -- ^ running notes document
     , wCreated    :: !Text       -- ^ UTC timestamp
     , wLinks      :: ![Link]     -- ^ the graph
+    , wApproved   :: !Bool       -- ^ has the human arbiter approved it? (default
+                                 -- False: every weave is AI-made study material
+                                 -- until a person reviews and blesses it)
+    , wTension    :: !Text       -- ^ note of scholarly/theological tension or
+                                 -- controversy in the parallel; "" when none
     } deriving (Eq, Show)
 
 instance ToJSON Weave where
-    toJSON w = object
+    toJSON w = object $
         [ "format" .= ("overlay-weave-v2" :: Text)
         , "name" .= wName w
         , "kind" .= kindToken (wKind w)
         , "tokenization" .= wTokVersion w
         , "notes" .= wNotes w
         , "created" .= wCreated w
+        , "approved" .= wApproved w
         , "links" .= wLinks w
         ]
+        <> [ "tension" .= wTension w | not (T.null (wTension w)) ]
 
 instance FromJSON Weave where
     parseJSON = withObject "Weave" $ \o -> do
@@ -152,6 +172,8 @@ instance FromJSON Weave where
             <*> o .:? "notes" .!= ""
             <*> o .: "created"
             <*> o .:? "links" .!= []
+            <*> o .:? "approved" .!= False
+            <*> o .:? "tension" .!= ""
 
 data LoadedWeave = LoadedWeave
     { lwFile  :: !FilePath
@@ -160,7 +182,7 @@ data LoadedWeave = LoadedWeave
 
 -- | A fresh, empty weave (no links yet).
 emptyWeave :: Text -> WeaveKind -> Text -> Text -> Weave
-emptyWeave name kind tokv created = Weave name kind tokv "" created []
+emptyWeave name kind tokv created = Weave name kind tokv "" created [] False ""
 
 -- ── graph operations ────────────────────────────────────────────────────────
 
@@ -180,9 +202,9 @@ combine a b = addLinks (wLinks b) a
 components :: [Link] -> [[VRef]]
 components links = go (Set.fromList verts) []
   where
-    verts = concatMap (\(Link a b) -> [a, b]) links
+    verts = concatMap (\(Link a b _) -> [a, b]) links
     adj = M.fromListWith (<>)
-        (concatMap (\(Link a b) -> [(a, [b]), (b, [a])]) links)
+        (concatMap (\(Link a b _) -> [(a, [b]), (b, [a])]) links)
     go remaining acc = case Set.lookupMin remaining of
         Nothing -> reverse acc
         Just v  -> let comp = bfs [v] Set.empty
@@ -203,7 +225,7 @@ componentOf links v =
 -- rendering: edges of weaves that touch what is currently on screen).
 linksTouching :: Set VRef -> Weave -> [Link]
 linksTouching vs w =
-    [ l | l@(Link a b) <- wLinks w, a `Set.member` vs || b `Set.member` vs ]
+    [ l | l@(Link a b _) <- wLinks w, a `Set.member` vs || b `Set.member` vs ]
 
 -- | Build links from a per-pane selection. Two equal-length panes zip 1:1
 -- (4→8, 5→9, …); anything else connects every selected verse to every selected
@@ -305,7 +327,7 @@ instance FromJSON V1Weave where
 
 migrateV1 :: V1Weave -> Weave
 migrateV1 v = Weave (v1Name v) (v1Kind v) (v1Tok v) (v1Notes v) (v1Created v)
-    (Set.toList (Set.fromList (concatMap rowLinks (v1Rows v))))
+    (Set.toList (Set.fromList (concatMap rowLinks (v1Rows v)))) False ""
   where
     rowLinks cells =
         let lists = map (concatMap expand) cells

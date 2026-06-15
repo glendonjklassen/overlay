@@ -15,7 +15,7 @@ import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as BL
-import Data.List (delete, elemIndex, find, findIndex, nub, sortOn)
+import Data.List (delete, elemIndex, find, findIndex, nub, sort, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe, mapMaybe)
 import qualified Data.Set as Set
@@ -31,6 +31,7 @@ import System.Exit (die)
 import System.FilePath ((</>))
 
 import Overlay.Canon (Book (..), bookById, bookIds)
+import Overlay.CanonMap
 import Overlay.Corpus
 import Overlay.Patch
 import Overlay.ReaderView
@@ -252,6 +253,48 @@ showt = T.pack . show
 refText :: (Text, Int, Int) -> Text
 refText (b, c, v) = displayName b <> " " <> showt c <> ":" <> showt v
 
+-- | The verse span each book covers in a weave, in canon order: for every book
+-- among the link endpoints, its lowest and highest (chapter, verse). Lets the
+-- reader see at a glance which passages a weave sets side by side.
+weaveSpans :: Weave -> [(Text, (Int, Int), (Int, Int))]
+weaveSpans w =
+    [ (b, minimum rs, maximum rs)
+    | b <- books, let rs = [(c, v) | (bb, c, v) <- refs, bb == b], not (null rs) ]
+  where
+    refs = concatMap (\(Link a b _) -> [a, b]) (wLinks w)
+    books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
+        (nub (map fst3 refs))
+
+-- | Compact text for one book's span: a lone verse, a verse-range within one
+-- chapter, or a cross-chapter range.
+spanText :: (Text, (Int, Int), (Int, Int)) -> Text
+spanText (b, (c1, v1), (c2, v2))
+    | (c1, v1) == (c2, v2) = refText (b, c1, v1)
+    | c1 == c2             = refText (b, c1, v1) <> "–" <> showt v2
+    | otherwise            = refText (b, c1, v1) <> " – " <> refText (b, c2, v2)
+
+-- | The canon's sections as (label, first book index, last book index) over the
+-- 66 books in OSIS order — for the shared canon-overview map.
+canonSegments :: [(Text, Int, Int)]
+canonSegments =
+    [ ("Law", 0, 4)
+    , ("History", 5, 16)
+    , ("Wisdom", 17, 21)
+    , ("Prophets", 22, 38)
+    , ("Gospels", 39, 42)
+    , ("Acts", 43, 43)
+    , ("Letters", 44, 64)
+    , ("Revelation", 65, 65)
+    ]
+
+-- | A distinct colour per pane, for its pin on the canon map (cycles past four).
+paneColor :: Int -> Color
+paneColor i = case i `mod` 4 of
+    0 -> rgbHex "#D2B46E"
+    1 -> rgbHex "#7FB4E6"
+    2 -> rgbHex "#8FB88A"
+    _ -> rgbHex "#D98C8C"
+
 -- ── overlay composition ─────────────────────────────────────────────────────
 
 -- | Compose the patch and rule overlays over a verse, producing renderable
@@ -419,14 +462,43 @@ buildUI env _wenv model = widgetTree
         (showt i <> ":" <> _psBook p <> ":" <> showt (_psChapter p))
         [ toRVerse own patches rules (marksFor p v) (notesFor v) v
         | v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
+        (alignFor p)
+
+    -- where this pane sits in the canon, 0 (Genesis 1) … 1 (Revelation): book
+    -- index plus how far through the book's chapters, over the 66 books
+    canonPosOf p =
+        let bi = fromMaybe 0 (elemIndex (_psBook p) bookIds)
+            nb = max 1 (length bookIds)
+            nc = max 1 (chapterCount corpus (_psBook p))
+        in (fromIntegral bi + fromIntegral (_psChapter p - 1) / fromIntegral nc)
+            / fromIntegral nb
+
+    -- when a weave is open, line its first link up: the pane showing an
+    -- endpoint of that link scrolls so the endpoint verse sits at the top
+    openWeaveFirstLink = case model ^. amPanel of
+        PWeaveView file ->
+            case find ((== file) . lwFile) (model ^. amWeaves) of
+                Just lw -> case wLinks (lwWeave lw) of
+                    (l : _) -> Just l
+                    []      -> Nothing
+                Nothing -> Nothing
+        _ -> Nothing
+    alignFor p = case openWeaveFirstLink of
+        Just (Link a b _) ->
+            let m (bk, c, v) = if bk == _psBook p && c == _psChapter p
+                    then Just v else Nothing
+            in case m a of
+                Just v  -> Just v
+                Nothing -> m b
+        Nothing -> Nothing
 
     -- ambient: every weave link whose verses are both visible in some pane
     visibleRefs = Set.fromList
         [ (_psBook p, _psChapter p, vVerse v)
         | p <- panes, v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
     ambientLinks = nub
-        [ (a, b)
-        | lw <- model ^. amWeaves, Link a b <- wLinks (lwWeave lw)
+        [ (a, b, lbl)
+        | lw <- model ^. amWeaves, Link a b lbl <- wLinks (lwWeave lw)
         , a `Set.member` visibleRefs, b `Set.member` visibleRefs ]
 
     navStrip i p = hstack
@@ -474,7 +546,19 @@ buildUI env _wenv model = widgetTree
         PWeaves -> [weavesPanel model]
         PWeaveView f -> [weaveViewPanel model f]
 
-    mainArea = vstack [navRow, reader]
+    -- the shared canon overview strip: one map, a pin per pane
+    canonMap = canonMapView CanonMapCfg
+        { cmcSegs = [ CanonSeg lbl (fromIntegral lo / nb)
+                        (fromIntegral (hi + 1) / nb) (lo >= otNT)
+                    | (lbl, lo, hi) <- canonSegments ]
+        , cmcPins = [ CanonPin (canonPosOf p) (_psBook p) (paneColor i)
+                    | (i, p) <- zip [0 :: Int ..] panes ]
+        , cmcDivider = fromIntegral otNT / nb
+        }
+      where nb = fromIntegral (length bookIds)
+            otNT = 39  -- Matthew is the 40th book (index 39)
+
+    mainArea = vstack [navRow, reader, canonMap]
 
     widgetTree = vstack
         [ header `styleBasic` [padding 10]
@@ -542,6 +626,9 @@ strongsPanel env (word, ref) = panel
 editorPanel :: AppModel -> EditTarget -> WidgetNode AppModel AppEvent
 editorPanel model et = panelBox $
     [ panelHeader (if everywhere then "new rule" else "new patch") EvClosePanel
+    , wrapLabel ("For modernizing archaisms only — e.g. fourscore → eighty. "
+        <> "Never to add to, take from, or change the meaning of the text.")
+        `styleBasic` [textSize 10, textColor (rgbHex "#C99A4B"), width panelInnerW]
     , label (refText (etRef et) <> ", words "
         <> showt (fst (etSpan et)) <> "–" <> showt (snd (etSpan et)))
         `styleBasic` [textSize 11, textColor gray]
@@ -760,8 +847,13 @@ weavesPanel model = panelBox
                 [ label (wName w)
                     `styleBasic` [textSize 13, textColor lightSkyBlue]
                 , label (kindLabel (wKind w) <> " · "
-                    <> showt (length (wLinks w)) <> " links")
-                    `styleBasic` [textSize 10, textColor gray]
+                    <> showt (length (wLinks w)) <> " links"
+                    <> (if wApproved w then "" else " · ⚠ unapproved")
+                    <> (if T.null (wTension w) then "" else " · tension"))
+                    `styleBasic` [textSize 10, textColor
+                        (if wApproved w then gray else rgbHex "#C99A4B")]
+                , label (T.intercalate "  ↔  " (map spanText (weaveSpans w)))
+                    `styleBasic` [textSize 10, textColor (rgbHex "#9A968F")]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -784,8 +876,25 @@ weaveViewPanel model file =
             , button "delete weave" (EvDeleteWeave file)
                 `styleBasic` [textSize 10, padding 3]
             ]
-        , wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
+        , wrapLabel (if wApproved w
+                then "✓ reviewed and approved"
+                else "⚠ AI-generated for study — not reviewed or approved")
+            `styleBasic` [textSize 11, padding 5, width panelInnerW
+                , textColor (if wApproved w
+                    then rgbHex "#8FB88A" else rgbHex "#E0B05A")
+                , bgColor (rgbHex "#2A2620")]
+        ]
+        <> [ wrapLabel ("tension — " <> wTension w)
+                `styleBasic` [textSize 11, padding 5, width panelInnerW
+                    , textColor (rgbHex "#E08A5A"), bgColor (rgbHex "#2A2620")]
+           | not (T.null (wTension w)) ]
+        <> [ wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
             `styleBasic` [textSize 10, textColor gray, width panelInnerW]
+        , label "comparing" `styleBasic` [textSize 10, textColor gray]
+        , vstack_ [childSpacing_ 1]
+            [ label ("· " <> spanText s)
+                `styleBasic` [textSize 11, textColor (rgbHex "#C8C4BD")]
+            | s <- weaveSpans w ]
         , label "kind" `styleBasic` [textSize 10, textColor gray]
         , dropdown_ amWeaveKind allKinds kindRowW kindRowW [onChange EvSetWeaveKind]
             `styleBasic` [textSize 12]
@@ -801,15 +910,19 @@ weaveViewPanel model file =
         , vscroll (vstack_ [childSpacing_ 4] (map linkRow (wLinks w)))
         ]
         <> combineSeg
-    linkRow l@(Link a b) = hstack
-        [ box_ [onClick (EvGoRef (fst3 a) (snd3 a)), alignLeft]
+    linkRow l@(Link a b lbl) = hstack
+        ( [ box_ [onClick (EvGoRef (fst3 a) (snd3 a)), alignLeft]
             (label (refText a) `styleBasic` [textSize 11, textColor lightSkyBlue])
-        , label " ↔ " `styleBasic` [textSize 11, textColor gray]
-        , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
+          , label " ↔ " `styleBasic` [textSize 11, textColor gray]
+          , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
             (label (refText b) `styleBasic` [textSize 11, textColor lightSkyBlue])
-        , filler
-        , button "x" (EvRemoveLink l) `styleBasic` [textSize 10, padding 2]
-        ]
+          ]
+          <> [ label ("· " <> lbl)
+                 `styleBasic` [textSize 10, textColor (rgbHex "#D2B46E")]
+             | not (T.null lbl) ]
+          <> [ filler
+             , button "x" (EvRemoveLink l) `styleBasic` [textSize 10, padding 2]
+             ] )
     combineSeg =
         [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label "combine another weave in (merge links)"
@@ -998,7 +1111,7 @@ handleEvent env _wenv _node model evt = case evt of
                 (find ((== file) . lwFile) (model ^. amWeaves))
         _ -> []
 
-    weaveVerses lw = concatMap (\(Link a b) -> [a, b]) (wLinks (lwWeave lw))
+    weaveVerses lw = concatMap (\(Link a b _) -> [a, b]) (wLinks (lwWeave lw))
 
     autoName refs = case refs of
         (r : _) -> "parallel: " <> refText r
@@ -1007,10 +1120,14 @@ handleEvent env _wenv _node model evt = case evt of
     -- distinct books among a weave's links, canon order, each at its first
     -- linked chapter — used to point the panes at the weave's passages
     weaveTracks w =
-        let refs = concatMap (\(Link a b) -> [a, b]) (wLinks w)
+        let refs = concatMap (\(Link a b _) -> [a, b]) (wLinks w)
             books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
                 (nub (map fst3 refs))
-        in [ (b, minimum [c | (bb, c, _) <- refs, bb == b]) | b <- books ]
+        in case books of
+            -- a same-book weave (two creation accounts, Ps 14 / Ps 53) would
+            -- otherwise collapse to one pane: split it by chapter instead
+            [b] -> [ (b, c) | c <- nub (sort [c | (_, c, _) <- refs]) ]
+            _   -> [ (b, minimum [c | (bb, c, _) <- refs, bb == b]) | b <- books ]
 
     setPane i f = model & amPanes %~ \ps ->
         [ if j == i then f p else p | (j, p) <- zip [0 ..] ps ]
@@ -1324,8 +1441,10 @@ checkMain = do
         renderRef ref = case M.lookup ref (cByRef corpus) of
             Nothing -> "?"
             Just i -> renderVerse (vs V.! i)
-        linkRender (Link a b) =
-            refKey a <> " ↔ " <> refKey b <> " — “"
+        linkRender (Link a b lbl) =
+            refKey a <> " ↔ " <> refKey b
+                <> (if T.null lbl then "" else " (" <> lbl <> ")")
+                <> " — “"
                 <> T.take 28 (renderRef a) <> "…” ↔ “"
                 <> T.take 28 (renderRef b) <> "…”"
         allLinks = [l | lw <- weaves, l <- wLinks (lwWeave lw)]

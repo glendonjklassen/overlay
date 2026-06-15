@@ -8,6 +8,7 @@ import Data.Functor (void)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
+import qualified Data.ByteString.Lazy.Char8 as BLC
 import qualified Data.Vector as V
 import System.FilePath ((</>))
 import Test.Hspec
@@ -427,10 +428,41 @@ main = hspec $ do
         let sampleWeave = Weave "Test" Retelling "test-tok1" "notes"
                 "2026-06-14T00:00:00Z"
                 [canonLink ("Exod", 20, 4) ("Deut", 5, 8)]
+                False ""
             emptyW = emptyWeave "x" Retelling "t" "now"
 
         it "JSON roundtrips weaves with links" $
             decode (encode sampleWeave) `shouldBe` Just sampleWeave
+
+        it "weaves default to unapproved and round-trip approval + tension" $ do
+            wApproved emptyW `shouldBe` False
+            wTension emptyW `shouldBe` ""
+            let w = emptyW { wApproved = True
+                           , wTension = "Satan provoked / the LORD moved" }
+            decode (encode w) `shouldBe` Just w
+
+        it "JSON roundtrips a labelled link and keeps its label" $ do
+            let lbl = canonLinkL ("1Chr", 11, 11) ("2Sam", 23, 8) "Jashobeam"
+                w = addLinks [lbl] emptyW
+            decode (encode w) `shouldBe` Just w
+            map lLabel (wLinks w) `shouldBe` ["Jashobeam"]
+
+        it "omits the label field when empty (older files stay clean)" $
+            T.isInfixOf "label" (T.pack (BLC.unpack (encode sampleWeave)))
+                `shouldBe` False
+
+        it "two labels between the same verse pair are distinct edges" $ do
+            let w = addLinks
+                    [ canonLinkL ("1Chr", 11, 11) ("2Sam", 23, 8) "Jashobeam"
+                    , canonLinkL ("1Chr", 11, 11) ("2Sam", 23, 8) "the Tachmonite"
+                    ] emptyW
+            length (wLinks w) `shouldBe` 2
+            -- still one graph component: same two verses
+            length (components (wLinks w)) `shouldBe` 1
+
+        it "an empty label canonicalises identically to canonLink" $
+            canonLinkL ("Deut", 5, 8) ("Exod", 20, 4) ""
+                `shouldBe` canonLink ("Exod", 20, 4) ("Deut", 5, 8)
 
         it "round-trips every kind token" $
             map (parseKind . kindToken) allKinds `shouldBe` map Just allKinds

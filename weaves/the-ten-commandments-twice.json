@@ -5,6 +5,7 @@
   "tokenization": "kjv1769-tok2",
   "notes": "Deuteronomy 5 restates the Decalogue Moses received at Horeb, nearly verse for verse. The lines run straight across — except the sabbath, where Exodus 20:11 grounds the command in the creation rest and Deuteronomy 5:15 in the deliverance from Egypt.",
   "created": "2026-06-14T00:00:00Z",
+  "approved": false,
   "links": [
     {"a": "Exod 20:2", "b": "Deut 5:6"},
     {"a": "Exod 20:3", "b": "Deut 5:7"},
