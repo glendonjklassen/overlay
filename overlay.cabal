@@ -18,6 +18,7 @@ library
   exposed-modules:
       Overlay
       Overlay.Canon
+      Overlay.CanonMap
       Overlay.Corpus
       Overlay.Import
       Overlay.Patch

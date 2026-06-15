@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Cyrus' Decree",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Hebrew Bible closes and Ezra opens on the same words. Chronicles ends mid-proclamation with Cyrus' charge to go up; Ezra repeats it and continues. Chronicles' single closing verse (36:23) is split across two verses in Ezra (1:2-3), so both are linked to it. Ezra 1:4, the provision for those who remain, has no counterpart in Chronicles and is left unlinked.",
+  "created": "2026-06-14T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Chr 36:22", "b": "Ezra 1:1", "label": "the first year of Cyrus king of Persia"},
+    {"a": "2Chr 36:23", "b": "Ezra 1:2", "label": "Thus saith Cyrus king of Persia"},
+    {"a": "2Chr 36:23", "b": "Ezra 1:3", "label": "Who is there among you of all his people"}
+  ]
+}

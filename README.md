@@ -2,11 +2,23 @@
 
 A reader and study tool for the 1769 KJV: classic Strong's word lookup with
 concordance cross-references, Ed25519-signed point-patches and corpus-wide
-rules over the text, personal study threads, and weaves that line up parallel
+rules layered over the text — **non-destructive overlays; the base KJV text is
+never modified** — personal study threads, and weaves that line up parallel
 passages. No modern translations, no commentary layers.
 
 GUI built with [Monomer](https://github.com/fjvallarino/monomer)
 (SDL2 + NanoVG rendering), displayed through WSLg.
+
+## Disclaimer
+
+> [!IMPORTANT]
+> **The only part of this repository that is without error is the Bible, the
+> Word of God.** Everything else here is a tool for studying it more closely.
+> Code and text in this repo may reflect human or AI inference and are meant
+> only to provoke study — never as an addition to, or a removal from, the Word
+> (cf. Deuteronomy 4:2; Revelation 22:18–19). Care has been taken to add no
+> extrabiblical spin to the text. This is a work in progress, developed with
+> AI. Use your own discernment.
 
 ## Data
 
@@ -38,15 +50,21 @@ All source data is classic and freely licensed:
   step chapters and roll across book boundaries.
 - Keyboard (the reading pane holds focus; click it if a dropdown stole it):
   `Up`/`Down` scroll by a few lines, `PageUp`/`PageDown`/`Space` by nearly a
-  page, `Home`/`End` jump to chapter start/end.
-- **Click any word** to open the Strong's panel: the 1890 entry (lemma,
+  page, `Home`/`End` jump to chapter start/end. Hold **Shift** while scrolling
+  (wheel or `Up`/`Down`) to lock every pane together for line-by-line reading.
+- **Ctrl+click any word** to open the Strong's panel: the 1890 entry (lemma,
   transliteration, pronunciation, derivation, definition, KJV renderings)
   plus every verse sharing that Strong's number — click an occurrence to jump
-  there. `✕` closes.
+  there. `✕` closes. (Ctrl is required so a stray click while scrolling can't
+  swap the side panel out.)
 - Hovering a word underlines it if it carries a Strong's tag.
 - **1769 notes** checkbox shows the translators' margin notes beneath their
   verses (the original apparatus — literal Hebrew renderings and variants).
 - **patches (N)** opens the patch manager: jump to, or delete, any patch.
+- A **canon map** runs along the bottom: the whole Bible front to back, banded
+  by section (Law · History · Wisdom · Prophets ∣ Gospels · Acts · Letters ·
+  Revelation) with the Old/New Testament divide marked and a coloured pin per
+  pane — so you can see where, and how far apart, your passages sit.
 
 ## Weaves — parallel passages
 
@@ -74,14 +92,22 @@ normal way to use it.
 - **weaves (N)** opens the list — browse, set the kind, edit notes, remove
   individual links, **combine** another weave in (the transitive merge), or
   delete. Clicking a weave points the panes at its passages.
-- Per pane: book/chapter dropdowns, `‹ ›`, and independent scroll. Word clicks
-  still open Strong's; right-click / drag still author patches.
+- Per pane: book/chapter dropdowns, `‹ ›`, and independent scroll. Ctrl+click
+  still opens Strong's; right-click / drag still author patches.
+- Each edge may carry a **label** — the exact shared words it points at — shown
+  on hover, so a many-to-one parallel (a name-list, say) reads cleanly instead
+  of as a tangle of lines.
 
-Weaves are plain unsigned JSON under `weaves/` (personal study data — they never
-alter the text). The repo ships a few stock examples (the Decalogue in Exodus vs.
-Deuteronomy, the feeding of the five thousand across all four Gospels, the bronze
-serpent, Bethlehem in Micah and Matthew, "the just shall live by faith"). Older
-`overlay-weave-v1` grid files are migrated to the graph model on load.
+> [!NOTE]
+> The weaves shipped in this repo are **AI-generated study aids, not approved**.
+> Every weave records an `approved` flag (all currently `false`) and, where a
+> parallel is contested, a `tension` note — both surfaced in the reader. Treat
+> them as prompts for study, not as authority, until reviewed.
+
+Weaves are plain unsigned JSON under `weaves/` and never alter the text; older
+`overlay-weave-v1` grid files migrate to the graph model on load. The repo ships
+a couple dozen examples — from the two creation accounts and the Chronicler's
+retelling of David's reign to the Olivet discourse across the synoptics.
 
 ## Type and settings
 
@@ -101,6 +127,10 @@ verse, addressed by word index against the frozen tokenization, and is
 signed (Ed25519) over a deterministic encoding of its content. Patches live
 as JSON files under `patches/`; delete a file to undo its change.
 
+> [!WARNING]
+> Patches must never add to, take from, or change the meaning of the text. They
+> are strictly for modernizing archaisms — for example `fourscore → eighty`.
+
 - **Author one**: right-click a word, or **drag across several words of a
   verse**, then enter the replacement (any number of words) + optional note →
   *Sign & save*. Or from the CLI:
@@ -119,10 +149,15 @@ as JSON files under `patches/`; delete a file to undo its change.
 
 ## Signed rules
 
-Where a patch fixes one verse, a **rule** rewrites a word sequence *everywhere*
+Where a patch affects one verse, a **rule** rewrites a word sequence *everywhere*
 it occurs in the canonical text — addressed by content, not position. Like
 patches, rules are an Ed25519-signed overlay: verified on load, never touching
 the base text. Rules live as JSON under `rules/`.
+
+> [!WARNING]
+> Rules must never add to, take from, or change the meaning of the text. Like
+> patches, they are strictly for modernizing archaisms — for example
+> `fourscore → eighty`.
 
 - **Author one**: right-click a word (or drag a span), choose the scope —
   *this verse only* (a patch) or *everywhere — N matches* (a rule, with a live

@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Hagar Sent Away",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Hagar driven into the wilderness twice. The shared beats are linked: the mistress driving her out, Hagar in the wilderness at water, the angel of God, and the promise that Ishmael becomes a nation. The two wells are deliberately left unlinked: Beer-lahai-roi (Gen 16) and the well near Beer-sheba (Gen 21) are different named places, and the sequence differs (angel finds her at the fountain in Gen 16; the well appears after the angel speaks in Gen 21).",
+  "created": "2026-06-14T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 16:6", "b": "Gen 21:10"},
+    {"a": "Gen 16:6", "b": "Gen 21:14", "label": "sent her away"},
+    {"a": "Gen 16:7", "b": "Gen 21:14", "label": "in the wilderness"},
+    {"a": "Gen 16:7", "b": "Gen 21:19", "label": "fountain of water"},
+    {"a": "Gen 16:7", "b": "Gen 21:17", "label": "the angel"},
+    {"a": "Gen 16:11", "b": "Gen 21:17", "label": "hath heard"},
+    {"a": "Gen 16:10", "b": "Gen 21:18", "label": "I will multiply thy seed"},
+    {"a": "Gen 16:10", "b": "Gen 21:13", "label": "make a nation"}
+  ]
+}

@@ -11,10 +11,13 @@
 -- across columns. The widget owns all columns, which is what lets it draw
 -- those lines across the gaps between them.
 --
--- Interactions (per column): left-click a word -> Strong's; right-click ->
+-- Interactions (per column): Ctrl+left-click a word -> Strong's (Ctrl so a
+-- stray click while scrolling can't swap the side panel out); right-click ->
 -- patch editor for that word; left-drag across words of one verse -> patch
 -- editor for the span; left-click a verse number -> toggle weave selection
 -- (Shift-click extends). Left/Right arrows raise per-column chapter nav.
+-- Up/Down + wheel scroll the active column; holding Shift locks the columns so
+-- they scroll together (for reading parallels line by line).
 module Overlay.ReaderView
     ( ReaderCfg (..)
     , ColumnCfg (..)
@@ -66,17 +69,21 @@ data RVerse = RVerse
 -- | One reading column: an identity (changing it resets that column's scroll)
 -- and the verses to show.
 data ColumnCfg = ColumnCfg
-    { ccKey    :: !Text
-    , ccVerses :: ![RVerse]
+    { ccKey      :: !Text
+    , ccVerses   :: ![RVerse]
+    , ccAlign    :: !(Maybe Int)
+      -- ^ when this column first appears (key change), scroll so this verse
+      -- sits at the top, so a freshly opened weave lines its passages up
     } deriving (Eq, Show)
 
 data ReaderCfg e = ReaderCfg
     { rcColumns      :: [ColumnCfg]
     , rcBodySize     :: Double      -- ^ body text size in px
     , rcLineSpacing  :: Double      -- ^ line height multiplier
-    , rcLinks        :: [((Text, Int, Int), (Text, Int, Int))]
-      -- ^ weave edges to draw between verses (any columns)
-    , rcOnWordClick  :: RTok -> e   -- ^ left click on a word with Strong's
+    , rcLinks        :: [((Text, Int, Int), (Text, Int, Int), Text)]
+      -- ^ weave edges to draw between verses (any columns); the third element
+      -- is the edge label (empty for a plain connector)
+    , rcOnWordClick  :: RTok -> e   -- ^ Ctrl+left-click on a word with Strong's
     , rcOnWordAlt    :: RTok -> e   -- ^ right click: start a one-word patch
     , rcOnSpanSelect :: (Text, Int, Int) -> (Int, Int) -> e
       -- ^ drag selection released: verse ref + inclusive token span
@@ -154,6 +161,11 @@ linkColorBase, linkColorHot :: Color
 linkColorBase = rgba 201 162 75 0.45
 linkColorHot = rgba 236 206 120 0.95
 
+-- edge label: muted gold text on a near-opaque dark pill
+linkLabelColor, linkLabelBg :: Color
+linkLabelColor = rgba 210 180 110 0.9
+linkLabelBg = rgba 23 25 28 0.88
+
 cardBgColor, cardTextColor :: Color
 cardBgColor = rgbHex "#17191C"
 cardTextColor = rgbHex "#D8D4CD"
@@ -224,13 +236,21 @@ makeReader cfg state = widget
             groupW = fromIntegral n * cw + fromIntegral (n - 1) * colGap
             leftPad = if n == 1 then 0 else max 0 ((w - groupW) / 2)
             old = rsCols st
-            mk j (ColumnCfg key vs) =
+            mk j (ColumnCfg key vs av) =
                 let (lns, ch) = layoutVerses fm cw
                         (rcBodySize cfg) (rcLineSpacing cfg) vs
-                    prevOff = case drop j old of
-                        (c : _) | clKey c == key -> clOffset c
-                        _ -> 0
-                in ColState key (clampOffset ch h prevOff) lns ch
+                    sameKey = case drop j old of
+                        (c : _) -> clKey c == key
+                        _ -> False
+                    -- top of a given verse's first line, for align-on-open
+                    firstY vn = listToMaybe
+                        [ rlY ln | ln <- lns
+                        , Just (_, _, v) <- [lineVerse ln], v == vn ]
+                    off | sameKey = case drop j old of
+                            (c : _) -> clOffset c
+                            _ -> 0
+                        | otherwise = maybe 0 (fromMaybe 0 . firstY) av
+                in ColState key (clampOffset ch h off) lns ch
                     (leftPad + fromIntegral j * (cw + colGap)) cw
             cols = zipWith mk [0 ..] cfgs
         in st { rsCols = cols, rsViewW = w, rsViewH = h
@@ -252,14 +272,14 @@ makeReader cfg state = widget
         Click p BtnRight _ -> onAltClick p
         WheelScroll p (Point _ wy) dir ->
             let mul = if dir == WheelNormal then 1 else -1
-                col = colAtX state carea p
-            in scrollBy col (negate wy * 60 * mul)
+                d = negate wy * 60 * mul
+            in if shiftHeld then scrollAllBy d else scrollBy (colAtX state carea p) d
         KeyAction _ code KeyPressed
-            | isKeyUp code -> scrollBy (Just (rsActive state)) (negate lineStep)
-            | isKeyDown code -> scrollBy (Just (rsActive state)) lineStep
-            | isKeyPageUp code -> scrollBy (Just (rsActive state)) (negate pageStep)
-            | isKeyPageDown code -> scrollBy (Just (rsActive state)) pageStep
-            | isKeySpace code -> scrollBy (Just (rsActive state)) pageStep
+            | isKeyUp code -> vScroll (negate lineStep)
+            | isKeyDown code -> vScroll lineStep
+            | isKeyPageUp code -> vScroll (negate pageStep)
+            | isKeyPageDown code -> vScroll pageStep
+            | isKeySpace code -> vScroll pageStep
             | isKeyHome code -> scrollTo (rsActive state) 0
             | isKeyEnd code -> scrollTo (rsActive state) (1 / 0)
             | isKeyLeft code -> Just (resultEvts node [rcOnPaneNav cfg (rsActive state) (-1)])
@@ -273,13 +293,30 @@ makeReader cfg state = widget
             let km = wenv ^. L.inputStatus . L.keyMod
             in km ^. L.leftShift || km ^. L.rightShift
 
+        ctrlHeld =
+            let km = wenv ^. L.inputStatus . L.keyMod
+            in km ^. L.leftCtrl || km ^. L.rightCtrl
+
         leftHeld = M.lookup BtnLeft
             (wenv ^. L.inputStatus . L.buttons) == Just BtnPressed
+
+        -- arrows / wheel scroll one pane; holding Shift locks the panes so they
+        -- scroll together (parallel reading)
+        vScroll d
+            | shiftHeld = scrollAllBy d
+            | otherwise = scrollBy (Just (rsActive state)) d
 
         scrollBy Nothing _ = Nothing
         scrollBy (Just ci) d = case drop ci (rsCols state) of
             (c : _) -> scrollTo ci (clOffset c + d)
             [] -> Nothing
+
+        scrollAllBy d =
+            let st = state { rsCols =
+                    [ c { clOffset = clampOffset (clContentH c) (rsViewH state)
+                            (clOffset c + d) }
+                    | c <- rsCols state ] }
+            in Just (resultReqs (replace st node) [RenderOnce])
         scrollTo ci o = case drop ci (rsCols state) of
             (c : _) ->
                 let o' = clampOffset (clContentH c) (rsViewH state) o
@@ -338,16 +375,18 @@ makeReader cfg state = widget
                                , rsDragged = False }
                 in Just (resultReqs (replace st node) [RenderOnce])
 
-        -- a click on a verse number selects that verse for weaving; a click on
-        -- a word with Strong's opens the lookup
+        -- a click on a verse number selects that verse for weaving; Strong's
+        -- needs Ctrl-click, so a stray click while scrolling doesn't replace the
+        -- side panel (and clear the weave view) with a lookup
         onLeftClick p = case verseNumberAt state carea p of
             Just (ci, ref) ->
                 Just (resultEvts node [rcOnVerseClick cfg ci ref shiftHeld])
-            Nothing -> do
-                rt <- hitWord p
-                if null (tokStrongs (rtTok rt))
-                    then Just (resultNode node)
-                    else Just (resultEvts node [rcOnWordClick cfg rt])
+            Nothing
+                | not ctrlHeld -> Just (resultNode node)
+                | otherwise -> case hitWord p of
+                    Just rt | not (null (tokStrongs (rtTok rt))) ->
+                        Just (resultEvts node [rcOnWordClick cfg rt])
+                    _ -> Just (resultNode node)
 
         onAltClick p = do
             rt <- hitWord p
@@ -367,7 +406,7 @@ makeReader cfg state = widget
                 col <- listToMaybe (drop ci (rsCols st))
                 ln <- listToMaybe (drop li (clLines col))
                 lineVerse ln
-        drawLinks renderer cx cy chh st hov (rcLinks cfg)
+        drawLinks renderer fm cx cy chh st hov (rcLinks cfg)
         -- patch hover card, last so it sits above everything
         forM_ (rsHover st) $ \(ci, li, wi) ->
             forM_ (cardFor st ci li wi) $ \(col, pw, ln, pinfo) -> do
@@ -427,13 +466,13 @@ makeReader cfg state = widget
     -- draw a connector for every link whose endpoints fall in two different
     -- columns, from the right edge of the left verse to the left edge of the
     -- right verse (vertical centre of each verse's lines, clamped to view)
-    drawLinks renderer cx cy chh st hov links = do
+    drawLinks renderer fm cx cy chh st hov links = do
         let findIn ref = listToMaybe
                 [ (col, cy + (top + bot) / 2 - clOffset col)
                 | col <- rsCols st
                 , Just (top, bot) <- [M.lookup ref (verseBands col)] ]
             clampY y = max (cy + 2) (min (cy + chh - 2) y)
-        forM_ links $ \(a, b) -> case (findIn a, findIn b) of
+        forM_ links $ \(a, b, lbl) -> case (findIn a, findIn b) of
             (Just (cola, ya), Just (colb, yb)) | clX cola /= clX colb -> do
                 let (lc, ly, rc, ry)
                         | clX cola <= clX colb = (cola, ya, colb, yb)
@@ -441,11 +480,17 @@ makeReader cfg state = widget
                     hot = hov == Just a || hov == Just b
                     col = if hot then linkColorHot else linkColorBase
                     wdt = if hot then 2.4 else 1.3
-                    p1 = Point (cx + clX lc + clW lc - 14) (clampY ly)
-                    p2 = Point (cx + clX rc + 14) (clampY ry)
+                    p1@(Point x1 y1) = Point (cx + clX lc + clW lc - 14) (clampY ly)
+                    p2@(Point x2 y2) = Point (cx + clX rc + 14) (clampY ry)
                 drawCurve renderer wdt col p1 p2
                 drawDot renderer col p1
                 drawDot renderer col p2
+                -- show the label only for the hovered verse's edges, sat just
+                -- above the connector midpoint (a straight line would otherwise
+                -- strike through the text); showing them all at once is a wall
+                when (hot && not (T.null lbl)) $
+                    drawLinkLabel renderer fm
+                        (Point ((x1 + x2) / 2) ((y1 + y2) / 2 - 10)) hot lbl
             _ -> pure ()
 
     cardFor st ci li wi = do
@@ -525,6 +570,21 @@ drawCurve renderer lineW col p1@(Point x1 y1) (Point x2 y2) = do
 drawDot :: Renderer -> Color -> Point -> IO ()
 drawDot renderer col (Point x y) =
     drawRect renderer (Rect (x - 2.5) (y - 2.5) 5 5) (Just col) Nothing
+
+-- | An edge label (the exact shared text), centred on the connector midpoint
+-- on a small dark pill so it stays legible over the curve and the text behind.
+drawLinkLabel :: Renderer -> FontManager -> Point -> Bool -> Text -> IO ()
+drawLinkLabel renderer fm (Point mx my) hot lbl = do
+    let sz = FontSize 10.5
+        tw = _sW (computeTextSize fm numFont sz def lbl)
+        padX = 5
+        pillW = tw + padX * 2
+        pillH = 15
+        x = mx - pillW / 2
+        y = my - pillH / 2
+    drawRect renderer (Rect x y pillW pillH) (Just linkLabelBg) Nothing
+    setFillColor renderer (if hot then linkColorHot else linkLabelColor)
+    renderText renderer (Point (x + padX) (y + 11)) numFont sz def lbl
 
 clampOffset :: Double -> Double -> Double -> Double
 clampOffset contentH viewH = max 0 . min (max 0 (contentH - viewH))

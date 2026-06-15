@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Baptism Of Jesus",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jesus comes from Galilee to be baptized, the heavens open, the Spirit descends like a dove, and a voice from heaven names him the beloved Son. Matthew alone records the exchange with John (3:14-15), which is left unlinked. Mark and Luke each compress the heaven-opened, dove, and voice beats into two verses, so several edges fan out to a single verse on the Mark or Luke side.",
+  "created": "2026-06-14T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 3:13", "b": "Mark 1:9"},
+    {"a": "Matt 3:16", "b": "Mark 1:10", "label": "out of the water"},
+    {"a": "Matt 3:16", "b": "Luke 3:21", "label": "the heaven was opened"},
+    {"a": "Mark 1:10", "b": "Luke 3:21", "label": "the heavens opened"},
+    {"a": "Matt 3:16", "b": "Luke 3:22", "label": "like a dove"},
+    {"a": "Mark 1:10", "b": "Luke 3:22", "label": "the Spirit like a dove descending"},
+    {"a": "Matt 3:17", "b": "Mark 1:11", "label": "a voice from heaven"},
+    {"a": "Matt 3:17", "b": "Luke 3:22", "label": "my beloved Son"},
+    {"a": "Mark 1:11", "b": "Luke 3:22", "label": "Thou art my beloved Son"}
+  ]
+}
