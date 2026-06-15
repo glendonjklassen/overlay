@@ -11,10 +11,10 @@
     file bridge is roughly an order of magnitude slower.
 
 .EXAMPLE
-    .\run.ps1                  # cabal run overlay
-    .\run.ps1 build            # cabal build
-    .\run.ps1 repl             # cabal repl
-    .\run.ps1 clean            # cabal clean
+    .\util\windows_run.ps1                  # cabal run overlay
+    .\util\windows_run.ps1 build            # cabal build
+    .\util\windows_run.ps1 repl             # cabal repl
+    .\util\windows_run.ps1 clean            # cabal clean
 #>
 param(
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -25,9 +25,12 @@ if (-not $CabalArgs -or $CabalArgs.Count -eq 0) {
     $CabalArgs = @('run', 'overlay')
 }
 
+# This script lives in util/; cabal must run against the project root above it.
+$projectRoot = Split-Path $PSScriptRoot -Parent
+
 # Regenerate overlay.cabal from package.yaml (hpack) before invoking cabal.
 $builddir = '$HOME/.cache/overlay-dist'
 $cmd = "{ [ ! -f package.yaml ] || hpack; } && cabal --builddir=`"$builddir`" " + ($CabalArgs -join ' ')
 
-wsl --cd "$PSScriptRoot" -e bash -lc $cmd
+wsl --cd "$projectRoot" -e bash -lc $cmd
 exit $LASTEXITCODE

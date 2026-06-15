@@ -1,8 +1,9 @@
 # overlay
 
-A reader and study tool for the 1769 KJV, with signed point-patches to the
-text (Ed25519), classic Strong's word lookup, and concordance
-cross-references. No modern translations, no commentary layers.
+A reader and study tool for the 1769 KJV: classic Strong's word lookup with
+concordance cross-references, Ed25519-signed point-patches and corpus-wide
+rules over the text, personal study threads, and weaves that line up parallel
+passages. No modern translations, no commentary layers.
 
 GUI built with [Monomer](https://github.com/fjvallarino/monomer)
 (SDL2 + NanoVG rendering), displayed through WSLg.
@@ -20,7 +21,7 @@ All source data is classic and freely licensed:
   [openscriptures/strongs](https://github.com/openscriptures/strongs).
 
 `data/` is gitignored; regenerate it with the two downloads above plus
-`.\run.ps1 run overlay-import`, which produces:
+`.\util\windows_run.ps1 run overlay-import`, which produces:
 
 - `data/kjv.jsonl` — canonical tokenized text (31,102 verses; tokenization is
   version-stamped and **frozen** — signed patches address into it)
@@ -28,7 +29,7 @@ All source data is classic and freely licensed:
 - `data/kjv-notes.jsonl` — the 1769 translators' margin notes (kept for a
   future layer, not yet shown)
 
-`.\run.ps1 run overlay '--' --check` verifies the data pipeline headlessly.
+`.\util\windows_run.ps1 run overlay '--' --check` verifies the data pipeline headlessly.
 (The quotes matter: PowerShell eats a bare `--` before the script sees it.)
 
 ## Using the reader
@@ -103,7 +104,7 @@ as JSON files under `patches/`; delete a file to undo its change.
 - **Author one**: right-click a word, or **drag across several words of a
   verse**, then enter the replacement (any number of words) + optional note →
   *Sign & save*. Or from the CLI:
-  `.\run.ps1 run overlay '--' --mkpatch Exod 7 7 fourscore eighty`
+  `.\util\windows_run.ps1 run overlay '--' --mkpatch Exod 7 7 fourscore eighty`
 - **Rendering**: patched words show amber with a dotted underline; hover
   for the original reading, author key fingerprint, date, and verification
   status.
@@ -116,14 +117,52 @@ as JSON files under `patches/`; delete a file to undo its change.
   applied. Valid signatures from unknown keys apply but render orange and
   say so on the card.
 
+## Signed rules
+
+Where a patch fixes one verse, a **rule** rewrites a word sequence *everywhere*
+it occurs in the canonical text — addressed by content, not position. Like
+patches, rules are an Ed25519-signed overlay: verified on load, never touching
+the base text. Rules live as JSON under `rules/`.
+
+- **Author one**: right-click a word (or drag a span), choose the scope —
+  *this verse only* (a patch) or *everywhere — N matches* (a rule, with a live
+  corpus match count) — then *Sign & save*. Or from the CLI:
+  `.\util\windows_run.ps1 run overlay '--' --mkrule <words...> => <words...>`
+- **Exclusions**: right-click a rule-rewritten span → *exclude this verse from
+  the rule* (your own rules only). The exclusion is part of the signed content,
+  so it re-signs but keeps the rule's `created` stamp — and thus its precedence.
+- **Composition**: point patches always beat rules; among rules, the earlier
+  `created` wins where matches overlap; rules match the canonical text only, so
+  application never cascades. Patching over a rule span overrides it.
+- Rules appear in the **patches (N)** panel with status, match, and exclusion
+  counts, plus delete. Same key / trust model as patches.
+
+## Threads
+
+A **thread** is a named trail through the text — *"Christ throughout the
+Bible"* — collecting passages (a verse ref plus a word span, down to a single
+word), each with an optional note, alongside a running notes document on the
+thread itself. Threads are personal study data: plain unsigned JSON under
+`threads/`, one file per thread (they never alter the rendered text, so the
+patch trust model doesn't apply).
+
+- **Add a passage**: right-click a word / drag a span → *add span to thread* →
+  pick an existing thread or name a new one; the note travels with the entry.
+- **threads (N)** lists every thread; opening one shows its running notes
+  (edit + save), every passage (snapshot text, note, click-to-jump, remove),
+  and delete-thread. While a thread is open its passages are softly highlighted
+  in the reader.
+- Entries snapshot the words they covered when added, so a thread file stays
+  readable on its own and survives retokenization gracefully.
+
 ## Development
 
-- `.\run.ps1 test` — unit suite (hspec): tokenizer, signing (incl. a golden
+- `.\util\windows_run.ps1 test` — unit suite (hspec): tokenizer, signing (incl. a golden
   test freezing the signature byte format), overlap resolution, overlay
   composition.
 - `hlint src app tools test` (inside WSL) — kept hint-clean; config in
   [.hlint.yaml](.hlint.yaml).
-- `.\run.ps1 run overlay '--' --check` — headless end-to-end check.
+- `.\util\windows_run.ps1 run overlay '--' --check` — headless end-to-end check.
 
 Haskell project, built and run inside WSL (Ubuntu). Source lives on the Windows
 filesystem; everything compiles and executes on the Linux side.
@@ -133,20 +172,19 @@ filesystem; everything compiles and executes on the Linux side.
 - WSL2 with Ubuntu and the ghcup toolchain (`ghc`, `cabal`) on the PATH.
   Already set up on this machine: GHC 9.6.7, cabal 3.14, stack 3.7 (aarch64).
 - System libraries for Monomer (already installed):
-  `sudo apt-get install pkg-config libsdl2-dev libglew-dev libgl1-mesa-dev libfreetype-dev fonts-dejavu-core`
-- The app currently uses DejaVu Sans from the system font path
-  (`/usr/share/fonts/truetype/dejavu/`); bundle a font under `assets/` when
-  looks start to matter.
+  `sudo apt-get install pkg-config libsdl2-dev libglew-dev libgl1-mesa-dev libfreetype-dev`
+- Scripture renders in EB Garamond, bundled under `assets/fonts/` (no system
+  font needed); see [Type and settings](#type-and-settings) to override it.
 
 ## Build and run (from Windows)
 
 ```powershell
-.\run.ps1            # cabal run overlay
-.\run.ps1 build
-.\run.ps1 repl
+.\util\windows_run.ps1            # cabal run overlay
+.\util\windows_run.ps1 build
+.\util\windows_run.ps1 repl
 ```
 
-Anything you pass to `run.ps1` is forwarded to `cabal` inside WSL.
+Anything you pass to `util\windows_run.ps1` is forwarded to `cabal` inside WSL.
 
 Package metadata lives in `package.yaml` (hpack format); `overlay.cabal` is
 generated from it — edit the YAML, never the `.cabal` file. The runner script
@@ -164,3 +202,11 @@ For HLS-backed editing, open the folder via the VS Code **WSL** extension
 install HLS with `ghcup install hls`. If dependency builds ever feel slow even
 with the builddir redirect, the next step is moving the repo itself into the
 Linux filesystem (`~/code/overlay`) and accessing it via `\\wsl$`.
+
+## License
+
+Code is [MIT](LICENSE) licensed. The bundled EB Garamond fonts are under the
+SIL Open Font License (see [assets/fonts/OFL.txt](assets/fonts/OFL.txt)). The
+scripture text and Strong's data are not redistributed here (`data/` is
+gitignored); they carry their own licenses — the KJV SWORD module is public
+domain, the Open Scriptures Strong's dictionaries are CC-BY-SA (see [Data](#data)).
