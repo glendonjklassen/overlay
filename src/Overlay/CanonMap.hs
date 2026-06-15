@@ -14,7 +14,7 @@ module Overlay.CanonMap
     ) where
 
 import Control.Lens ((^.))
-import Control.Monad (when)
+import Control.Monad (when, zipWithM_)
 import Data.Default (def)
 import Data.Text (Text)
 
@@ -99,7 +99,7 @@ canonMapView cfg = defaultWidgetNode (WidgetType "canonMap") widget
                     renderText renderer
                         (Point (x0 + (w - tw) / 2) (bandTop + bandH / 2 + 4))
                         mapFont segSize def lbl
-        sequence_ (zipWith drawSeg [0 ..] (cmcSegs cfg))
+        zipWithM_ drawSeg [0 ..] (cmcSegs cfg)
 
         -- Old / New Testament divider — kept inside the band so it never cuts
         -- through a pin or its label above; tags sit on the top row
