@@ -1,6 +1,11 @@
 name: overlay
 version: 0.1.0.0
 synopsis: KJV 1769 reader with signed text patches and Strong's lookup
+license: MIT
+license-file: LICENSE
+author: Glendon Klassen
+maintainer: gjklassen@proton.me
+copyright: 2026 Glendon Klassen
 language: GHC2021
 
 ghc-options:

@@ -2,7 +2,7 @@
 
 module Main (main) where
 
-import Data.Aeson (decode, encode)
+import Data.Aeson (Value, decode, encode, object, (.=))
 import Data.Either (isLeft)
 import Data.Functor (void)
 import Data.Text (Text)
@@ -13,15 +13,18 @@ import System.FilePath ((</>))
 import Test.Hspec
 
 import Overlay (toRVerse)
+import Overlay.Canon
+    (Book (..), books, bookById, bookByImpName, bookIds)
 import Overlay.Corpus
-import Overlay.Import (parseBlock, tokenize)
+import Overlay.Import (parseBlock, splitBlocks, tokenize)
 import Overlay.Patch
 import Overlay.ReaderView (RTok (..), RVerse (..))
 import Overlay.Rule
-import Overlay.Strongs (occurrenceIndex, refLabel)
+import Overlay.Strongs (StrongsEntry (..), occurrenceIndex, refLabel)
 import Overlay.Thread
 import Overlay.Weave
 import qualified Data.Map.Strict as M
+import qualified Data.Set as Set
 
 -- ── helpers ─────────────────────────────────────────────────────────────────
 
@@ -473,3 +476,109 @@ main = hspec $ do
             M.lookup "H7225" ix `shouldBe` Just [("Gen", 1, 1)]
             M.lookup "H776" ix `shouldBe` Just [("Gen", 1, 2)]
             refLabel ("Gen", 1, 2) `shouldBe` "Genesis 1:2"
+
+    describe "canon" $ do
+        it "holds all 66 books in canonical order" $ do
+            length books `shouldBe` 66
+            head bookIds `shouldBe` "Gen"
+            bookIds !! 39 `shouldBe` "Matt"  -- first NT book
+            last bookIds `shouldBe` "Rev"
+
+        it "looks up books by OSIS id and by imp name" $ do
+            fmap bookName (M.lookup "Ps" bookById) `shouldBe` Just "Psalms"
+            fmap bookId (M.lookup "I Samuel" bookByImpName)
+                `shouldBe` Just "1Sam"
+            fmap bookName (M.lookup "Rev" bookById) `shouldBe` Just "Revelation"
+            M.lookup "Enoch" bookById `shouldBe` Nothing
+
+    describe "corpus header and rendering" $ do
+        it "renders a token sequence with single spaces" $
+            renderTokens [tokP "In" "" [], tokP "Selah" "." []]
+                `shouldBe` "In Selah."
+
+        it "freezes the canonical-corpus header format (golden)" $
+            corpusHeader "kjv1769-tok2" 7 `shouldBe` (object
+                [ "format" .= ("overlay-kjv-canonical" :: Text)
+                , "tokenization" .= ("kjv1769-tok2" :: Text)
+                , "source" .=
+                    ("engKJV2006eb 14.3 (CrossWire/eBible.org, public domain)"
+                        :: Text)
+                , "verses" .= (7 :: Int)
+                ] :: Value)
+
+    describe "imp block splitting" $ do
+        it "drops preamble and groups headers with their body lines" $
+            splitBlocks
+                [ "ignored preamble"
+                , "$$$Genesis 1:1", "In the beginning"
+                , "$$$Genesis 1:2", "And the earth", "was without form"
+                ]
+                `shouldBe`
+                [ ("Genesis 1:1", ["In the beginning"])
+                , ("Genesis 1:2", ["And the earth", "was without form"])
+                ]
+
+        it "yields nothing when there is no header" $
+            splitBlocks ["just", "loose", "lines"] `shouldBe` []
+
+    describe "crypto primitives" $ do
+        it "fingerprints to the first eight characters" $
+            fingerprint "cf475b20edbecf1d" `shouldBe` "cf475b20"
+
+        it "signs and verifies raw bytes, rejecting tampering" $ do
+            keys <- generateKeys
+            let msg = TE.encodeUtf8 "the quick brown fox"
+                sig = signBytes keys msg
+            verifyBytes (kPubHex keys) sig msg `shouldBe` Right ()
+            verifyBytes (kPubHex keys) sig (TE.encodeUtf8 "tampered")
+                `shouldSatisfy` isLeft
+
+        it "rejects malformed author/signature hex" $ do
+            keys <- generateKeys
+            let msg = TE.encodeUtf8 "x"
+            verifyBytes "not-hex" (signBytes keys msg) msg
+                `shouldSatisfy` isLeft
+
+        it "selfTest confirms the local signing path round-trips" $ do
+            keys <- generateKeys
+            selfTest keys "test-tok1" >>= (`shouldBe` Right ())
+
+    describe "strongs entry codec" $ do
+        it "parses a full dictionary entry" $
+            decode "{\"lemma\":\"\\u03b8\",\"xlit\":\"theos\",\
+                   \\"pron\":\"theh'-os\",\"derivation\":\"of uncertain\",\
+                   \\"strongs_def\":\"a deity\",\"kjv_def\":\"God, god\"}"
+                `shouldBe` Just (StrongsEntry (Just "\x03b8") (Just "theos")
+                    (Just "theh'-os") (Just "of uncertain") (Just "a deity")
+                    (Just "God, god"))
+
+        it "fills absent fields with Nothing" $
+            decode "{\"lemma\":\"only\"}"
+                `shouldBe` Just (StrongsEntry (Just "only") Nothing Nothing
+                    Nothing Nothing Nothing)
+
+    describe "weave graph ops" $ do
+        let emptyW = emptyWeave "x" Retelling "t" "now"
+            mark = canonLink ("Exod", 20, 4) ("Deut", 5, 8)
+            harmony = addLinks
+                [ canonLink ("Matt", 1, 1) ("Mark", 1, 1)
+                , canonLink ("Mark", 1, 1) ("Luke", 1, 1) ] emptyW
+
+        it "removeLink deletes exactly the named edge" $ do
+            let w = addLinks [mark] emptyW
+            wLinks (removeLink mark w) `shouldBe` []
+
+        it "componentOf returns the transitive group, self for an island" $ do
+            length (componentOf (wLinks harmony) ("Luke", 1, 1)) `shouldBe` 3
+            componentOf (wLinks harmony) ("John", 1, 1)
+                `shouldBe` [("John", 1, 1)]
+
+        it "linksTouching keeps edges with an on-screen endpoint" $ do
+            let w = addLinks [mark] harmony
+            linksTouching (Set.fromList [("Exod", 20, 4)]) w `shouldBe` [mark]
+            linksTouching (Set.fromList [("Gen", 1, 1)]) w `shouldBe` []
+
+        it "labels kinds and rejects unknown kind tokens" $ do
+            kindLabel Prophecy `shouldBe` "prophecy & fulfillment"
+            kindLabel Retelling `shouldBe` "retelling"
+            parseKind "nonsense" `shouldBe` Nothing
