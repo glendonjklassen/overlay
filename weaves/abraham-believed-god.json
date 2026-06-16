@@ -1,17 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "Abraham believed God",
-  "kind": "quotation",
-  "tokenization": "kjv1769-tok2",
-  "notes": "Genesis 15:6 records that Abraham believed the LORD and that it was counted to him for righteousness, the seed-text of justification by faith. The New Testament epistles quote this verse three times, each citing it as the ground of righteousness reckoned apart from works: Romans 4:3, Galatians 3:6, and James 2:23. All three share the near-identical wording 'Abraham believed God, and it was ... him for righteousness,' differing only in the verb they use for the reckoning. Romans says 'counted,' Galatians 'accounted,' and James 'imputed' — three complementary vantages on the one act of God crediting faith as righteousness. James further adds that the scripture 'was fulfilled' and that Abraham 'was called the Friend of God,' a detail unique to that account that reads in place.",
-  "created": "2026-06-15T00:00:00Z",
-  "approved": false,
-  "links": [
-    {"a": "Gen 15:6", "b": "Rom 4:3", "label": "believed ... it ... counted ... to him for righteousness"},
-    {"a": "Gen 15:6", "b": "Gal 3:6", "label": "believed ... and it was ... to him for righteousness"},
-    {"a": "Gen 15:6", "b": "Jas 2:23", "label": "believed ... and it was ... unto him for righteousness"},
-    {"a": "Rom 4:3", "b": "Gal 3:6", "label": "Abraham believed God, and it was ... to him for righteousness"},
-    {"a": "Rom 4:3", "b": "Jas 2:23", "label": "Abraham believed God, and it was ... him for righteousness"},
-    {"a": "Gal 3:6", "b": "Jas 2:23", "label": "Abraham believed God, and it was ... him for righteousness"}
-  ]
-}
+{"approved":false,"created":"2026-06-15T00:00:00Z","format":"overlay-weave-v2","kind":"quotation","links":[{"a":"Gen 15:6","b":"Rom 4:3","label":"believed ... it ... counted ... to him for righteousness"},{"a":"Gen 15:6","approved":true,"b":"Gal 3:6","label":"believed ... and it was ... to him for righteousness"},{"a":"Gen 15:6","b":"Jas 2:23","label":"believed ... and it was ... unto him for righteousness"},{"a":"Rom 4:3","approved":true,"b":"Gal 3:6","label":"Abraham believed God, and it was ... to him for righteousness"},{"a":"Rom 4:3","b":"Jas 2:23","label":"Abraham believed God, and it was ... him for righteousness"},{"a":"Gal 3:6","b":"Jas 2:23","label":"Abraham believed God, and it was ... him for righteousness"}],"name":"Abraham believed God","notes":"Genesis 15:6 records that Abraham believed the LORD and that it was counted to him for righteousness, the seed-text of justification by faith. The New Testament epistles quote this verse three times, each citing it as the ground of righteousness reckoned apart from works: Romans 4:3, Galatians 3:6, and James 2:23. All three share the near-identical wording 'Abraham believed God, and it was ... him for righteousness,' differing only in the verb they use for the reckoning. Romans says 'counted,' Galatians 'accounted,' and James 'imputed' — three complementary vantages on the one act of God crediting faith as righteousness. James further adds that the scripture 'was fulfilled' and that Abraham 'was called the Friend of God,' a detail unique to that account that reads in place.","tokenization":"kjv1769-tok2"}
