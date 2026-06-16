@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The zeal of thine house",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 69:9 is a single verse in two clauses, and the New Testament applies each clause to Christ in a different place. John 2:17 cites the first clause when the disciples remember the zeal of God's house consuming the Lord as He cleanses the temple. Romans 15:3 cites the second clause to show that Christ pleased not Himself but bore the reproaches that fell on God. Thus one Davidic verse is divided and fulfilled across two passages, the zeal in John and the reproaches in Paul. The shared wording in each link is the exact quoted phrase, with John keeping the present 'hath eaten me up' and Romans the past 'fell on me' as the apostle frames it as already accomplished.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 69:9", "b": "John 2:17", "label": "The zeal of thine house hath eaten me up"},
+    {"a": "Ps 69:9", "b": "Rom 15:3", "label": "The reproaches of them that reproached thee ... me"}
+  ]
+}

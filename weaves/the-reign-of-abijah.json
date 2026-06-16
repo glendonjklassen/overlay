@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The reign of Abijah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles both record the reign of Judah's king whom Kings calls Abijam and Chronicles calls Abijah. They share a common frame: he began to reign over Judah in the eighteenth year of Jeroboam, reigned three years in Jerusalem, his mother is named, there was war between him and Jeroboam, the rest of his acts were written down, and he slept with his fathers, was buried in the city of David, and Asa his son reigned in his stead. Kings keeps its own vantage, weighing his heart against David's and recalling the lamp given for David's sake; Chronicles keeps its own vantage, recounting at length his great battle speech against Jeroboam and the LORD-given victory. The two names for the king and the two names given for his mother (Maachah daughter of Abishalom; Michaiah daughter of Uriel of Gibeah) are complementary vantages left as a matter for further study. The unique matter in each account is left unlinked and reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "1Kgs 15:1", "b": "2Chr 13:1", "label": "in the eighteenth year of king Jeroboam ... over Judah"},
+    {"a": "1Kgs 15:2", "b": "2Chr 13:2", "label": "three years ... in Jerusalem"},
+    {"a": "1Kgs 15:2", "b": "2Chr 13:2", "label": "his mother's name"},
+    {"a": "1Kgs 15:7", "b": "2Chr 13:2", "label": "war between Abijam and Jeroboam"},
+    {"a": "1Kgs 15:7", "b": "2Chr 13:22", "label": "the rest of the acts of Abijam ... written"},
+    {"a": "1Kgs 15:8", "b": "2Chr 14:1", "label": "slept with his fathers and they buried him in the city of David and Asa his son reigned in his stead"}
+  ]
+}

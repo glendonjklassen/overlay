@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The blood of the testament",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "At Sinai Moses ratifies the covenant by sprinkling sacrificial blood on the people and declaring its words; Hebrews 9 cites this very moment to expound how the first testament was dedicated with blood. The shared core is Moses' spoken formula over the blood, which Hebrews repeats almost verbatim as it argues that without shedding of blood there is no remission. Exodus keeps the original setting at the altar with the people and the book of the covenant, while Hebrews sets the saying within its larger argument about Christ as mediator of a better testament. The rendering of the same blood as 'the covenant' in Exodus and 'the testament' in Hebrews is a complementary point left as a matter for further study. Both verses, read together, present one unbroken testimony that the covenant is sealed by blood.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Exod 24:8", "b": "Heb 9:20", "label": "the blood of the ... which"}
+  ]
+}

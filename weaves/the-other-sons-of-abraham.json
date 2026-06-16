@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The other sons of Abraham",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Chronicler, opening his great genealogy of the nations, reproduces from Genesis the lines of Abraham's other sons: the children he had by Keturah and the twelve sons of Ishmael. The shared core is the names themselves, set down in the same order in both books, so that the seed of Abraham besides Isaac is preserved in the record. Genesis frames these lists within narrative, telling how Keturah was taken to wife and how Hagar the Egyptian bare Ishmael, while Chronicles strips the names to a bare register of generations. Minor differences in spelling, such as Hanoch and Henoch or Hadar and Hadad, and the way Chronicles compresses into two verses what Genesis spreads over more, are complementary vantages on the same God-given line and are left as a matter for further study. Together they show that the Chronicler is faithfully carrying forward the words of Moses.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 25:1", "b": "1Chr 1:32", "label": "her name was Keturah ... the sons of Keturah Abraham’s concubine"},
+    {"a": "Gen 25:2", "b": "1Chr 1:32", "label": "Zimran and Jokshan and Medan and Midian and Ishbak and Shuah"},
+    {"a": "Gen 25:3", "b": "1Chr 1:32", "label": "And the sons of Jokshan Sheba and Dedan"},
+    {"a": "Gen 25:4", "b": "1Chr 1:33", "label": "Ephah and Epher and ... Eldaah All these"},
+    {"a": "Gen 25:12", "b": "1Chr 1:28", "label": "Ishmael Abraham’s son"},
+    {"a": "Gen 25:13", "b": "1Chr 1:29", "label": "the firstborn of Ishmael Neba ... and Kedar and Adbeel and Mibsam"},
+    {"a": "Gen 25:14", "b": "1Chr 1:30", "label": "Mishma and Dumah and Massa"},
+    {"a": "Gen 25:15", "b": "1Chr 1:30", "label": "Hada ... and Tema"},
+    {"a": "Gen 25:15", "b": "1Chr 1:31", "label": "Jetur Naphish and Kedemah"}
+  ]
+}

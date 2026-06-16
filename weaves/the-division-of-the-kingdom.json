@@ -1,0 +1,30 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The division of the kingdom",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles recount the same hour in near-identical words: all Israel gather at Shechem to make Rehoboam king, plead that he lighten his father's grievous yoke, and after three days receive the harsh answer that splits the nation. The shared core runs verse for verse, from the elders' counsel to be a servant, to the young men's boast of the little finger and the scorpions, to the cry 'What portion have we in David,' the stoning of the tribute officer, and Rehoboam's flight to Jerusalem. The wording differs only in small touches treated here as complementary vantages: Kings says Jeroboam 'who was yet in Egypt' while Chronicles says he 'returned out of Egypt'; Kings names the slain officer Adoram, Chronicles Hadoram; Kings ascribes the cause 'from the LORD,' Chronicles 'of God.' Each account keeps the rebellion of the ten tribes against the house of David standing 'unto this day.' The slight name and phrasing variations are left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "1Kgs 12:1", "b": "2Chr 10:1", "label": "Rehoboam went to Shechem ... all Israel ... to make him king"},
+    {"a": "1Kgs 12:2", "b": "2Chr 10:2", "label": "Jeroboam the son of Nebat ... fled from the presence of ... Solomon"},
+    {"a": "1Kgs 12:3", "b": "2Chr 10:3", "label": "they sent and called him ... came and spake ... unto Rehoboam saying"},
+    {"a": "1Kgs 12:4", "b": "2Chr 10:4", "label": "Thy father made our yoke grievous ... and we will serve thee"},
+    {"a": "1Kgs 12:5", "b": "2Chr 10:5", "label": "three days ... And the people departed"},
+    {"a": "1Kgs 12:6", "b": "2Chr 10:6", "label": "the old men that ... stood before Solomon his father while he yet lived"},
+    {"a": "1Kgs 12:7", "b": "2Chr 10:7", "label": "speak good words to them ... they will be thy servants for ever"},
+    {"a": "1Kgs 12:8", "b": "2Chr 10:8", "label": "he forsook the counsel ... of the old men ... the young men that were ... stood before him"},
+    {"a": "1Kgs 12:9", "b": "2Chr 10:9", "label": "What counsel give ye that we may ... answer ... the yoke ... thy father did put upon us"},
+    {"a": "1Kgs 12:10", "b": "2Chr 10:10", "label": "My little finger shall be thicker than my father's loins"},
+    {"a": "1Kgs 12:11", "b": "2Chr 10:11", "label": "my father ... chastised you with whips but I will chastise you with scorpions"},
+    {"a": "1Kgs 12:12", "b": "2Chr 10:12", "label": "Jeroboam and all the people came to Rehoboam ... the third day"},
+    {"a": "1Kgs 12:13", "b": "2Chr 10:13", "label": "the king answered the people roughly and forsook the ... counsel of the old men"},
+    {"a": "1Kgs 12:14", "b": "2Chr 10:14", "label": "after the ... of the young men ... I will chastise you with scorpions"},
+    {"a": "1Kgs 12:15", "b": "2Chr 10:15", "label": "the king hearkened not unto the people ... by ... Ahijah the Shilonite"},
+    {"a": "1Kgs 12:16", "b": "2Chr 10:16", "label": "What portion have we in David ... to your tents O Israel"},
+    {"a": "1Kgs 12:17", "b": "2Chr 10:17", "label": "the children of Israel which dwelt in the cities of Judah Rehoboam reigned over them"},
+    {"a": "1Kgs 12:18", "b": "2Chr 10:18", "label": "stoned him with stones that he died ... flee to Jerusalem"},
+    {"a": "1Kgs 12:19", "b": "2Chr 10:19", "label": "Israel rebelled against the house of David unto this day"}
+  ]
+}

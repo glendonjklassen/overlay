@@ -1,0 +1,24 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Psalm 108 and its sources",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 108 is a new song of David assembled from two earlier psalms: its opening praise (verses 1-5) reproduces the closing praise of Psalm 57 (verses 7-11), and its petition for victory (verses 6-13) reproduces the closing prayer of Psalm 60 (verses 5-12). The shared core is nearly word for word, joining the confident praise of Psalm 57 with the battle petition of Psalm 60 into a single unified hymn. A few small variations appear, such as 'answer me' for 'hear me' in verse 6, 'over Philistia will I triumph' for 'Philistia triumph thou because of me' in verse 9, and 'go forth with our hosts' for 'go out with our armies' in verse 11. These minor differences in wording are left as a matter for further study. The verse-by-verse correspondence holds throughout, the praise of the first source flowing seamlessly into the petition of the second.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 108:1", "b": "Ps 57:7", "label": "my heart is fixed ... I will sing and give praise"},
+    {"a": "Ps 108:2", "b": "Ps 57:8", "label": "Awake psaltery and harp I myself will awake early"},
+    {"a": "Ps 108:3", "b": "Ps 57:9", "label": "I will praise thee ... among the people ... among the nations"},
+    {"a": "Ps 108:4", "b": "Ps 57:10", "label": "For thy mercy is great ... the heavens and thy truth ... the clouds"},
+    {"a": "Ps 108:5", "b": "Ps 57:11", "label": "Be thou exalted O God above the heavens ... glory ... above all the earth"},
+    {"a": "Ps 108:6", "b": "Ps 60:5", "label": "That thy beloved may be delivered save with thy right hand"},
+    {"a": "Ps 108:7", "b": "Ps 60:6", "label": "God hath spoken in his holiness I will rejoice I will divide Shechem and mete out the valley of Succoth"},
+    {"a": "Ps 108:8", "b": "Ps 60:7", "label": "Manasseh is mine Ephraim also is the strength of mine head Judah is my lawgiver"},
+    {"a": "Ps 108:9", "b": "Ps 60:8", "label": "Moab is my washpot over Edom will I cast out my shoe"},
+    {"a": "Ps 108:10", "b": "Ps 60:9", "label": "Who will bring me into the strong city who will lead me into Edom"},
+    {"a": "Ps 108:11", "b": "Ps 60:10", "label": "Wilt not thou O God ... cast us off"},
+    {"a": "Ps 108:12", "b": "Ps 60:11", "label": "Give us help from trouble for vain is the help of man"},
+    {"a": "Ps 108:13", "b": "Ps 60:12", "label": "Through God we shall do valiantly for he it is that shall tread down our enemies"}
+  ]
+}

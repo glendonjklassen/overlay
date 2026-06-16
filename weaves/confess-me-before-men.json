@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Confess me before men",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A twofold synoptic saying of the Lord on confessing or denying Him before men, recorded in Matthew 10:32-33 and Luke 12:8-9. Both accounts share the same two-part structure: a promise to those who confess Him before men, and a warning to those who deny Him before men, with the recompense rendered in the heavenly court. The accounts give complementary vantages on that court: Matthew names the verdict before \"my Father which is in heaven,\" while Luke names it before \"the angels of God\" and speaks of \"the Son of man\" confessing. Luke also frames the denial in the passive (\"shall be denied\"), a fitting variation that keeps the same outcome in view.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 10:32", "b": "Luke 12:8", "label": "Whosoever ... shall confess me before men"},
+    {"a": "Matt 10:32", "b": "Luke 12:8", "label": "him will I confess also before my Father which is in heaven / the Son of man also confess before the angels of God"},
+    {"a": "Matt 10:33", "b": "Luke 12:9", "label": "But whosoever shall deny me before men"},
+    {"a": "Matt 10:33", "b": "Luke 12:9", "label": "him will I also deny before my Father / shall be denied before the angels of God"}
+  ]
+}

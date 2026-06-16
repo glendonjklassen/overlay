@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The suffering servant",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "This is Isaiah's prophecy of the suffering servant (Isa 53:7-8), the very scripture the Ethiopian eunuch was reading when Philip joined him. Acts 8:32-33 quotes the passage directly and Philip preached Jesus to him beginning at that same scripture, applying the servant to Christ. Isa 53:7 answers to Acts 8:32 in the figure of the lamb led to the slaughter, dumb before the shearer, opening not his mouth; Isa 53:8 answers to Acts 8:33 in his judgment taken away and the question who shall declare his generation. The small differences in wording arise from the Greek rendering quoted in Acts, and are left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 53:7", "b": "Acts 8:32", "label": "a lamb ... to the slaughter ... dumb ... not his mouth"},
+    {"a": "Isa 53:8", "b": "Acts 8:33", "label": "who shall declare his generation"}
+  ]
+}

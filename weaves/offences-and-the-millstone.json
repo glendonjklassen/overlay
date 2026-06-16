@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Offences and the millstone",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic on the gravity of causing others to stumble, joining Matthew, Mark, and Luke. All three share the millstone saying: better a millstone about the neck and drowning in the sea than to offend one of these little ones which believe in Christ. Matthew and Luke together pronounce the woe over offences that must needs come, while Matthew and Mark together press the call to cut off the hand or foot, or pluck out the eye, that offends, rather than be cast into hell fire. Each Evangelist keeps his own vantage: Luke sets the millstone after the warning as the lesser evil to offending, Matthew gathers hand and foot into one verse where Mark unfolds them separately, and Mark alone triples the solemn refrain, 'Where their worm dieth not, and the fire is not quenched,' which reads in place. The differing arrangement of the same dominical words is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 18:6", "b": "Mark 9:42", "label": "whoso shall offend one of these little ones which believe in me it were better for him that a millstone were hanged about his neck"},
+    {"a": "Matt 18:6", "b": "Luke 17:2", "label": "a millstone were hanged about his neck ... offend one of these little ones"},
+    {"a": "Mark 9:42", "b": "Luke 17:2", "label": "a millstone were hanged about his neck and he ... cast into the sea"},
+    {"a": "Matt 18:7", "b": "Luke 17:1", "label": "offences ... but woe ... by whom the offence cometh"},
+    {"a": "Matt 18:8", "b": "Mark 9:43", "label": "if thy hand ... offend thee cut ... off ... better for thee to enter into life ... than having two hands ... cast into ... fire"},
+    {"a": "Matt 18:8", "b": "Mark 9:45", "label": "if thy ... foot offend thee cut ... off ... better for thee to enter ... halt ... into life than having two feet to be cast into hell"},
+    {"a": "Matt 18:9", "b": "Mark 9:47", "label": "if thine eye offend thee pluck it out ... than having two eyes to be cast into hell fire"}
+  ]
+}

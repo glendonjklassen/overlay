@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The leaven of the Pharisees",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew and Mark give the same crossing of the sea, where the disciples, having forgotten to take bread, are warned to beware the leaven of the Pharisees, and mistake the saying for a rebuke about their empty provision. The shared core runs pair-by-pair: the forgotten bread, the charge to take heed, the disciples' reasoning, Jesus perceiving their thought, the appeal to the five loaves among the five thousand and the seven among the four thousand, and the closing 'How is it that ye do not understand.' The two vantages name the leaven differently and complement one another: Matthew says 'the Pharisees and of the Sadducees,' Mark 'the Pharisees and of the leaven of Herod.' Mark heightens the rebuke with 'have ye your heart yet hardened' and 'having eyes see ye not,' and records the disciples' own answers 'Twelve' and 'Seven' to the questions about the baskets. Matthew alone closes by telling that they then understood he meant the doctrine of the Pharisees, not the leaven of bread.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 16:5", "b": "Mark 8:14", "label": "had forgotten to take bread"},
+    {"a": "Matt 16:6", "b": "Mark 8:15", "label": "Take heed and beware of the leaven of the Pharisees"},
+    {"a": "Matt 16:7", "b": "Mark 8:16", "label": "they reasoned among themselves saying It is because we have"},
+    {"a": "Matt 16:8", "b": "Mark 8:17", "label": "why reason ye ... because ye have"},
+    {"a": "Matt 16:9", "b": "Mark 8:17", "label": "Do ye not yet understand"},
+    {"a": "Matt 16:9", "b": "Mark 8:18", "label": "neither remember ... do ye not remember"},
+    {"a": "Matt 16:9", "b": "Mark 8:19", "label": "the five loaves of the five thousand ... how many baskets"},
+    {"a": "Matt 16:10", "b": "Mark 8:20", "label": "the seven loaves of the four thousand ... how many baskets"},
+    {"a": "Matt 16:11", "b": "Mark 8:21", "label": "How is it that ye do not understand"}
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The paralytic let down through the roof",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel of the healing of the man sick of the palsy, told by Matthew, Mark, and Luke. The shared core runs the same course in all three: the paralytic brought to Jesus, Jesus seeing their faith and forgiving sins, the scribes and Pharisees reasoning that he blasphemes since God alone forgives, Jesus perceiving their thoughts and posing the question which is easier, the healing wrought that they may know the Son of man hath power on earth to forgive sins, and the crowd's amazement and glory to God. Mark and Luke supply the vivid vantage of the bearers uncovering the roof and letting the man down through the tiling because of the press, a detail Matthew leaves unrecorded as he moves swiftly to the forgiveness and healing. Luke alone notes the Pharisees and doctors of the law gathered from every town and the power of the Lord present to heal, and that the crowd was filled with fear; Mark alone records the man borne of four and the crowd saying they never saw it on this fashion. These complementary vantages enrich the one account.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 9:2", "b": "Mark 2:3", "label": "sick of the palsy"},
+    {"a": "Matt 9:2", "b": "Luke 5:18", "label": "a man ... taken with a palsy"},
+    {"a": "Mark 2:3", "b": "Luke 5:18", "label": "one sick of the palsy ... bringing"},
+
+    {"a": "Mark 2:4", "b": "Luke 5:19", "label": "they let down ... through the tiling"},
+
+    {"a": "Matt 9:2", "b": "Mark 2:5", "label": "Jesus seeing their faith"},
+    {"a": "Matt 9:2", "b": "Luke 5:20", "label": "seeing their faith"},
+    {"a": "Mark 2:5", "b": "Luke 5:20", "label": "saw their faith"},
+
+    {"a": "Matt 9:2", "b": "Mark 2:5", "label": "Son ... thy sins be forgiven thee"},
+    {"a": "Matt 9:2", "b": "Luke 5:20", "label": "thy sins be forgiven thee"},
+    {"a": "Mark 2:5", "b": "Luke 5:20", "label": "thy sins be forgiven thee"},
+
+    {"a": "Matt 9:3", "b": "Mark 2:7", "label": "This man blasphemeth ... blasphemies"},
+    {"a": "Matt 9:3", "b": "Luke 5:21", "label": "speaketh blasphemies"},
+    {"a": "Mark 2:7", "b": "Luke 5:21", "label": "who can forgive sins but God only"},
+
+    {"a": "Matt 9:4", "b": "Mark 2:8", "label": "knowing their thoughts ... in your hearts"},
+    {"a": "Matt 9:4", "b": "Luke 5:22", "label": "Wherefore think ye ... in your hearts"},
+    {"a": "Mark 2:8", "b": "Luke 5:22", "label": "perceived ... Why reason ye ... in your hearts"},
+
+    {"a": "Matt 9:5", "b": "Mark 2:9", "label": "Whether is ... easier to say Thy sins be forgiven thee"},
+    {"a": "Matt 9:5", "b": "Luke 5:23", "label": "Whether is easier to say Thy sins be forgiven thee"},
+    {"a": "Mark 2:9", "b": "Luke 5:23", "label": "Whether is ... easier to say ... Thy sins be forgiven thee"},
+
+    {"a": "Matt 9:6", "b": "Mark 2:10", "label": "that ye may know that the Son of man hath power on earth to forgive sins"},
+    {"a": "Matt 9:6", "b": "Luke 5:24", "label": "that ye may know that the Son of man hath power ... to forgive sins"},
+    {"a": "Mark 2:10", "b": "Luke 5:24", "label": "that ye may know that the Son of man hath power ... to forgive sins"},
+
+    {"a": "Matt 9:6", "b": "Mark 2:11", "label": "Arise take up thy bed ... go ... into thine house"},
+    {"a": "Matt 9:6", "b": "Luke 5:24", "label": "Arise take up thy ... and go into thine house"},
+    {"a": "Mark 2:11", "b": "Luke 5:24", "label": "Arise and take up thy ... and go ... into thine house"},
+
+    {"a": "Matt 9:7", "b": "Mark 2:12", "label": "he arose ... took up the bed"},
+    {"a": "Matt 9:7", "b": "Luke 5:25", "label": "he arose and departed to his house"},
+    {"a": "Mark 2:12", "b": "Luke 5:25", "label": "he ... took up the bed ... departed"},
+
+    {"a": "Matt 9:8", "b": "Mark 2:12", "label": "glorified God"},
+    {"a": "Matt 9:8", "b": "Luke 5:26", "label": "glorified God"},
+    {"a": "Mark 2:12", "b": "Luke 5:26", "label": "amazed and ... glorified God"}
+  ]
+}

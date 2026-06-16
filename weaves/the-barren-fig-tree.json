@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The barren fig tree",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A twofold synoptic retelling of the cursing of the fig tree during Passion week, given by Matthew and Mark. The shared core runs detail for detail: the Lord hungering in the morning, seeing a leafy fig tree by the way, finding nothing but leaves, speaking the curse that no fruit grow on it for ever, and then the lesson on faith that moves mountains and on believing prayer. Matthew narrates the withering at once and the disciples marvelling, while Mark spreads the account across two days, with Peter calling the tree to remembrance and adding the word on forgiving when ye stand praying. This complementary vantage of timing is left as a matter for further study. Each evangelist keeps his own unhurried frame around the same words of the Lord.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 21:18", "b": "Mark 11:12", "label": "in the morning ... he hungered ... he was hungry"},
+    {"a": "Matt 21:19", "b": "Mark 11:13", "label": "saw a fig tree in the way ... a fig tree afar off having leaves"},
+    {"a": "Matt 21:19", "b": "Mark 11:13", "label": "found nothing thereon but leaves only ... he found nothing but leaves"},
+    {"a": "Matt 21:19", "b": "Mark 11:14", "label": "Let no fruit grow on thee henceforward for ever ... No man eat fruit of thee hereafter for ever"},
+    {"a": "Matt 21:20", "b": "Mark 11:20", "label": "the fig tree withered away ... the fig tree dried up from the roots"},
+    {"a": "Matt 21:20", "b": "Mark 11:21", "label": "the disciples saw it they marvelled ... Peter calling to remembrance ... is withered away"},
+    {"a": "Matt 21:21", "b": "Mark 11:22", "label": "If ye have faith and doubt not ... Have faith in God"},
+    {"a": "Matt 21:21", "b": "Mark 11:23", "label": "say unto this mountain Be thou removed and be thou cast into the sea"},
+    {"a": "Matt 21:22", "b": "Mark 11:24", "label": "ask in prayer believing ye shall receive ... believe that ye receive them and ye shall have them"}
+  ]
+}

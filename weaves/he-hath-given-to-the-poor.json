@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "He hath given to the poor",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul, urging the Corinthians toward cheerful and bountiful giving, cites the psalm of the righteous man who fears the LORD. Psalm 112:9 describes that man's open-handed generosity: he hath dispersed, he hath given to the poor, and his righteousness endureth for ever. In 2 Corinthians 9:9 Paul frames the same words with \"As it is written\" and applies them to the believer whose liberality God supplies and multiplies. The shared core is the giver who scatters to the poor and whose righteousness abides. Paul reads \"dispersed abroad\" and \"remaineth for ever\" where the psalm reads \"dispersed\" and \"endureth for ever\"; these complementary renderings carry the one settled sense that the righteous giver's righteousness stands fast before God.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 112:9", "b": "2Cor 9:9", "label": "he hath given to the poor: his righteousness"}
+  ]
+}

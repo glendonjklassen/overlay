@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Thou wilt not leave my soul in hell",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "David's words in Psalm 16 look beyond himself to the resurrection of the Messiah, whose soul would not be left in hell and whose flesh would not see corruption. Peter cites the psalm in full at Pentecost (Acts 2:25-28), then applies it: David being dead and buried, he spake as a prophet of the resurrection of Christ, whose soul was not left in hell, neither his flesh did see corruption (Acts 2:31). Paul presses the same hook at Antioch, citing the corruption clause and reasoning that David saw corruption while the Risen One did not (Acts 13:35). The shared core is the right hand, the rejoicing heart, the flesh resting in hope, and above all the soul not left in hell and the Holy One not seeing corruption. The Acts quotations follow the Greek wording, so heart/tongue and path/ways of life read as complementary renderings rather than departures, left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 16:8", "b": "Acts 2:25", "label": "at my right hand ... I shall not be moved"},
+    {"a": "Ps 16:9", "b": "Acts 2:26", "label": "my heart ... glad ... my flesh ... shall rest in hope"},
+    {"a": "Ps 16:10", "b": "Acts 2:27", "label": "thou wilt not leave my soul in hell neither wilt thou suffer thine Holy One to see corruption"},
+    {"a": "Ps 16:10", "b": "Acts 2:31", "label": "his soul was not left in hell neither his flesh did see corruption"},
+    {"a": "Ps 16:10", "b": "Acts 13:35", "label": "thou ... suffer thine Holy One to see corruption"},
+    {"a": "Ps 16:11", "b": "Acts 2:28", "label": "the path of life ... fulness of joy"}
+  ]
+}

@@ -1,16 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "Naaman in the Jordan",
-  "kind": "type",
-  "tokenization": "kjv1769-tok2",
-  "notes": "Elisha sends the leper to wash in Jordan seven times; he goes down, and his flesh comes again like unto the flesh of a little child, and he is clean. The Son of God goes down into the same Jordan and comes up straightway out of the water, the heavens opening upon him. The washing that cleanses the leper answers to the baptism in Jordan — type and fulfilment. (Unions with 'The baptism of Jesus' to draw in Luke's account.)",
-  "created": "2026-06-14T00:00:00Z",
-  "approved": false,
-  "tension": "This is a typological reading, not a parallel the text states; the tie between Naaman's cleansing and Christ's baptism is interpretive.",
-  "links": [
-    {"a": "2Kgs 5:10", "b": "Matt 3:13", "label": "Jordan"},
-    {"a": "2Kgs 5:10", "b": "Mark 1:9", "label": "Jordan"},
-    {"a": "2Kgs 5:14", "b": "Matt 3:16", "label": "out of the water"},
-    {"a": "2Kgs 5:14", "b": "Mark 1:10", "label": "out of the water"}
-  ]
-}
+{"approved":true,"created":"2026-06-14T00:00:00Z","format":"overlay-weave-v2","kind":"type","links":[{"a":"2Kgs 5:10","approved":true,"b":"Matt 3:13","label":"Jordan"},{"a":"2Kgs 5:10","approved":true,"b":"Mark 1:9","label":"Jordan"},{"a":"2Kgs 5:14","approved":true,"b":"Matt 3:16","label":"out of the water"},{"a":"2Kgs 5:14","approved":true,"b":"Mark 1:10","label":"out of the water"}],"name":"Naaman in the Jordan","notes":"Elisha sends the leper to wash in Jordan seven times; he goes down, and his flesh comes again like unto the flesh of a little child, and he is clean. The Son of God goes down into the same Jordan and comes up straightway out of the water, the heavens opening upon him. The washing that cleanses the leper answers to the baptism in Jordan — type and fulfilment. (Unions with 'The baptism of Jesus' to draw in Luke's account.)","tokenization":"kjv1769-tok2"}

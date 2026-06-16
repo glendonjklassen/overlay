@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "All flesh is as grass",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Peter quotes Isaiah's word of comfort to set the frailty of all human flesh against the abiding word of God. Isaiah's prophet hears the charge to cry that all flesh is grass whose goodliness fades like the flower of the field, while the word of our God stands for ever; Peter applies the same contrast to the new birth by the living word. Isaiah splits the perishing of flesh across two verses (the flower as the field's bloom, then the grass withering and flower fading), so both Isaiah verses are linked to the single 1Pet 1:24 where Peter combines them. Isaiah names the spirit of the LORD blowing upon the grass and the people as grass, detail Peter does not carry over, so it reads in place without a link. Peter closes by identifying that abiding word as the gospel preached unto his readers, a vantage proper to his epistle.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 40:6", "b": "1Pet 1:24", "label": "All flesh is ... grass"},
+    {"a": "Isa 40:6", "b": "1Pet 1:24", "label": "as the flower of"},
+    {"a": "Isa 40:7", "b": "1Pet 1:24", "label": "The grass withereth the flower"},
+    {"a": "Isa 40:8", "b": "1Pet 1:25", "label": "the word of ... for ever"}
+  ]
+}

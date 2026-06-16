@@ -1,0 +1,64 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The passion foretold",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Three times along the road to Jerusalem the Lord Jesus foretold His own death and resurrection, and each of the synoptic Gospels records all three foretellings. This weave keeps the three predictions as three clusters, linking the matching details across Matthew, Mark, and Luke pair by pair. The shared core grows fuller each time: the first names the suffering, rejection by the elders and chief priests and scribes, the killing, and the rising the third day; the second adds the betrayal into the hands of men and the disciples' sorrow; the third, on the final ascent to Jerusalem, unfolds the delivering to the Gentiles, the mocking, scourging, spitting, and crucifixion. It is one foretelling given three times, told fuller at each telling, with the three Gospels offering complementary vantages on the same words; where one account keeps a detail another passes over, each still reads whole in its place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 16:21", "b": "Mark 8:31", "label": "suffer many things"},
+    {"a": "Matt 16:21", "b": "Luke 9:22", "label": "suffer many things"},
+    {"a": "Mark 8:31", "b": "Luke 9:22", "label": "suffer many things"},
+
+    {"a": "Matt 16:21", "b": "Mark 8:31", "label": "the elders and ... chief priests and scribes"},
+    {"a": "Matt 16:21", "b": "Luke 9:22", "label": "the elders and chief priests and scribes"},
+    {"a": "Mark 8:31", "b": "Luke 9:22", "label": "rejected of the elders and ... chief priests and scribes"},
+
+    {"a": "Matt 16:21", "b": "Mark 8:31", "label": "be killed"},
+    {"a": "Matt 16:21", "b": "Luke 9:22", "label": "be killed ... be slain"},
+    {"a": "Mark 8:31", "b": "Luke 9:22", "label": "be killed ... be slain"},
+
+    {"a": "Matt 16:21", "b": "Mark 8:31", "label": "the third day ... rise again"},
+    {"a": "Matt 16:21", "b": "Luke 9:22", "label": "be raised ... the third day"},
+    {"a": "Mark 8:31", "b": "Luke 9:22", "label": "the third day rise again ... be raised the third day"},
+
+    {"a": "Matt 17:22", "b": "Mark 9:31", "label": "The Son of man ... delivered into the hands of men"},
+    {"a": "Matt 17:22", "b": "Luke 9:44", "label": "The Son of man ... betrayed into the hands of men"},
+    {"a": "Mark 9:31", "b": "Luke 9:44", "label": "The Son of man ... delivered into the hands of men"},
+
+    {"a": "Matt 17:23", "b": "Mark 9:31", "label": "they shall kill him"},
+
+    {"a": "Matt 17:23", "b": "Mark 9:31", "label": "the third day he shall ... rise"},
+
+    {"a": "Matt 20:18", "b": "Mark 10:33", "label": "we go up to Jerusalem"},
+    {"a": "Matt 20:18", "b": "Luke 18:31", "label": "we go up to Jerusalem"},
+    {"a": "Mark 10:33", "b": "Luke 18:31", "label": "we go up to Jerusalem"},
+
+    {"a": "Matt 20:18", "b": "Mark 10:33", "label": "the chief priests and ... the scribes"},
+
+    {"a": "Matt 20:18", "b": "Mark 10:33", "label": "they shall condemn him to death"},
+
+    {"a": "Matt 20:19", "b": "Mark 10:33", "label": "deliver him to the Gentiles"},
+    {"a": "Matt 20:19", "b": "Luke 18:32", "label": "delivered unto the Gentiles"},
+    {"a": "Mark 10:33", "b": "Luke 18:32", "label": "deliver him to the Gentiles"},
+
+    {"a": "Matt 20:19", "b": "Mark 10:34", "label": "to mock ... shall mock him"},
+    {"a": "Matt 20:19", "b": "Luke 18:32", "label": "to mock ... shall be mocked"},
+    {"a": "Mark 10:34", "b": "Luke 18:32", "label": "shall mock him ... shall be mocked"},
+
+    {"a": "Matt 20:19", "b": "Mark 10:34", "label": "to scourge ... shall scourge him"},
+    {"a": "Matt 20:19", "b": "Luke 18:33", "label": "to scourge ... shall scourge him"},
+    {"a": "Mark 10:34", "b": "Luke 18:33", "label": "shall scourge him"},
+
+    {"a": "Mark 10:34", "b": "Luke 18:32", "label": "shall spit upon him ... spitted on"},
+
+    {"a": "Matt 20:19", "b": "Mark 10:34", "label": "to crucify him ... shall kill him"},
+    {"a": "Matt 20:19", "b": "Luke 18:33", "label": "to crucify him ... put him to death"},
+    {"a": "Mark 10:34", "b": "Luke 18:33", "label": "shall kill him ... put him to death"},
+
+    {"a": "Matt 20:19", "b": "Mark 10:34", "label": "the third day he shall rise again"},
+    {"a": "Matt 20:19", "b": "Luke 18:33", "label": "the third day he shall rise again"},
+    {"a": "Mark 10:34", "b": "Luke 18:33", "label": "the third day he shall rise again"}
+  ]
+}

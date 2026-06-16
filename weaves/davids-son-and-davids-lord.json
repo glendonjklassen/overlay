@@ -1,0 +1,33 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "David's son and David's Lord",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In the temple Jesus turns a question on the Pharisees and scribes: if all confess that the Christ is the Son of David, how does David himself, speaking by the Spirit, call him Lord? He grounds the puzzle in Psalm 110:1, where David hears the LORD say unto his Lord, \"Sit thou at my right hand, until I make thine enemies thy footstool.\" The three synoptists carry the same exchange: the opening question about the Christ being David's son, the appeal to David's inspired words, the citation of the Psalm, and the closing riddle, \"If David then call him Lord, how is he his son?\" Matthew frames it as Jesus questioning the gathered Pharisees and notes that none durst ask him any more questions, Mark says David spake \"by the Holy Ghost\" and that the common people heard him gladly, and Luke names the source as \"the book of Psalms\" and spreads the quotation across two verses. The shared core is the quotation of Psalm 110:1 and the unanswerable question it poses about the Christ being at once David's son and David's Lord; each account's added detail complements rather than competes with the others.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 110:1", "b": "Matt 22:44", "label": "The LORD said unto my Lord ... until I make thine enemies thy footstool"},
+    {"a": "Ps 110:1", "b": "Mark 12:36", "label": "The LORD said ... to my Lord ... until I make thine enemies thy footstool"},
+    {"a": "Ps 110:1", "b": "Luke 20:42", "label": "The LORD said unto my Lord, Sit thou ... at my right hand"},
+    {"a": "Ps 110:1", "b": "Luke 20:43", "label": "until I make thine enemies thy footstool"},
+
+    {"a": "Matt 22:44", "b": "Mark 12:36", "label": "The LORD said ... my Lord, Sit thou on my right hand, till I make thine enemies thy footstool"},
+    {"a": "Matt 22:44", "b": "Luke 20:42", "label": "The LORD said unto my Lord, Sit thou on my right hand"},
+    {"a": "Matt 22:44", "b": "Luke 20:43", "label": "till I make thine enemies thy footstool"},
+    {"a": "Mark 12:36", "b": "Luke 20:42", "label": "The LORD said ... my Lord, Sit thou on my right hand"},
+    {"a": "Mark 12:36", "b": "Luke 20:43", "label": "till I make thine enemies thy footstool"},
+
+    {"a": "Matt 22:42", "b": "Mark 12:35", "label": "Christ ... the Son of David"},
+    {"a": "Matt 22:42", "b": "Luke 20:41", "label": "Christ ... son of David"},
+    {"a": "Mark 12:35", "b": "Luke 20:41", "label": "Christ is ... David's son"},
+
+    {"a": "Matt 22:43", "b": "Mark 12:36", "label": "David ... call him Lord"},
+    {"a": "Matt 22:43", "b": "Luke 20:42", "label": "David ... call him Lord"},
+    {"a": "Mark 12:36", "b": "Luke 20:42", "label": "David himself ... my Lord"},
+
+    {"a": "Matt 22:45", "b": "Mark 12:37", "label": "David ... call him Lord, how is he ... his son"},
+    {"a": "Matt 22:45", "b": "Luke 20:44", "label": "If David then call him Lord, how is he ... his son"},
+    {"a": "Mark 12:37", "b": "Luke 20:44", "label": "David ... calleth him Lord ... how is he ... his son"}
+  ]
+}

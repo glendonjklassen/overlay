@@ -1,0 +1,34 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "New wine in old bottles",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The threefold synoptic account of the question about fasting, where the disciples of John and the Pharisees ask why they fast often but Jesus' disciples do not. The shared core is His answer in two movements: the children of the bridechamber cannot fast while the bridegroom is with them, yet the days will come when he is taken away and then they shall fast; and the twin parables of new cloth on an old garment and new wine in old bottles. Matthew has the children of the bridechamber 'mourn' where Mark and Luke have 'fast,' and where Matthew keeps the taking-away and the new bottles each within one verse, Mark and Luke unfold them across two, so the single verse is linked to both. Luke alone preserves the parable's closing word, 'No man also having drunk old wine straightway desireth new: for he saith, The old is better' (5:39), which the others do not record and which therefore reads unlinked. These are complementary vantages of one teaching, each Evangelist keeping his own faithful detail.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 9:14", "b": "Mark 2:18", "label": "Why do ... thy disciples fast not"},
+    {"a": "Matt 9:14", "b": "Luke 5:33", "label": "Why do the disciples of John fast"},
+    {"a": "Mark 2:18", "b": "Luke 5:33", "label": "the disciples of John ... fast"},
+
+    {"a": "Matt 9:15", "b": "Mark 2:19", "label": "Can the children of the bridechamber ... as long as the bridegroom is with them"},
+    {"a": "Matt 9:15", "b": "Luke 5:34", "label": "the children of the bridechamber ... while the bridegroom is with them"},
+    {"a": "Mark 2:19", "b": "Luke 5:34", "label": "Can ... the children of the bridechamber ... while the bridegroom is with them"},
+
+    {"a": "Matt 9:15", "b": "Mark 2:20", "label": "the days will come when the bridegroom shall be taken ... and then shall they fast"},
+    {"a": "Matt 9:15", "b": "Luke 5:35", "label": "the days will come when the bridegroom shall be taken ... and then shall they fast"},
+    {"a": "Mark 2:20", "b": "Luke 5:35", "label": "the days will come when the bridegroom shall be taken away from them and then shall they fast in those days"},
+
+    {"a": "Matt 9:16", "b": "Mark 2:21", "label": "a piece of new cloth ... an old garment ... the rent is made worse"},
+    {"a": "Matt 9:16", "b": "Luke 5:36", "label": "No man putteth a piece of ... new ... upon an old"},
+    {"a": "Mark 2:21", "b": "Luke 5:36", "label": "a piece of new cloth on an old"},
+
+    {"a": "Matt 9:17", "b": "Mark 2:22", "label": "new wine into old bottles ... the bottles ... and the wine ... out"},
+    {"a": "Matt 9:17", "b": "Luke 5:37", "label": "new wine into old bottles else the bottles ... and the bottles perish"},
+    {"a": "Mark 2:22", "b": "Luke 5:37", "label": "new wine into old bottles else the new wine ... burst the bottles and ... spilled"},
+
+    {"a": "Matt 9:17", "b": "Mark 2:22", "label": "new wine into new bottles"},
+    {"a": "Matt 9:17", "b": "Luke 5:38", "label": "new wine ... into new bottles and both are preserved"},
+    {"a": "Mark 2:22", "b": "Luke 5:38", "label": "new wine must be put into new bottles"}
+  ]
+}

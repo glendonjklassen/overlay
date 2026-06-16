@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "I will never leave thee",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Hebrews 13:5-6 grounds Christian contentment and courage by binding together two Old Testament promises. The first quotation, \"I will never leave thee, nor forsake thee,\" draws on the LORD's assurance of His abiding presence given in the Law: Moses' charge to Israel in Deuteronomy 31:6 and the LORD's word to Joshua in Joshua 1:5, both worded \"I will not fail thee, nor forsake thee.\" The second, \"The Lord is my helper, and I will not fear what man shall do unto me,\" echoes the worshipper's confidence in Psalm 118:6. The shared core is the believer's freedom from fear because God Himself stands with His own. Deuteronomy speaks to the whole congregation and Joshua to the new leader, while Hebrews applies the same promise to every saint; the slight differences in wording between the promise as first spoken and as quoted in Hebrews are complementary and left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 31:6", "b": "Heb 13:5", "label": "forsake thee"},
+    {"a": "Josh 1:5", "b": "Heb 13:5", "label": "forsake thee"},
+    {"a": "Ps 118:6", "b": "Heb 13:6", "label": "The LORD ... I will not fear what ... man ... do unto me"}
+  ]
+}

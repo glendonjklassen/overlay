@@ -1,0 +1,24 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The reign of Asa",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles each recount the reign of Asa king of Judah. The Kings account (1Kgs 15:9-24) gives a compact summary; Chronicles tells the same reign far more fully across several chapters, and the links here join only the beats genuinely shared by both: Asa doing right as David his father, the removal of Maachah and her idol at the brook Kidron, the high places left standing while his heart stayed perfect, the dedicated things brought into the house of the LORD, the Baasha war with the league bought from Ben-hadad of Syria and the building of Geba and Mizpah, the disease in his feet, and his death and burial in the city of David. Where Chronicles keeps unique matter -- the prophet Azariah and the great reform assembly, Hanani the seer's rebuke, and Asa's anger and final faithlessness -- those verses are left unlinked and read in place. The two books offer complementary vantages: Kings narrates the political summary, while Chronicles adds the prophetic and devotional dimension of the same events. Where details such as the regnal years or the count of Asa's wars are stated differently, this is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "1Kgs 15:11", "b": "2Chr 14:2", "label": "did that which was right in the eyes of the LORD as did David his father"},
+    {"a": "1Kgs 15:13", "b": "2Chr 15:16", "label": "Maachah his mother ... removed from being queen ... made an idol in a grove ... burnt it by the brook Kidron"},
+    {"a": "1Kgs 15:14", "b": "2Chr 15:17", "label": "the high places were not removed ... Asa's heart was perfect"},
+    {"a": "1Kgs 15:15", "b": "2Chr 15:18", "label": "he brought in the things which his father had dedicated ... silver and gold and vessels"},
+    {"a": "1Kgs 15:17", "b": "2Chr 16:1", "label": "Baasha king of Israel ... built Ramah that he might not suffer any to go out or come in to Asa"},
+    {"a": "1Kgs 15:18", "b": "2Chr 16:2", "label": "Asa took ... the silver and the gold ... of the house of the LORD ... sent ... to Ben-hadad ... of Syria that dwelt at Damascus"},
+    {"a": "1Kgs 15:19", "b": "2Chr 16:3", "label": "There is a league between me and thee ... break thy league with Baasha ... that he may depart from me"},
+    {"a": "1Kgs 15:20", "b": "2Chr 16:4", "label": "Ben-hadad hearkened unto king Asa and sent the captains ... and smote Ijon and Dan ... the land of Naphtali"},
+    {"a": "1Kgs 15:21", "b": "2Chr 16:5", "label": "when Baasha heard ... he left off building of Ramah"},
+    {"a": "1Kgs 15:22", "b": "2Chr 16:6", "label": "the stones of Ramah and the timber thereof ... Asa built ... Geba ... and Mizpah"},
+    {"a": "1Kgs 15:23", "b": "2Chr 16:12", "label": "diseased in his feet"},
+    {"a": "1Kgs 15:24", "b": "2Chr 16:13", "label": "Asa slept with his fathers"},
+    {"a": "1Kgs 15:24", "b": "2Chr 16:14", "label": "buried ... in the city of David"}
+  ]
+}

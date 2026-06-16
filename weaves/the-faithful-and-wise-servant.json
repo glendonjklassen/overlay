@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The faithful and wise servant",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A twofold synoptic parable from the Olivet teaching, given in two complementary settings: Matthew sets it within the discourse on the mount of Olives, Luke within the journey teaching prompted by Peter's question. The shared core is two figures: the watching householder who would have guarded his house had he known the thief's hour, and the steward set over the household, faithful and wise if found feeding them in due season, but evil if he presumes 'My lord delayeth his coming' and turns to smiting and drunkenness. Both close with the lord coming in an unlooked-for hour and cutting the unfaithful servant asunder, appointing his portion with the hypocrites (Matthew) or unbelievers (Luke). Matthew speaks of 'meat,' 'his goods,' and adds the weeping and gnashing of teeth; Luke speaks of 'their portion of meat,' 'all that he hath,' the menservants and maidens, and frames the saying as answering Peter's question. These differing emphases are complementary vantages on one parable.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 24:43", "b": "Luke 12:39", "label": "if the goodman of the house had known ... the thief would come, he would have watched"},
+    {"a": "Matt 24:44", "b": "Luke 12:40", "label": "be ye also ready: for in such an hour as ye think not the Son of man cometh"},
+    {"a": "Matt 24:45", "b": "Luke 12:42", "label": "Who then is a faithful and wise servant ... whom his lord hath made ruler over his household, to give them meat in due season"},
+    {"a": "Matt 24:46", "b": "Luke 12:43", "label": "Blessed is that servant, whom his lord when he cometh shall find so doing"},
+    {"a": "Matt 24:47", "b": "Luke 12:44", "label": "he shall make him ruler over all"},
+    {"a": "Matt 24:48", "b": "Luke 12:45", "label": "if that evil servant shall say in his heart, My lord delayeth his coming"},
+    {"a": "Matt 24:49", "b": "Luke 12:45", "label": "shall begin to smite ... and to eat and drink with the drunken"},
+    {"a": "Matt 24:50", "b": "Luke 12:46", "label": "shall come in a day when he looketh not for him, and in an hour that he is not aware of"},
+    {"a": "Matt 24:51", "b": "Luke 12:46", "label": "cut him asunder, and appoint him his portion with the hypocrites"}
+  ]
+}

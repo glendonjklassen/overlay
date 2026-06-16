@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The dog and the sow",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Peter cites the proverb of Solomon against the apostate who, having known the way of righteousness, turns back to the pollutions of the world. Proverbs gives the single image of the dog returning to its vomit as the picture of the fool repeating his folly; Peter quotes this as a true proverb and applies it to false teachers who escape and are again entangled. The shared core is the dog turned to its own vomit again. Peter adds a second, complementary proverb, the washed sow returning to her wallowing in the mire, which Proverbs does not record at this place; together the two images double the witness that the unchanged nature reverts to its filth. The pairing of the two proverbs as a single saying is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Prov 26:11", "b": "2Pet 2:22", "label": "dog ... vomit"}
+  ]
+}

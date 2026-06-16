@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The lost sheep",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The parable of the one sheep gone astray, given by the Lord in two settings: in Matthew to the disciples, and in Luke to the murmuring Pharisees and scribes. Both share the same core figure: a man with an hundred sheep who, losing one, leaves the ninety and nine to seek that which is gone astray, finds it, and rejoices more over that one than over the ninety and nine which went not astray. The two accounts close on complementary applications: Matthew lifts the eye to the Father's will that not one of these little ones should perish, while Luke turns to the joy in heaven over one sinner that repenteth. Luke alone keeps the homecoming detail of laying the sheep on his shoulders and calling friends and neighbours to rejoice, an expansion that suits its setting among those who scorned the Lord's receiving of sinners. The differing settings and applications stand as complementary vantages on one parable, each preserved by inspiration for its own purpose.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 18:12", "b": "Luke 15:4", "label": "an hundred sheep"},
+    {"a": "Matt 18:12", "b": "Luke 15:4", "label": "one of them"},
+    {"a": "Matt 18:12", "b": "Luke 15:4", "label": "doth he not leave the ninety and nine ... that which is gone astray"},
+    {"a": "Matt 18:13", "b": "Luke 15:4", "label": "he find it"},
+    {"a": "Matt 18:13", "b": "Luke 15:5", "label": "he rejoiceth"},
+    {"a": "Matt 18:13", "b": "Luke 15:7", "label": "more of that sheep than of the ninety and nine which went not astray"},
+    {"a": "Matt 18:14", "b": "Luke 15:7", "label": "I say unto you"}
+  ]
+}

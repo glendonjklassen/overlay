@@ -42,8 +42,8 @@ library
     , directory
     , filepath
     , lens
+    , memory
     , monomer
-    , ram
     , tagsoup
     , text
     , time

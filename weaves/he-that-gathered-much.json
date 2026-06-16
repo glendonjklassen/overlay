@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "He that gathered much had nothing over",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "When Israel gathered the manna, each one who measured it with an omer found that he that gathered much had nothing over and he that gathered little had no lack, for every man received according to his eating. Paul cites this very saying in his appeal to the Corinthians, applying the manna's equality to the grace of giving so that the abundance of some may supply the want of others. The shared core is the identical proverb of provision balanced to need, with Paul prefacing it 'As it is written.' Exodus keeps the narrative setting of the wilderness gathering and the omer measure; 2 Corinthians lifts the words into apostolic exhortation. The slight difference between 'he that gathered' and 'he that had gathered' is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Exod 16:18", "b": "2Cor 8:15", "label": "had nothing over ... had no lack"}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "His mother and his brethren",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic account of the day Jesus' mother and brethren came seeking him while he taught, and his declaration of his true kindred. All three Evangelists share the same core: the family arriving and standing without, the message relayed to Jesus, and his answer that those who do the will of God are his mother and brethren. Matthew and Mark frame the saying as a question (\"Who is my mother?\") answered by his gesture toward the disciples, where Matthew says \"the will of my Father which is in heaven\" and Mark \"the will of God.\" Luke gives the most compressed vantage, joining the reply directly into a single sentence and noting the unique detail that they \"could not come at him for the press\"; he also renders the will of God as those \"which hear the word of God, and do it.\" These are complementary vantages on one scene, each preserving its own emphasis.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 12:46", "b": "Mark 3:31", "label": "his mother and his brethren ... standing without"},
+    {"a": "Matt 12:46", "b": "Luke 8:19", "label": "his mother and his brethren"},
+    {"a": "Mark 3:31", "b": "Luke 8:19", "label": "his brethren and his mother"},
+
+    {"a": "Matt 12:47", "b": "Mark 3:32", "label": "Behold thy mother and thy brethren ... without"},
+    {"a": "Matt 12:47", "b": "Luke 8:20", "label": "thy mother and thy brethren stand without desiring"},
+    {"a": "Mark 3:32", "b": "Luke 8:20", "label": "thy mother and thy brethren ... without"},
+
+    {"a": "Matt 12:48", "b": "Mark 3:33", "label": "Who is my mother ... my brethren"},
+
+    {"a": "Matt 12:49", "b": "Mark 3:34", "label": "Behold my mother and my brethren"},
+    {"a": "Matt 12:49", "b": "Luke 8:21", "label": "my mother and my brethren"},
+    {"a": "Mark 3:34", "b": "Luke 8:21", "label": "my mother and my brethren"},
+
+    {"a": "Matt 12:50", "b": "Mark 3:35", "label": "shall do the will of God ... my brother and ... sister and mother"},
+    {"a": "Matt 12:50", "b": "Luke 8:21", "label": "do the will of my Father"},
+    {"a": "Mark 3:35", "b": "Luke 8:21", "label": "do the will of God"}
+  ]
+}

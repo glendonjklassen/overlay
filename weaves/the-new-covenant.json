@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The new covenant",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jeremiah prophesies a new covenant the LORD will make with the house of Israel and the house of Judah, unlike the covenant their fathers brake at the Exodus: God will write his law in their hearts, all shall know him, and he will remember their sin no more. Hebrews 8 quotes the oracle in full to show that the better covenant Christ mediates was promised of old, and Hebrews 10 cites it again in part, drawing out the heart-written law and the pardon of sins to seal its argument that one offering perfects the sanctified. Where Hebrews 8 splits Jeremiah's closing verse into a clause on universal knowledge of the Lord (8:11) and a clause on forgiveness (8:12), the single verse Jer 31:34 links to both. Hebrews 10:16 condenses the heart-and-mind clause of Jer 31:33, and Hebrews 10:17 repeats the remembrance-of-sins-no-more of Jer 31:34. The apostle follows the Septuagint reading at points (\"I regarded them not,\" \"merciful to their unrighteousness\"), a complementary vantage on the same prophecy left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Jer 31:31", "b": "Heb 8:8", "label": "Behold the days come saith the Lord ... make a new covenant with the house of Israel and with the house of Judah"},
+    {"a": "Jer 31:32", "b": "Heb 8:9", "label": "Not according to the covenant that I made with their fathers in the day ... I took them by the hand ... out of the land of Egypt"},
+    {"a": "Jer 31:33", "b": "Heb 8:10", "label": "this ... is the covenant that I will make with the house of Israel ... after those days ... write ... in their hearts"},
+    {"a": "Jer 31:33", "b": "Heb 10:16", "label": "the covenant that I will make ... after those days ... I will put my laws into their hearts"},
+    {"a": "Heb 8:10", "b": "Heb 10:16", "label": "the covenant that I will make ... after those days saith the Lord I will put my laws into their"},
+    {"a": "Jer 31:34", "b": "Heb 8:11", "label": "teach ... every man his neighbour and every man his brother saying Know the Lord ... from the least ... to the greatest"},
+    {"a": "Jer 31:34", "b": "Heb 8:12", "label": "their ... iniquit ... I will remember ... no more"},
+    {"a": "Jer 31:34", "b": "Heb 10:17", "label": "their ... iniquities ... remember ... no more"},
+    {"a": "Heb 8:12", "b": "Heb 10:17", "label": "their sins and ... iniquities will I remember no more"}
+  ]
+}

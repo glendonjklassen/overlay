@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The tabernacle of David",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "At the Jerusalem council James appeals to Amos 9:11-12 to show that the inclusion of the Gentiles was foretold by the prophets. Amos foresees the LORD raising up the fallen tabernacle of David and rebuilding its ruins, and James cites this as the divine word being fulfilled in his day. The shared core is the rebuilding of David's fallen tabernacle and the gathering of those called by the LORD's name. Where Amos has the people possessing 'the remnant of Edom' and 'all the heathen,' Acts reads 'the residue of men' and 'all the Gentiles' seeking the Lord; this complementary rendering, drawn through the Septuagint that James quotes, is left as a matter for further study. Both passages close with the same seal: it is the Lord who doeth this.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Amos 9:11", "b": "Acts 15:16", "label": "the tabernacle of David which is fallen ... I will build"},
+    {"a": "Amos 9:12", "b": "Acts 15:17", "label": "all the heathen which are called by my name ... all the Gentiles upon whom my name is called"},
+    {"a": "Amos 9:12", "b": "Acts 15:17", "label": "saith the LORD that doeth this ... saith the Lord who doeth all these things"}
+  ]
+}

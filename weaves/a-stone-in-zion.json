@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "A stone in Zion",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Two Isaiah stone-prophecies are joined and applied to Christ in the New Testament. Isaiah 28:16 lays in Zion a precious corner stone, a sure foundation, with the promise that he that believeth shall not make haste; Isaiah 8:14 sets the same stone as a stone of stumbling and a rock of offence to those who do not trust it. Paul welds both into one citation in Romans 9:33, and Peter cites them in turn (1 Peter 2:6 for the corner stone, 1 Peter 2:8 for the stone of stumbling). The promise to the believer appears in three complementary vantages of the same Hebrew assurance, rendered shall not make haste in Isaiah, shall not be ashamed in Romans, and shall not be confounded in Peter. This is distinct from the Psalm 118 rejected-stone weave; here the shared core is the corner stone laid in Zion that is at once foundation to faith and offence to unbelief.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 28:16", "b": "Rom 9:33", "label": "I lay in Zion ... believeth ... shall not make haste / shall not be ashamed"},
+    {"a": "Isa 28:16", "b": "1Pet 2:6", "label": "Behold I lay in Zion ... a precious corner stone ... believeth ... shall not make haste / shall not be confounded"},
+    {"a": "Isa 8:14", "b": "Rom 9:33", "label": "a stone of stumbling and ... a rock of offence"},
+    {"a": "Isa 8:14", "b": "1Pet 2:8", "label": "a stone of stumbling and a rock of offence"}
+  ]
+}

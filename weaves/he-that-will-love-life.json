@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "He that will love life",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The apostle Peter quotes Psalm 34 at length to ground his exhortation that believers render blessing for evil. The shared core is David's counsel to the one who would love life and see good days: guard the tongue, turn from evil to do good, and pursue peace, for the eyes of the Lord watch over the righteous while his face is set against the wicked. Peter recasts the psalm's opening question ('What man is he that desireth life') as a direct statement ('he that will love life'), and folds David's two closing verses about the Lord's eyes and his face into the single span of 1 Peter 3:12, so that verse links to both Psalm 34:15 and 34:16. The wording shifts slightly between the vantages (pursue/ensue, cry/prayers, depart/eschew) as the apostle draws the psalm into the church's setting, complementary renderings of one counsel. Where the precise relation of David's 'cry' to Peter's 'prayers' invites further reflection, it is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 34:12", "b": "1Pet 3:10", "label": "love life ... see good"},
+    {"a": "Ps 34:13", "b": "1Pet 3:10", "label": "tongue from evil ... lips ... guile"},
+    {"a": "Ps 34:14", "b": "1Pet 3:11", "label": "do good seek peace"},
+    {"a": "Ps 34:15", "b": "1Pet 3:12", "label": "the eyes of the LORD are ... the righteous and his ears are open unto their"},
+    {"a": "Ps 34:16", "b": "1Pet 3:12", "label": "the face of the LORD is against them that do evil"}
+  ]
+}

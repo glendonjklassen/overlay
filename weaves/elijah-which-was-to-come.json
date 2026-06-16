@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Elijah which was to come",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Malachi closes the Old Testament with the promise that the LORD will send Elijah the prophet before the great and dreadful day of the LORD, and that he shall turn the heart of the fathers to the children. The New Testament applies this prophecy to John the Baptist: the angel Gabriel foretells that John shall go before the Lord in the spirit and power of Elias to turn the hearts of the fathers to the children, and Jesus declares plainly that John is Elias which was for to come. In the synoptic discussion after the transfiguration, Matthew and Mark together record both the expectation that Elias must first come and restore all things and the fulfillment that Elias is come already, suffering at men's hands as it was written. The shared core is the coming of Elias and the turning of the fathers' hearts to the children. Each account keeps its own vantage: Malachi gives the promise, Luke its angelic announcement before John's birth, and Matthew and Mark the Lord's own twofold word that Elias both shall come and has already come.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Mal 4:5", "b": "Matt 11:14", "label": "Elijah the prophet ... which was for to come"},
+    {"a": "Mal 4:5", "b": "Matt 17:11", "label": "Elias ... shall first come"},
+    {"a": "Mal 4:5", "b": "Mark 9:11", "label": "Elias must first come"},
+    {"a": "Mal 4:5", "b": "Mark 9:12", "label": "Elias verily cometh first"},
+    {"a": "Mal 4:5", "b": "Luke 1:17", "label": "in the spirit and power of Elias"},
+    {"a": "Mal 4:6", "b": "Luke 1:17", "label": "turn the heart of the fathers to the children"},
+    {"a": "Matt 17:11", "b": "Mark 9:12", "label": "Elias ... shall first come and restore all things"},
+    {"a": "Matt 17:12", "b": "Mark 9:13", "label": "Elias is come already ... done unto him whatsoever they listed"},
+    {"a": "Matt 17:12", "b": "Mark 9:12", "label": "the Son of man ... suffer"}
+  ]
+}

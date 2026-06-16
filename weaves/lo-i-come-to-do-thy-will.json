@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Lo, I come to do thy will",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Hebrews 10:5-7 cites Psalm 40:6-8, putting David's words on the lips of Christ as he comes into the world to offer himself. The shared core is the rejection of mere sacrifice and offering in favour of a will gladly done: 'Lo, I come ... to do thy will, O God.' Psalm 40:7 and Hebrews 10:7 share the line word for word, while the framing clauses about sacrifice align closely. Where the Hebrew of Psalm 40:6 reads 'mine ears hast thou opened,' Hebrews follows the Septuagint with 'a body hast thou prepared me'; this is a complementary rendering pointing to the same prepared servant, and is left as a matter for further study. Psalm 40:8 adds 'thy law is within my heart,' a detail kept in the psalm that Hebrews folds into the single clause of obedience.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 40:6", "b": "Heb 10:5", "label": "Sacrifice and offering thou"},
+    {"a": "Ps 40:6", "b": "Heb 10:6", "label": "burnt offering"},
+    {"a": "Ps 40:7", "b": "Heb 10:7", "label": "Lo I come in the volume of the book it is written of me"},
+    {"a": "Ps 40:8", "b": "Heb 10:7", "label": "to do thy will O"}
+  ]
+}

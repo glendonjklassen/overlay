@@ -1,0 +1,44 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The burial of Jesus",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All four Gospels record the burial of Jesus by Joseph of Arimathaea, and the shared core runs in close parallel: Joseph goes to Pilate and begs the body, takes it down and wraps it in linen, and lays it in a new tomb hewn out of rock. The accounts give complementary vantages on Joseph himself, naming him a rich man (Matthew), an honourable counsellor who waited for the kingdom of God (Mark, Luke), and a disciple secretly for fear of the Jews (John). Matthew and Mark note the great stone rolled to the door; Luke and John explicitly say the tomb was one wherein never man before was laid, which Matthew complements as Joseph's own new tomb. Each account also keeps unique matter that reads in place: Mark records Pilate marvelling that Jesus was already dead and questioning the centurion; John recounts Nicodemus bringing myrrh and aloes about an hundred pound weight; and Luke follows the women as they prepared spices and ointments and rested the sabbath according to the commandment.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 27:57", "b": "Mark 15:43", "label": "of Arimathaea named Joseph"},
+    {"a": "Matt 27:57", "b": "Luke 23:50", "label": "a man named Joseph"},
+    {"a": "Matt 27:57", "b": "John 19:38", "label": "Joseph of Arimathaea ... Jesus disciple"},
+    {"a": "Mark 15:43", "b": "Luke 23:51", "label": "of Arimathaea ... waited for the kingdom of God"},
+    {"a": "Mark 15:43", "b": "John 19:38", "label": "Joseph of Arimathaea"},
+    {"a": "Luke 23:51", "b": "John 19:38", "label": "he was of Arimathaea"},
+
+    {"a": "Matt 27:58", "b": "Mark 15:43", "label": "went ... unto Pilate ... the body"},
+    {"a": "Matt 27:58", "b": "Luke 23:52", "label": "went ... unto Pilate and begged the body of Jesus"},
+    {"a": "Matt 27:58", "b": "John 19:38", "label": "the body of Jesus"},
+    {"a": "Mark 15:43", "b": "Luke 23:52", "label": "went ... unto Pilate and craved the body"},
+    {"a": "Mark 15:43", "b": "John 19:38", "label": "Pilate and craved the body of Jesus"},
+    {"a": "Luke 23:52", "b": "John 19:38", "label": "went unto Pilate ... the body of Jesus"},
+
+    {"a": "Matt 27:59", "b": "Mark 15:46", "label": "wrapped ... in ... linen"},
+    {"a": "Matt 27:59", "b": "Luke 23:53", "label": "wrapped it in ... linen"},
+    {"a": "Matt 27:59", "b": "John 19:40", "label": "the body ... linen"},
+    {"a": "Mark 15:46", "b": "Luke 23:53", "label": "took him down and wrapped him in ... linen"},
+    {"a": "Mark 15:46", "b": "John 19:40", "label": "the body ... linen"},
+    {"a": "Luke 23:53", "b": "John 19:40", "label": "wrapped it in linen"},
+
+    {"a": "Matt 27:60", "b": "Mark 15:46", "label": "new tomb which he had hewn out in the rock"},
+    {"a": "Matt 27:60", "b": "Luke 23:53", "label": "laid it in ... hewn ... in ... rock"},
+    {"a": "Matt 27:60", "b": "John 19:41", "label": "his own new tomb"},
+    {"a": "Mark 15:46", "b": "Luke 23:53", "label": "laid him in a sepulchre which was hewn out of a rock"},
+    {"a": "Mark 15:46", "b": "John 19:41", "label": "a sepulchre ... new"},
+    {"a": "Luke 23:53", "b": "John 19:41", "label": "wherein never man ... laid"},
+
+    {"a": "Matt 27:60", "b": "Mark 15:46", "label": "rolled a ... stone ... to the door of the sepulchre"},
+
+    {"a": "Matt 27:61", "b": "Mark 15:47", "label": "Mary Magdalene"},
+    {"a": "Matt 27:61", "b": "Luke 23:55", "label": "Mary Magdalene ... over against the sepulchre"},
+    {"a": "Mark 15:47", "b": "Luke 23:55", "label": "beheld ... where he was laid"}
+  ]
+}

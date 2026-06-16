@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Smite the shepherd",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "On the night of his arrest Jesus warns the disciples that all will be offended because of him, and grounds it in Zechariah's word of the sword awakened against the shepherd. The shared core is the smiting of the shepherd and the resulting scattering of the sheep, which the Lord here applies to himself and the eleven. Matthew preserves the fuller form, naming the sheep \"of the flock\" and scattered \"abroad,\" while Mark gives the more compact citation; both keep the prophet's central clause word for word. Zechariah supplies the prophetic source, speaking it as the LORD of hosts and adding the turning of his hand upon the little ones, a detail the Gospels leave in place. Together they show one prophecy spoken once and fulfilled that night, the two Gospel witnesses standing as complementary vantages on the same word of Christ.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Zech 13:7", "b": "Matt 26:31", "label": "smite the shepherd and the sheep ... shall be scattered"},
+    {"a": "Zech 13:7", "b": "Mark 14:27", "label": "smite the shepherd and the sheep shall be scattered"},
+    {"a": "Matt 26:31", "b": "Mark 14:27", "label": "I will smite the shepherd and the sheep ... shall be scattered"}
+  ]
+}

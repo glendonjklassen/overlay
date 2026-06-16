@@ -1,0 +1,63 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Peter's denial, foretold and fulfilled",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All four Gospels record both halves: Jesus foretelling that Peter will deny him thrice before the cock crows, and Peter doing it in the high priest's courtyard. The weave links the four predictions to one another, the four fulfilments to one another, and — within each Gospel — the prediction to the moment Peter \"remembered the word\" (Matt 26:75; Mark 14:72; Luke 22:61; John 18:27), so the foretelling and its fulfilment line up. The accusers differ in detail (a damsel, another maid, the bystanders who hear his Galilean speech; John names the doorkeeper and a kinsman of Malchus), but all four hold the count at three denials. Luke alone records the Lord turning to look at Peter (22:61).",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:33", "b": "Mark 14:29", "label": "Though all ... shall be offended ... yet will not I"},
+
+    {"a": "Matt 26:34", "b": "Mark 14:30", "label": "before the cock crow ... thou shalt deny me thrice"},
+    {"a": "Matt 26:34", "b": "Luke 22:34", "label": "the cock shall not crow ... before ... thou shalt thrice deny"},
+    {"a": "Matt 26:34", "b": "John 13:38", "label": "The cock shall not crow, till thou hast denied me thrice"},
+    {"a": "Mark 14:30", "b": "Luke 22:34", "label": "the cock ... before ... thou shalt ... deny ... thrice"},
+    {"a": "Mark 14:30", "b": "John 13:38", "label": "the cock ... thou shalt deny me thrice"},
+    {"a": "Luke 22:34", "b": "John 13:38", "label": "the cock shall not crow ... denied me thrice"},
+
+    {"a": "Matt 26:35", "b": "Mark 14:31", "label": "Though I should die with thee, yet will I not deny thee"},
+    {"a": "Matt 26:35", "b": "Luke 22:33", "label": "ready to go ... to death"},
+    {"a": "Matt 26:35", "b": "John 13:37", "label": "I will lay down my life for thy sake"},
+    {"a": "Mark 14:31", "b": "Luke 22:33", "label": "into prison, and to death"},
+    {"a": "Mark 14:31", "b": "John 13:37", "label": "lay down my life"},
+
+    {"a": "Matt 26:69", "b": "Mark 14:67", "label": "thou also wast with Jesus of Nazareth"},
+    {"a": "Matt 26:69", "b": "Luke 22:56", "label": "this man was also with him"},
+    {"a": "Matt 26:69", "b": "John 18:17", "label": "Art not thou also one of this man's disciples?"},
+    {"a": "Mark 14:67", "b": "Luke 22:56", "label": "thou also wast with him"},
+
+    {"a": "Matt 26:70", "b": "Mark 14:68", "label": "I know not what thou sayest"},
+    {"a": "Matt 26:70", "b": "Luke 22:57", "label": "I know him not"},
+    {"a": "Matt 26:70", "b": "John 18:17", "label": "I am not"},
+    {"a": "Mark 14:68", "b": "Luke 22:57", "label": "denied ... I know not"},
+
+    {"a": "Matt 26:71", "b": "Mark 14:69", "label": "this fellow / this is one of them"},
+    {"a": "Matt 26:71", "b": "Luke 22:58", "label": "Thou art also of them"},
+    {"a": "Matt 26:71", "b": "John 18:25", "label": "Art not thou also one of his disciples?"},
+    {"a": "Mark 14:69", "b": "Luke 22:58", "label": "one of them"},
+
+    {"a": "Matt 26:72", "b": "Mark 14:70", "label": "he denied ... again"},
+    {"a": "Matt 26:72", "b": "Luke 22:58", "label": "Man, I am not"},
+    {"a": "Matt 26:72", "b": "John 18:25", "label": "He denied it ... I am not"},
+
+    {"a": "Matt 26:73", "b": "Mark 14:70", "label": "Surely thou ... art one of them ... a Galilaean ... thy speech"},
+    {"a": "Matt 26:73", "b": "Luke 22:59", "label": "this fellow also was with him: for he is a Galilaean"},
+    {"a": "Mark 14:70", "b": "Luke 22:59", "label": "one of them ... he is a Galilaean"},
+
+    {"a": "Matt 26:74", "b": "Mark 14:71", "label": "began to curse and to swear ... I know not the man"},
+    {"a": "Matt 26:74", "b": "Luke 22:60", "label": "I know not what thou sayest ... immediately ... the cock crew"},
+    {"a": "Matt 26:74", "b": "John 18:27", "label": "denied again: and immediately the cock crew"},
+    {"a": "Mark 14:71", "b": "Luke 22:60", "label": "I know not ... the cock crew"},
+
+    {"a": "Matt 26:75", "b": "Mark 14:72", "label": "remembered ... the word ... Before the cock crow, thou shalt deny me thrice"},
+    {"a": "Matt 26:75", "b": "Luke 22:61", "label": "remembered the word ... Before the cock crow, thou shalt deny me thrice"},
+    {"a": "Matt 26:75", "b": "Luke 22:62", "label": "went out, and wept bitterly"},
+    {"a": "Mark 14:72", "b": "Luke 22:61", "label": "called to mind / remembered the word"},
+
+    {"a": "Matt 26:34", "b": "Matt 26:75", "label": "foretold, then remembered: deny me thrice"},
+    {"a": "Mark 14:30", "b": "Mark 14:72", "label": "foretold, then called to mind: before the cock crow twice"},
+    {"a": "Luke 22:34", "b": "Luke 22:61", "label": "foretold, then remembered: before the cock crow"},
+    {"a": "John 13:38", "b": "John 18:27", "label": "foretold, then fulfilled: the cock crew"}
+  ]
+}

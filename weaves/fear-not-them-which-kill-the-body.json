@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Fear not them which kill the body",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A twofold synoptic saying of the Lord on holy fear, recorded by Matthew and Luke. Its shared core moves through one chain of thought: do not fear those who can only kill the body, but fear him who has power over soul and body in hell; the Father's care reaches even the sparrows and numbers every hair, so the disciple is of more value than many sparrows and need not fear. Matthew sets the saying within the charge to the twelve as they are sent out, while Luke addresses it to 'my friends' amid warnings about hypocrisy and confession. The accounts keep complementary vantages on the sparrows: Matthew has two sold for a farthing and not one falling 'without your Father,' Luke has five for two farthings and not one 'forgotten before God' — the same assurance of providence viewed from each side. Luke alone doubles the call 'Fear him' and adds that the body-killers 'have no more that they can do,' details left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 10:28", "b": "Luke 12:4", "label": "them which kill the body ... are not able to kill the soul / them that kill the body and after that have no more that they can do"},
+    {"a": "Matt 10:28", "b": "Luke 12:5", "label": "fear him which is able to destroy both soul and body in hell / fear him which after he hath killed hath power to cast into hell"},
+    {"a": "Matt 10:29", "b": "Luke 12:6", "label": "Are not two sparrows sold for a farthing / Are not five sparrows sold for two farthings"},
+    {"a": "Matt 10:29", "b": "Luke 12:6", "label": "shall not fall on the ground without your Father / not one of them is forgotten before God"},
+    {"a": "Matt 10:30", "b": "Luke 12:7", "label": "the very hairs of your head are all numbered"},
+    {"a": "Matt 10:31", "b": "Luke 12:7", "label": "Fear ye not therefore ye are of more value than many sparrows"}
+  ]
+}

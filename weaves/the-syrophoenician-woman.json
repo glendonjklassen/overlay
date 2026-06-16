@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Syrophoenician woman",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew and Mark recount the same encounter in the region of Tyre and Sidon, where a Gentile woman pleads with Jesus for her demon-possessed daughter and prevails through humble, persistent faith. Both share the core: the journey to the coasts/borders of Tyre and Sidon, the woman and her afflicted daughter, the saying about the children's bread and the dogs, her reply about the crumbs, Jesus' word releasing the daughter, and the healing. The two accounts give complementary vantages: Matthew names her a woman of Canaan and draws out the disciples' plea to send her away and Jesus' word that he was sent unto the lost sheep of the house of Israel, framing the scene around Israel's mission; Mark identifies her as a Greek, a Syrophenician by nation, notes the house Jesus entered, and closes by showing the daughter found laid upon the bed with the devil gone. Matthew's unique matter about the disciples and the lost sheep of Israel has no Markan parallel and reads in place. Where the wording of her plea and the closing scene differ, the accounts complement one another as two true witnesses to one event.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 15:21", "b": "Mark 7:24", "label": "departed into the coasts ... of Tyre and Sidon"},
+    {"a": "Matt 15:22", "b": "Mark 7:25", "label": "my daughter is grievously vexed with a devil ... young daughter had an unclean spirit"},
+    {"a": "Matt 15:22", "b": "Mark 7:26", "label": "a woman of Canaan ... a Greek a Syrophenician by nation"},
+    {"a": "Matt 15:26", "b": "Mark 7:27", "label": "It is not meet to take the children's bread and to cast it ... to the dogs"},
+    {"a": "Matt 15:27", "b": "Mark 7:28", "label": "Truth Lord yet the dogs eat of the crumbs ... Yes Lord yet the dogs under the table eat of the children's crumbs"},
+    {"a": "Matt 15:28", "b": "Mark 7:29", "label": "O woman great is thy faith ... For this saying ... the devil is gone out of thy daughter"},
+    {"a": "Matt 15:28", "b": "Mark 7:30", "label": "her daughter was made whole from that very hour ... she found the devil gone out and her daughter laid upon the bed"}
+  ]
+}

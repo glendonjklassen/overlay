@@ -1,0 +1,46 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Gadarene demoniac",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic retelling of Jesus crossing to the other side and casting the devils out of the man (or men) among the tombs. The shared core runs detail by detail: the coming to the country of the Gadarenes/Gergesenes, the tomb-dwelling possessed meeting him, the cry \"What have I to do with thee, Jesus, thou Son of God ... torment,\" the devils' plea to enter the swine, the herd running violently down a steep place into the sea and perishing, the keepers fleeing to tell it in the city, and the people beseeching Jesus to depart out of their coasts. Mark and Luke alone name the devils \"Legion, for we are many,\" show the man afterward clothed and in his right mind, and record him sent home to publish what was done; these details are linked between those two. Matthew names two possessed while Mark and Luke fix on one, and Matthew writes \"Gergesenes\" where Mark and Luke write \"Gadarenes\"; these are complementary vantages on one account, left as matters for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 8:28", "b": "Mark 5:1", "label": "the other side into the country of the Gadarenes"},
+    {"a": "Matt 8:28", "b": "Luke 8:26", "label": "the country of the Gadarenes"},
+    {"a": "Mark 5:1", "b": "Luke 8:26", "label": "the country of the Gadarenes"},
+
+    {"a": "Matt 8:28", "b": "Mark 5:2", "label": "there met him ... coming out of the tombs"},
+    {"a": "Matt 8:28", "b": "Luke 8:27", "label": "there met him ... in the tombs"},
+    {"a": "Mark 5:2", "b": "Luke 8:27", "label": "there met him out of the tombs"},
+
+    {"a": "Mark 5:3", "b": "Luke 8:27", "label": "his dwelling among the tombs"},
+
+    {"a": "Matt 8:29", "b": "Mark 5:7", "label": "What have I to do with thee Jesus thou Son of ... God ... torment"},
+    {"a": "Matt 8:29", "b": "Luke 8:28", "label": "What have I to do with thee Jesus thou Son of God ... torment"},
+    {"a": "Mark 5:7", "b": "Luke 8:28", "label": "What have I to do with thee Jesus thou Son of ... God most high ... torment"},
+
+    {"a": "Mark 5:9", "b": "Luke 8:30", "label": "What is thy name ... Legion ... many"},
+
+    {"a": "Matt 8:31", "b": "Mark 5:12", "label": "the devils besought him ... into the ... swine"},
+    {"a": "Matt 8:31", "b": "Luke 8:32", "label": "suffer us to go away into the herd of swine"},
+    {"a": "Mark 5:12", "b": "Luke 8:32", "label": "the devils besought him ... enter into them"},
+
+    {"a": "Matt 8:32", "b": "Mark 5:13", "label": "the herd ... ran violently down a steep place into the sea"},
+    {"a": "Matt 8:32", "b": "Luke 8:33", "label": "ran violently down a steep place into the ... and perished"},
+    {"a": "Mark 5:13", "b": "Luke 8:33", "label": "the herd ran violently down a steep place into the ... and were choked"},
+
+    {"a": "Matt 8:33", "b": "Mark 5:14", "label": "they that ... them fled ... into the city and told"},
+    {"a": "Matt 8:33", "b": "Luke 8:34", "label": "fled and went ... into the city and told"},
+    {"a": "Mark 5:14", "b": "Luke 8:34", "label": "they that fed ... fled and told it in the city and in the country"},
+
+    {"a": "Mark 5:15", "b": "Luke 8:35", "label": "clothed and in his right mind and they were afraid"},
+
+    {"a": "Matt 8:34", "b": "Mark 5:17", "label": "besought him that he would depart out of their coasts"},
+    {"a": "Matt 8:34", "b": "Luke 8:37", "label": "besought him that he would depart"},
+    {"a": "Mark 5:17", "b": "Luke 8:37", "label": "depart out of their coasts"},
+
+    {"a": "Mark 5:19", "b": "Luke 8:39", "label": "Go home ... tell them how great things the Lord hath done"}
+  ]
+}

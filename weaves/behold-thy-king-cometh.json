@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Behold, thy King cometh",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Zechariah foretells Zion's King coming meek and lowly, riding upon an ass and upon a colt the foal of an ass. Both Matthew and John cite this prophecy as fulfilled when Jesus enters Jerusalem on a colt at the triumphal entry. Matthew keeps Zechariah's fuller wording, retaining \"and a colt the foal of an ass\" alongside the King coming meek and \"unto thee,\" while John abbreviates to \"behold, thy King cometh, sitting on an ass's colt\" and opens with \"Fear not\" rather than \"Rejoice greatly.\" These are complementary vantages on the one prophecy: each evangelist draws out the shared core of the King of Zion arriving on the colt, abridging Zechariah's words differently as suited his account. The shared hooks are \"behold thy King cometh\" and the address to the daughter of Sion, with Matthew alone preserving the colt-foal phrase verbatim.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Zech 9:9", "b": "Matt 21:5", "label": "behold thy King cometh unto thee"},
+    {"a": "Zech 9:9", "b": "Matt 21:5", "label": "and a colt the foal of an ass"},
+    {"a": "Zech 9:9", "b": "Matt 21:5", "label": "daughter of Zion ... daughter of Sion"},
+    {"a": "Zech 9:9", "b": "John 12:15", "label": "behold thy King cometh"},
+    {"a": "Zech 9:9", "b": "John 12:15", "label": "daughter of Zion ... daughter of Sion"}
+  ]
+}

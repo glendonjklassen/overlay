@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Despise not the chastening",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The writer of Hebrews cites the wisdom of Proverbs to comfort believers under the discipline of the Lord. Proverbs 3:11-12 counsels the son neither to despise the LORD's chastening nor to be weary of His correction, grounding that discipline in fatherly love; Hebrews 12:5-6 quotes this exhortation almost word for word, addressing it to children of God who must not faint when rebuked. The shared core is the twofold logic that the Lord chastens whom He loves, as a father the son in whom he delighteth. Proverbs frames the correction in the imagery of a delighting father, while Hebrews extends the thought by adding that He scourgeth every son whom he receiveth, drawing out the costliness of that love. Both passages teach the same comfort from one vantage: divine discipline is the mark, not the absence, of sonship.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Prov 3:11", "b": "Heb 12:5", "label": "My son despise not ... the chastening of the"},
+    {"a": "Prov 3:12", "b": "Heb 12:6", "label": "For whom the LORD loveth he"}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The last kings of Judah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles both summarize the reigns of Judah's final four kings before the captivity: Jehoahaz, Jehoiakim, Jehoiachin, and Zedekiah. The shared core runs the same course for each: the king's age and length of reign, his doing of evil in the sight of the LORD, and his fall to the powers of Egypt and Babylon, until Nebuchadnezzar carries off the vessels of the house of the LORD and sets up the next king. Kings keeps the fuller annalistic detail, recording Pharaoh-nechoh's exaction from Jehoiakim, the bands of Chaldees, Syrians, Moabites, and Ammonites, and the great deportation of ten thousand captives, princes, mighty men, and craftsmen to Babylon. Chronicles keeps its own complementary vantage, naming that the people of the land made Jehoahaz king, that Jehoiakim's abominations were found in him, that Jehoiachin reigned three months and ten days, and that Zedekiah humbled not himself before Jeremiah but stiffened his neck while the chief of the priests and the people polluted the temple and mocked God's messengers. The two accounts thus look at the same downward succession from different heights, the one tracing the political fall and the other tracing the spiritual cause, with the fall of Jerusalem itself left to its own weave.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 23:31", "b": "2Chr 36:2", "label": "twenty and three years old ... reigned three months in Jerusalem"},
+    {"a": "2Kgs 23:33", "b": "2Chr 36:3", "label": "an hundred talents of silver and a talent of gold"},
+    {"a": "2Kgs 23:34", "b": "2Chr 36:4", "label": "Eliakim ... turned his name to Jehoiakim ... took Jehoahaz away"},
+
+    {"a": "2Kgs 23:36", "b": "2Chr 36:5", "label": "twenty and five years old ... reigned eleven years in Jerusalem"},
+    {"a": "2Kgs 23:37", "b": "2Chr 36:5", "label": "did that which was evil in the sight of the LORD"},
+    {"a": "2Kgs 24:1", "b": "2Chr 36:6", "label": "Nebuchadnezzar king of Babylon came up"},
+    {"a": "2Kgs 24:5", "b": "2Chr 36:8", "label": "the rest of the acts of Jehoiakim"},
+    {"a": "2Kgs 24:6", "b": "2Chr 36:8", "label": "Jehoiachin his son reigned in his stead"},
+
+    {"a": "2Kgs 24:8", "b": "2Chr 36:9", "label": "reigned in Jerusalem three months"},
+    {"a": "2Kgs 24:9", "b": "2Chr 36:9", "label": "did that which was evil in the sight of the LORD"},
+    {"a": "2Kgs 24:13", "b": "2Chr 36:10", "label": "the vessels ... of the house of the LORD"},
+    {"a": "2Kgs 24:15", "b": "2Chr 36:10", "label": "carried away Jehoiachin to Babylon"},
+    {"a": "2Kgs 24:17", "b": "2Chr 36:10", "label": "made ... king in his stead ... name to Zedekiah"},
+
+    {"a": "2Kgs 24:18", "b": "2Chr 36:11", "label": "twenty and one years old ... reigned eleven years in Jerusalem"},
+    {"a": "2Kgs 24:19", "b": "2Chr 36:12", "label": "did that which was evil in the sight of the LORD"},
+    {"a": "2Kgs 24:20", "b": "2Chr 36:13", "label": "rebelled against the king of Babylon"}
+  ]
+}

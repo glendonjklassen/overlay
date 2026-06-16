@@ -1,16 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "The two creation accounts",
-  "kind": "retelling",
-  "tokenization": "kjv1769-tok2",
-  "notes": "The first event Scripture tells twice. Genesis 1 gives the ordered, cosmic week, man made last; Genesis 2 returns to the sixth day and tells the making of man and his world up close. The links are thematic, not verse-for-verse: the man formed, the woman built, the beasts named, the food given. Genesis 1:27 fans out to two verses in the second account — the making of the man and of the woman told apart.",
-  "created": "2026-06-14T00:00:00Z",
-  "approved": false,
-  "tension": "Whether Genesis 1 and 2 are one account told twice or two sources is the classic source-critical debate; read traditionally, Genesis 2 returns to the sixth day up close.",
-  "links": [
-    {"a": "Gen 1:26", "b": "Gen 2:19"},
-    {"a": "Gen 1:27", "b": "Gen 2:7"},
-    {"a": "Gen 1:27", "b": "Gen 2:22"},
-    {"a": "Gen 1:29", "b": "Gen 2:16"}
-  ]
-}
+{"approved":true,"created":"2026-06-14T00:00:00Z","format":"overlay-weave-v2","kind":"retelling","links":[{"a":"Gen 1:26","approved":true,"b":"Gen 2:19"},{"a":"Gen 1:27","approved":true,"b":"Gen 2:7"},{"a":"Gen 1:27","approved":true,"b":"Gen 2:22"},{"a":"Gen 1:29","approved":true,"b":"Gen 2:16"}],"name":"The two creation accounts","notes":"The first event Scripture tells twice. Genesis 1 gives the ordered, cosmic week, man made last; Genesis 2 returns to the sixth day and tells the making of man and his world up close. The links are thematic, not verse-for-verse: the man formed, the woman built, the beasts named, the food given. Genesis 1:27 fans out to two verses in the second account — the making of the man and of the woman told apart.","tokenization":"kjv1769-tok2"}

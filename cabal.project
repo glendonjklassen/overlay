@@ -1,1 +1,7 @@
 packages: .
+
+-- Two interchangeable packages expose Data.ByteArray (`memory` and the `ram`
+-- fork). If our code and crypton resolve to different ones, their
+-- ByteArrayAccess instances don't unify (builds locally but broke CI). Forbid
+-- `ram` so the whole plan uses `memory` everywhere, on every machine.
+constraints: ram <0

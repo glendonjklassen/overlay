@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Spirit of the Lord is upon me",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In the Nazareth synagogue Jesus reads from Isaiah 61 and, sitting down, declares \"This day is this scripture fulfilled in your ears,\" claiming the anointed-Servant prophecy as His own. The shared core runs clause by clause: the Spirit of the Lord upon the Anointed One, who is sent to preach to the poor, heal the brokenhearted, proclaim deliverance to the captives, and announce the acceptable year of the Lord. Luke renders Isaiah's \"proclaim liberty to the captives and the opening of the prison\" as \"recovering of sight to the blind,\" a complementary vantage drawn from the Greek scriptures, and adds the clause \"to set at liberty them that are bruised,\" which echoes the deliverance theme of Isaiah 58:6; this gospel-shaped reading of the prophecy is left as a matter for further study. Notably Jesus stops mid-Isaiah-61:2, reading \"the acceptable year of the Lord\" but closing the book before \"the day of vengeance of our God,\" marking His first coming as the season of grace. The Isaiah 58:6 link is left unlabelled because the correspondence is thematic rather than a shared exact phrase.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "The Spirit of the Lord"},
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "is upon me because"},
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "hath anointed me to preach"},
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "he hath sent me"},
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "the brokenhearted"},
+    {"a": "Isa 61:1", "b": "Luke 4:18", "label": "the captives"},
+    {"a": "Isa 61:2", "b": "Luke 4:19", "label": "the acceptable year of the"},
+    {"a": "Isa 58:6", "b": "Luke 4:18"}
+  ]
+}

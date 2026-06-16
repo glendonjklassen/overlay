@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Pentecost and the prophet Joel",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "On the day of Pentecost Peter answers the mockers by declaring \"this is that which was spoken by the prophet Joel\" and quotes the prophet's promise of the outpoured Spirit. Joel 2:28-32 and Acts 2:17-21 run in the same order: the Spirit poured upon all flesh with prophesying, visions, and dreams; the same gift upon servants and handmaids; wonders in heaven and earth of blood, fire, and smoke; the sun darkened and the moon turned to blood before the day of the Lord; and the promise that whosoever calls on the name of the Lord shall be delivered. The shared wording is extensive and nearly word for word. A few small differences are left as a matter for further study: Acts opens \"in the last days saith God\" where Joel says \"afterward,\" Acts reads \"I will pour out of my Spirit\" and adds \"and they shall prophesy\" of the servants, Joel orders \"old men dream dreams, young men see visions\" while Acts names the young men first, Joel says \"pillars of smoke\" where Acts has \"vapour of smoke,\" Joel \"the terrible day\" where Acts has \"that great and notable day,\" and Joel \"shall be delivered\" where Acts has \"shall be saved.\"",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Joel 2:28", "b": "Acts 2:17", "label": "pour out ... my spirit upon all flesh and your sons and your daughters shall prophesy"},
+    {"a": "Joel 2:28", "b": "Acts 2:17", "label": "your young men shall see visions ... old men shall dream dreams"},
+    {"a": "Joel 2:29", "b": "Acts 2:18", "label": "upon the servants and upon the handmaids in those days will I pour out my spirit"},
+    {"a": "Joel 2:30", "b": "Acts 2:19", "label": "I will shew wonders in ... heaven ... and in the earth blood and fire and ... smoke"},
+    {"a": "Joel 2:31", "b": "Acts 2:20", "label": "The sun shall be turned into darkness and the moon into blood before ... the ... day of the LORD come"},
+    {"a": "Joel 2:32", "b": "Acts 2:21", "label": "whosoever shall call on the name of the LORD shall be"}
+  ]
+}

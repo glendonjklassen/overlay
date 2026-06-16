@@ -1,0 +1,24 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Deny self and take up the cross",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Immediately after Peter's confession and the first passion prediction, all three synoptics record the same teaching on the cost of discipleship: deny self, take up the cross, and follow. The shared core runs verse for verse through four sayings: the call to follow, the paradox of saving and losing one's life, the worthlessness of gaining the world while forfeiting the soul, and the warning that the Son of man comes in his Father's glory with the holy angels. Each account keeps its own vantage: Luke adds that the cross is taken up 'daily,' Mark anchors losing one's life 'for my sake and the gospel's' in 'this adulterous and sinful generation,' and Matthew alone closes with the Son of man rewarding 'every man according to his works' rather than the 'ashamed' saying. Matthew folds the soul's profit and the soul's ransom into a single verse where Mark spreads them across two, and Matthew speaks of the coming in glory while Mark and Luke join it to being ashamed of Christ. These are complementary vantages of one sermon, each preserving detail the others leave in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 16:24", "b": "Mark 8:34", "label": "let him deny himself and take up his cross and follow me"},
+    {"a": "Matt 16:24", "b": "Luke 9:23", "label": "let him deny himself and take up his cross ... and follow me"},
+    {"a": "Mark 8:34", "b": "Luke 9:23", "label": "let him deny himself and take up his cross ... and follow me"},
+    {"a": "Matt 16:25", "b": "Mark 8:35", "label": "whosoever will save his life shall lose it"},
+    {"a": "Matt 16:25", "b": "Luke 9:24", "label": "whosoever will save his life shall lose it"},
+    {"a": "Mark 8:35", "b": "Luke 9:24", "label": "whosoever ... shall lose his life for my sake the same shall save it"},
+    {"a": "Matt 16:26", "b": "Mark 8:36", "label": "if he shall gain the whole world and lose his own soul"},
+    {"a": "Matt 16:26", "b": "Luke 9:25", "label": "gain the whole world and lose"},
+    {"a": "Mark 8:36", "b": "Luke 9:25", "label": "if he shall gain the whole world and lose"},
+    {"a": "Matt 16:26", "b": "Mark 8:37", "label": "what shall a man give in exchange for his soul"},
+    {"a": "Matt 16:27", "b": "Mark 8:38", "label": "when he cometh in the glory of his Father with the holy angels"},
+    {"a": "Matt 16:27", "b": "Luke 9:26", "label": "the glory of his Father ... the holy angels"},
+    {"a": "Mark 8:38", "b": "Luke 9:26", "label": "shall be ashamed of me and of my words ... of him ... shall the Son of man be ashamed"}
+  ]
+}

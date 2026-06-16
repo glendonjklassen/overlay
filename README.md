@@ -25,15 +25,25 @@ GUI built with [Monomer](https://github.com/fjvallarino/monomer)
 All source data is classic and freely licensed:
 
 - **Text + per-word Strong's tagging**: CrossWire/eBible.org KJV SWORD module
-  (`engKJV2006eb`, the 1769 standardized text, public domain), installed via
-  `apt install sword-text-kjv libsword-utils` and dumped with
-  `mod2imp engKJV2006eb > data/raw/kjv.imp`.
+  (`engKJV2006eb`, the 1769 standardized text, public domain).
 - **Strong's dictionaries** (1890): Open Scriptures JSON conversion
   (CC-BY-SA), from
   [openscriptures/strongs](https://github.com/openscriptures/strongs).
 
-`data/` is gitignored; regenerate it with the two downloads above plus
-`.\util\windows_run.ps1 run overlay-import`, which produces:
+`data/` is gitignored. **Hydrate it in one step** with
+[util/hydrate-data.sh](util/hydrate-data.sh), which installs the SWORD module
+(via `installmgr`), dumps it with `mod2imp`, downloads the Strong's
+dictionaries, and runs `overlay-import`. The script is idempotent — it skips
+any step whose output already exists, and `--force` rebuilds from scratch:
+
+```sh
+./util/hydrate-data.sh            # build data/ from the source materials
+./util/hydrate-data.sh --force    # wipe and rebuild
+```
+
+It needs a SWORD install (`installmgr`, `mod2imp`) — `sudo pacman -S sword` on
+Arch, `sudo apt install libsword-utils sword-text-kjv` on Debian/Ubuntu — plus
+`curl` and `cabal`. It produces:
 
 - `data/kjv.jsonl` — canonical tokenized text (31,102 verses; tokenization is
   version-stamped and **frozen** — signed patches address into it)
@@ -41,8 +51,8 @@ All source data is classic and freely licensed:
 - `data/kjv-notes.jsonl` — the 1769 translators' margin notes (kept for a
   future layer, not yet shown)
 
-`.\util\windows_run.ps1 run overlay '--' --check` verifies the data pipeline headlessly.
-(The quotes matter: PowerShell eats a bare `--` before the script sees it.)
+`cabal run overlay -- --check` (or `.\util\windows_run.ps1 run overlay '--'
+--check` from Windows) verifies the data pipeline headlessly.
 
 ## Using the reader
 
@@ -100,9 +110,11 @@ normal way to use it.
 
 > [!NOTE]
 > The weaves shipped in this repo are **AI-generated study aids, not approved**.
-> Every weave records an `approved` flag (all currently `false`) and, where a
-> parallel is contested, a `tension` note — both surfaced in the reader. Treat
-> them as prompts for study, not as authority, until reviewed.
+> Every weave records an `approved` flag (all currently `false`), surfaced in
+> the reader. Treat them as prompts for study, not as authority, until reviewed.
+> Where the parallel accounts differ in detail, the notes describe the
+> difference plainly as a matter for further study — never as a defect in the
+> text, which is the infallible, God-breathed Word.
 
 Weaves are plain unsigned JSON under `weaves/` and never alter the text; older
 `overlay-weave-v1` grid files migrate to the graph model on load. The repo ships
@@ -240,8 +252,12 @@ Linux filesystem (`~/code/overlay`) and accessing it via `\\wsl$`.
 
 ## License
 
-Code is [MIT](LICENSE) licensed. The bundled EB Garamond fonts are under the
-SIL Open Font License (see [assets/fonts/OFL.txt](assets/fonts/OFL.txt)). The
-scripture text and Strong's data are not redistributed here (`data/` is
-gitignored); they carry their own licenses — the KJV SWORD module is public
-domain, the Open Scriptures Strong's dictionaries are CC-BY-SA (see [Data](#data)).
+Code is [MIT](LICENSE) licensed. The bundled EB Garamond fonts (scripture body)
+are under the SIL Open Font License (see
+[assets/fonts/OFL.txt](assets/fonts/OFL.txt)); the bundled DejaVu Sans fonts (UI
+chrome) are under the Bitstream Vera / DejaVu Fonts License (see
+[assets/fonts/LICENSE-DejaVu.txt](assets/fonts/LICENSE-DejaVu.txt)) — both are
+permissive and freely redistributable. The scripture text and Strong's data are
+not redistributed here (`data/` is gitignored); they carry their own licenses —
+the KJV SWORD module is public domain, the Open Scriptures Strong's dictionaries
+are CC-BY-SA (see [Data](#data)).

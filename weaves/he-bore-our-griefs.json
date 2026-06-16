@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "He bore our griefs",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Isaiah 53 is the great Suffering Servant prophecy, and the New Testament reaches back to it again and again to declare it fulfilled in Christ. The chapter opens lamenting that few would believe the report, which both John and Paul quote of those who rejected the gospel; it foretells the Servant bearing griefs and sicknesses, which Matthew applies to Jesus' healing ministry; and it describes the wounding, the stripes, the sinlessness, and the bearing of the sin of many, which Peter gathers up as accomplished at the cross. Each evangelist and apostle keeps his own vantage: John and Paul on Israel's unbelief, Matthew on bodily healing, Peter on the atonement and the believer's call to righteousness. Together they show one prophecy unfolding across the whole work of Christ. The shared wording, often word-for-word with the prophet, is left as the visible thread binding promise to fulfillment.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 53:1", "b": "John 12:38", "label": "who hath believed our report ... the arm of the Lord"},
+    {"a": "Isa 53:1", "b": "Rom 10:16", "label": "Lord who hath believed our report"},
+    {"a": "Isa 53:4", "b": "Matt 8:17", "label": "borne our griefs ... bare our sicknesses"},
+    {"a": "Isa 53:5", "b": "1Pet 2:24", "label": "with his stripes we are healed ... by whose stripes ye were healed"},
+    {"a": "Isa 53:9", "b": "1Pet 2:22", "label": "neither was ... in his mouth"},
+    {"a": "Isa 53:12", "b": "1Pet 2:24", "label": "he bare the sin of many ... his own self bare our sins"}
+  ]
+}

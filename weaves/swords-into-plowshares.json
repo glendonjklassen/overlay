@@ -1,15 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "Swords Into Plowshares",
-  "kind": "retelling",
-  "tokenization": "kjv1769-tok2",
-  "notes": "The same oracle of the mountain of the LORD's house, recorded almost verbatim in two prophets. Isaiah opens his vision and Micah closes a section of judgment with it; the three core verses align cleanly though Isaiah says 'all nations' where Micah says 'people' and 'many nations'.",
-  "created": "2026-06-14T00:00:00Z",
-  "approved": false,
-  "tension": "Whether Isaiah quotes Micah, Micah quotes Isaiah, or both draw on an older oracle is unsettled.",
-  "links": [
-    {"a": "Isa 2:2", "b": "Mic 4:1", "label": "shall be established in the top of the mountains"},
-    {"a": "Isa 2:3", "b": "Mic 4:2", "label": "he will teach us of his ways, and we will walk in his paths"},
-    {"a": "Isa 2:4", "b": "Mic 4:3", "label": "beat their swords into plowshares"}
-  ]
-}
+{"approved":true,"created":"2026-06-14T00:00:00Z","format":"overlay-weave-v2","kind":"retelling","links":[{"a":"Isa 2:2","approved":true,"b":"Mic 4:1","label":"shall be established in the top of the mountains"},{"a":"Isa 2:3","approved":true,"b":"Mic 4:2","label":"he will teach us of his ways, and we will walk in his paths"},{"a":"Isa 2:4","approved":true,"b":"Mic 4:3","label":"beat their swords into plowshares"}],"name":"Swords Into Plowshares","notes":"The same oracle of the mountain of the LORD's house, recorded almost verbatim in two prophets. Isaiah opens his vision and Micah closes a section of judgment with it; the three core verses align cleanly though Isaiah says 'all nations' where Micah says 'people' and 'many nations'.","tokenization":"kjv1769-tok2"}

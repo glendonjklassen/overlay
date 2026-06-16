@@ -1,0 +1,28 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The cleansing of the temple",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew, Mark, and Luke each recount Jesus cleansing the temple during Passion week, after the triumphal entry into Jerusalem. The shared core is the same: he went into the temple, cast out them that sold and bought therein, and declared from Scripture, 'My house shall be called the house of prayer; but ye have made it a den of thieves.' Matthew and Mark together add the overthrowing of the tables of the moneychangers and the seats of them that sold doves, while Mark alone preserves the fuller citation 'of all nations' and the detail that he would not suffer any vessel to be carried through the temple. Luke gives the most compressed account, naming the words spoken and the casting out without the furniture detail. These are complementary vantages on one event in the final week. John 2:13-17 records a separate, earlier cleansing at the very start of Jesus' ministry, at the passover near the beginning of his public work, with its own distinctive details (the scourge of small cords, the oxen and sheep, 'make not my Father's house an house of merchandise'); it is intentionally not linked here.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 21:12", "b": "Mark 11:15", "label": "went into the temple"},
+    {"a": "Matt 21:12", "b": "Luke 19:45", "label": "went into the temple"},
+    {"a": "Mark 11:15", "b": "Luke 19:45", "label": "went into the temple"},
+
+    {"a": "Matt 21:12", "b": "Mark 11:15", "label": "cast out all them that sold and bought in the temple"},
+    {"a": "Matt 21:12", "b": "Luke 19:45", "label": "cast out ... them that sold ... and them that bought"},
+    {"a": "Mark 11:15", "b": "Luke 19:45", "label": "cast out them that sold ... and them that bought"},
+
+    {"a": "Matt 21:12", "b": "Mark 11:15", "label": "overthrew the tables of the moneychangers and the seats of them that sold doves"},
+
+    {"a": "Matt 21:13", "b": "Mark 11:17", "label": "It is written My house shall be called ... the house of prayer"},
+    {"a": "Matt 21:13", "b": "Luke 19:46", "label": "It is written My house ... the house of prayer"},
+    {"a": "Mark 11:17", "b": "Luke 19:46", "label": "My house ... the house of prayer"},
+
+    {"a": "Matt 21:13", "b": "Mark 11:17", "label": "but ye have made it a den of thieves"},
+    {"a": "Matt 21:13", "b": "Luke 19:46", "label": "but ye have made it a den of thieves"},
+    {"a": "Mark 11:17", "b": "Luke 19:46", "label": "but ye have made it a den of thieves"}
+  ]
+}

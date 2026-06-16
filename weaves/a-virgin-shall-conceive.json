@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "A virgin shall conceive",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Isaiah declares the sign the Lord himself would give: a virgin shall conceive and bear a son, and his name shall be called Immanuel. Matthew, recounting the conception of Jesus by the Holy Ghost, names this very word of Isaiah as fulfilled in the virgin birth of Christ. The two share the opening 'Behold, a virgin shall' and the naming of the son, Isaiah saying 'shall call his name Immanuel' and Matthew 'they shall call his name Emmanuel.' Matthew alone adds the interpretation of that name, 'God with us,' unfolding for the reader what Immanuel signifies. Where Isaiah keeps the form 'conceive and bear a son' and Matthew 'be with child and shall bring forth a son,' the prophecy and its fulfillment stand as one word from the giving of the sign to its accomplishment in Jesus.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 7:14", "b": "Matt 1:23", "label": "Behold a virgin shall ... a son ... call his name"}
+  ]
+}

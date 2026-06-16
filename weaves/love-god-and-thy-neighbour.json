@@ -1,0 +1,28 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Love God and thy neighbour",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Asked which is the great commandment, Jesus answers by quoting two passages of the law: Deut 6:5 (love the LORD thy God with all thine heart) and Lev 19:18 (love thy neighbour as thyself). Matthew and Mark record this exchange; Mark also prefaces the answer with the Shema of Deut 6:4 (\"Hear, O Israel; The Lord our God is one Lord\"). The accounts share the core wording of both commandments, with Matthew adding \"On these two commandments hang all the law and the prophets\" and Mark adding \"There is none other commandment greater than these.\" Luke 10:27 records the same two commandments quoted together in a single verse, but on a separate occasion: there it is a lawyer who recites them in answer to Jesus, the exchange that leads into the parable of the Good Samaritan. The complementary vantages set the same two great commandments before the reader from several angles.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 6:5", "b": "Matt 22:37", "label": "thou shalt love the Lord thy God with all thy heart and with all thy soul"},
+    {"a": "Deut 6:5", "b": "Mark 12:30", "label": "thou shalt love the Lord thy God with all thy heart and with all thy soul"},
+    {"a": "Deut 6:5", "b": "Luke 10:27", "label": "Thou shalt love the Lord thy God with all thy heart and with all thy soul"},
+
+    {"a": "Lev 19:18", "b": "Matt 22:39", "label": "love thy neighbour as thyself"},
+    {"a": "Lev 19:18", "b": "Mark 12:31", "label": "love thy neighbour as thyself"},
+    {"a": "Lev 19:18", "b": "Luke 10:27", "label": "thy neighbour as thyself"},
+
+    {"a": "Deut 6:4", "b": "Mark 12:29", "label": "Hear O Israel ... is one Lord"},
+
+    {"a": "Matt 22:37", "b": "Mark 12:30", "label": "love the Lord thy God with all thy heart and with all thy soul and with all thy mind"},
+    {"a": "Matt 22:39", "b": "Mark 12:31", "label": "And the second is like ... Thou shalt love thy neighbour as thyself"},
+
+    {"a": "Matt 22:37", "b": "Luke 10:27", "label": "love the Lord thy God with all thy heart and with all thy soul"},
+    {"a": "Mark 12:30", "b": "Luke 10:27", "label": "love the Lord thy God with all thy heart and with all thy soul ... and with all thy mind"},
+    {"a": "Matt 22:39", "b": "Luke 10:27", "label": "thy neighbour as thyself"},
+    {"a": "Mark 12:31", "b": "Luke 10:27", "label": "thy neighbour as thyself"}
+  ]
+}

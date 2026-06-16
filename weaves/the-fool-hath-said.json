@@ -1,18 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "The Fool Hath Said",
-  "kind": "retelling",
-  "tokenization": "kjv1769-tok2",
-  "notes": "Psalm 14 and Psalm 53 are near-duplicate laments over universal corruption, aligning verse for verse (both superscriptions counted as verse 1). The wording diverges most sharply at the fifth verse: Psalm 14:5-6 speaks of the fear of the righteous and the shaming of the poor's counsel, while Psalm 53:5 instead has God scattering the bones of the besieger. Where divergence is too great for an exact shared phrase, the label is omitted.",
-  "created": "2026-06-14T00:00:00Z",
-  "approved": false,
-  "tension": "Psalm 53 compresses and rewords Psalm 14:5-6 into a single, differently-worded verse (53:5) and says \"God\" where Psalm 14 says \"the LORD\"; whether they are one psalm or two is debated.",
-  "links": [
-    {"a": "Ps 14:1", "b": "Ps 53:1", "label": "The fool hath said in his heart, There is no God"},
-    {"a": "Ps 14:2", "b": "Ps 53:2", "label": "looked down from heaven upon the children of men"},
-    {"a": "Ps 14:3", "b": "Ps 53:3", "label": "there is none that doeth good, no, not one"},
-    {"a": "Ps 14:4", "b": "Ps 53:4", "label": "who eat up my people as they eat bread"},
-    {"a": "Ps 14:5", "b": "Ps 53:5", "label": "There were they in great fear"},
-    {"a": "Ps 14:7", "b": "Ps 53:6", "label": "Oh that the salvation of Israel were come out of Zion"}
-  ]
-}
+{"approved":true,"created":"2026-06-14T00:00:00Z","format":"overlay-weave-v2","kind":"quotation","links":[{"a":"Ps 14:1","approved":true,"b":"Ps 53:1","label":"The fool hath said in his heart, There is no God"},{"a":"Ps 14:2","approved":true,"b":"Ps 53:2","label":"looked down from heaven upon the children of men"},{"a":"Ps 14:3","approved":true,"b":"Ps 53:3","label":"there is none that doeth good, no, not one"},{"a":"Ps 14:4","approved":true,"b":"Ps 53:4","label":"who eat up my people as they eat bread"},{"a":"Ps 14:5","approved":true,"b":"Ps 53:5","label":"There were they in great fear"},{"a":"Ps 14:7","approved":true,"b":"Ps 53:6","label":"Oh that the salvation of Israel were come out of Zion"}],"name":"The Fool Hath Said","notes":"Psalm 14 and Psalm 53 are near-duplicate laments over universal corruption, aligning verse for verse (both superscriptions counted as verse 1). The wording diverges most sharply at the fifth verse: Psalm 14:5-6 speaks of the fear of the righteous and the shaming of the poor's counsel, while Psalm 53:5 instead has God scattering the bones of the besieger. Where divergence is too great for an exact shared phrase, the label is omitted.","tokenization":"kjv1769-tok2"}

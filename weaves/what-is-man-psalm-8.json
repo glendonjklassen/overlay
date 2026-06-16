@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "What is man (Psalm 8)",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 8 marvels that God is mindful of man, made a little lower than the angels, crowned with glory and honour, and given dominion with all things under his feet. Hebrews 2:6-8 quotes the psalm and applies it to Christ, the true Son of man, in whom the subjection of all things is secured even though we see not yet all things put under him. Paul in 1 Corinthians 15:27 cites the same clause, that he hath put all things under his feet, in his teaching on Christ's reign and the final subjection of all things. The shared core is the chain of phrases on man's estate and dominion, with the climactic all things under his feet drawing all three together. Hebrews keeps the unique vantage of present hope not yet fully seen, while Paul keeps the unique note that the One who put all things under him is himself excepted.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 8:4", "b": "Heb 2:6", "label": "What is man that thou art mindful of him ... the son of man that thou visitest him"},
+    {"a": "Ps 8:5", "b": "Heb 2:7", "label": "a little lower than the angels ... glory and honour"},
+    {"a": "Ps 8:6", "b": "Heb 2:7", "label": "the works of thy hands"},
+    {"a": "Ps 8:6", "b": "Heb 2:8", "label": "thou hast put all things ... under his feet"},
+    {"a": "Ps 8:6", "b": "1Cor 15:27", "label": "he hath put all things under his feet"},
+    {"a": "Heb 2:8", "b": "1Cor 15:27", "label": "all things ... under his feet ... all in subjection under him"}
+  ]
+}

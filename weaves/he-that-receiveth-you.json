@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "He that receiveth you receiveth me",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Three Gospel records of the same saying of Christ: to receive (or hear) his sent messengers is to receive him, and to receive him is to receive the Father who sent him. Matthew and John are near-identical, sharing the exact chain \"he that receiveth me receiveth him that sent me\" and casting the messengers' reception as Christ's own (Matthew: \"He that receiveth you\"; John: \"He that receiveth whomsoever I send\"). Luke records the saying from a complementary vantage, using hearing and despising rather than receiving, yet binds the same chain to the Father: \"he that despiseth me despiseth him that sent me.\" The shared core is the unbroken identification of messenger with Master and Master with Sender; Luke's added clause on despising preserves the warning side of the same truth, which is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 10:40", "b": "John 13:20", "label": "he that receiveth me receiveth him that sent me"},
+    {"a": "Matt 10:40", "b": "John 13:20", "label": "He that receiveth you receiveth me ... receiveth whomsoever I send receiveth me"},
+    {"a": "Matt 10:40", "b": "Luke 10:16", "label": "He that receiveth you receiveth me ... He that heareth you heareth me"},
+    {"a": "Matt 10:40", "b": "Luke 10:16", "label": "he that receiveth me receiveth him that sent me ... he that despiseth me despiseth him that sent me"},
+    {"a": "John 13:20", "b": "Luke 10:16", "label": "he that receiveth me receiveth him that sent me ... he that despiseth me despiseth him that sent me"}
+  ]
+}

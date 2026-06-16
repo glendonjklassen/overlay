@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Thy throne, O God",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Hebrews 1 gathers a chain of Old Testament texts to show the Son exalted above the angels, applying to Christ words first spoken of David's seed, of God enthroned, and of the LORD who founded the earth. The clearest verbal quotations are from Psalm 45 (the throne, the sceptre of righteousness, and the anointing with the oil of gladness) and Psalm 102 (the founding of the earth, the perishing creation that waxes old as a garment, and the unchanging years of God), where Hebrews follows the wording closely. The Father-Son saying draws on 2 Samuel 7:14, given to David concerning his son, and read by Hebrews as fulfilled in the firstbegotten Son. For Hebrews 1:6 the call to worship matches the KJV of Psalm 97:7, \"worship him, all ye gods,\" with \"gods\" understood as the angels; Deuteronomy 32:43 carries this same summons in the Septuagint, but the KJV (following the Masoretic text) does not contain the clause, so it is noted and left as a matter for further study. Each source keeps its own setting, while Hebrews binds them into one testimony to the deity and eternity of the Son.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Sam 7:14", "b": "Heb 1:5", "label": "I will be ... a Father, and he shall be ... a Son"},
+    {"a": "Ps 97:7", "b": "Heb 1:6", "label": "worship him"},
+    {"a": "Ps 45:6", "b": "Heb 1:8", "label": "Thy throne, O God, is for ever and ever"},
+    {"a": "Ps 45:7", "b": "Heb 1:9", "label": "anointed thee with the oil of gladness above thy fellows"},
+    {"a": "Ps 102:25", "b": "Heb 1:10", "label": "hast laid the foundation of the earth"},
+    {"a": "Ps 102:26", "b": "Heb 1:11", "label": "They shall perish ... wax old ... a garment"},
+    {"a": "Ps 102:27", "b": "Heb 1:12", "label": "thou art the same, and thy years shall"}
+  ]
+}

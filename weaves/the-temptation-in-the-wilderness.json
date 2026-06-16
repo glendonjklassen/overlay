@@ -1,0 +1,33 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The temptation in the wilderness",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Led by the Spirit into the wilderness, Jesus fasts forty days and is tempted. Mark compresses the whole episode into two verses — the Spirit driving him out, forty days, and the angels ministering — naming no single temptation, so only those beats link to him. Matthew and Luke both give all three temptations with near-identical wording, but in different order: Matthew runs bread, temple, mountain; Luke runs bread, mountain, temple. The links therefore cross between the two — Matthew's second temptation answers to Luke's third — which is why the connectors tangle rather than run straight.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 4:1", "b": "Mark 1:12", "label": "led of the Spirit into the wilderness"},
+    {"a": "Matt 4:1", "b": "Luke 4:1", "label": "led by the Spirit into the wilderness"},
+    {"a": "Mark 1:12", "b": "Luke 4:1", "label": "the Spirit into the wilderness"},
+
+    {"a": "Matt 4:2", "b": "Mark 1:13", "label": "forty days"},
+    {"a": "Matt 4:2", "b": "Luke 4:2", "label": "forty days ... he afterward hungered"},
+    {"a": "Mark 1:13", "b": "Luke 4:2", "label": "forty days"},
+
+    {"a": "Matt 4:3", "b": "Luke 4:3", "label": "If thou be the Son of God, command ... be made bread"},
+    {"a": "Matt 4:4", "b": "Luke 4:4", "label": "Man shall not live by bread alone"},
+
+    {"a": "Matt 4:8", "b": "Luke 4:5", "label": "all the kingdoms of the world"},
+    {"a": "Matt 4:9", "b": "Luke 4:6", "label": "All these ... will I give thee"},
+    {"a": "Matt 4:9", "b": "Luke 4:7", "label": "if thou wilt ... worship me"},
+    {"a": "Matt 4:10", "b": "Luke 4:8", "label": "Thou shalt worship the Lord thy God, and him only shalt thou serve"},
+
+    {"a": "Matt 4:5", "b": "Luke 4:9", "label": "a pinnacle of the temple ... cast thyself down"},
+    {"a": "Matt 4:6", "b": "Luke 4:10", "label": "He shall give his angels charge"},
+    {"a": "Matt 4:6", "b": "Luke 4:11", "label": "bear thee up, lest ... thou dash thy foot against a stone"},
+    {"a": "Matt 4:7", "b": "Luke 4:12", "label": "Thou shalt not tempt the Lord thy God"},
+
+    {"a": "Matt 4:11", "b": "Mark 1:13", "label": "the angels ministered unto him"}
+  ]
+}

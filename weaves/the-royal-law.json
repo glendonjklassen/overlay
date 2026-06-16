@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The royal law",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Leviticus 19:18 commands Israel to love a neighbour as oneself, and the New Testament epistles cite this very clause as the standard the law holds out. Paul in Romans 13:9 gathers the commandments and sums them up in this saying, while in Galatians 5:14 he declares that all the law is fulfilled in this one word. James 2:8 names it the royal law according to the scripture, that those who keep it do well. The shared core is the exact clause 'Thou shalt love thy neighbour as thyself,' quoted word for word in each place. Each writer keeps his own vantage: Leviticus sets the command against avenging and grudges, Paul shows it as the summing-up and fulfilling of the whole law, and James lifts it up as the royal law that governs how brethren regard one another.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Lev 19:18", "b": "Rom 13:9", "label": "Thou shalt love thy neighbour as thyself"},
+    {"a": "Lev 19:18", "b": "Gal 5:14", "label": "Thou shalt love thy neighbour as thyself"},
+    {"a": "Lev 19:18", "b": "Jas 2:8", "label": "Thou shalt love thy neighbour as thyself"},
+    {"a": "Rom 13:9", "b": "Gal 5:14", "label": "Thou shalt love thy neighbour as thyself"},
+    {"a": "Rom 13:9", "b": "Jas 2:8", "label": "Thou shalt love thy neighbour as thyself"},
+    {"a": "Gal 5:14", "b": "Jas 2:8", "label": "Thou shalt love thy neighbour as thyself"}
+  ]
+}

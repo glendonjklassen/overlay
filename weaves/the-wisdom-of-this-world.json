@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The wisdom of this world",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Across 1 Corinthians 1-3 Paul marshals a chain of Old Testament witnesses to overthrow human wisdom and ground all boasting in God. He cites Isaiah twice (29:14 against the wisdom of the wise, 64:4 on what God hath prepared) and once more on the unsearchable mind of the LORD (40:13), then seals the argument with Job 5:13 and Psalm 94:11 on God taking the wise in their craftiness and knowing the thoughts of man. Jeremiah 9:24 supplies the refrain that he who glorieth must glory in the Lord, which Paul quotes at 1 Corinthians 1:31 and again at 2 Corinthians 10:17. The shared core is that the wisdom and self-confidence of man are nothing before God, who alone is the proper object of all glory. Each citation keeps its own vantage: Isaiah and Jeremiah speak prophetically of the LORD, while Paul applies the same words to the gospel and to the Lord Jesus Christ.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 29:14", "b": "1Cor 1:19", "label": "the wisdom of the wise ... the understanding of the prudent"},
+    {"a": "Jer 9:24", "b": "1Cor 1:31", "label": "let him that glorieth glory in ... the LORD"},
+    {"a": "Jer 9:24", "b": "2Cor 10:17", "label": "he that glorieth ... glory in the LORD"},
+    {"a": "1Cor 1:31", "b": "2Cor 10:17", "label": "he that glorieth let him glory in the Lord"},
+    {"a": "Isa 64:4", "b": "1Cor 2:9", "label": "the eye seen ... what he hath prepared for him"},
+    {"a": "Isa 40:13", "b": "1Cor 2:16", "label": "the Spirit of the LORD ... his counsellor"},
+    {"a": "Job 5:13", "b": "1Cor 3:19", "label": "He taketh the wise in their own craftiness"},
+    {"a": "Ps 94:11", "b": "1Cor 3:20", "label": "The LORD knoweth the thoughts ... that they are"}
+  ]
+}

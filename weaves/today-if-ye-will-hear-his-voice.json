@@ -1,0 +1,28 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Today if ye will hear his voice",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The writer of Hebrews takes up Psalm 95:7-11, the Holy Ghost's call not to repeat the wilderness provocation, and presses it upon his readers across two chapters. Hebrews 3:7-11 sets out the full quotation almost word for word, and then the key phrases are sounded again: the opening 'To day if ye will hear his voice' returns at Hebrews 3:15 and 4:7, and the closing oath 'they shall not enter into my rest' returns at Hebrews 4:3 and 4:5. The shared core is the same warning from the same Psalm, with Hebrews drawing out that the rest God sware about is still open 'to day' to those who believe. Psalm 95 speaks the warning as Israel's worship; Hebrews keeps that vantage while applying it to the gospel hearer, noting the word was spoken 'in David' so long after the wilderness. Small wordings differ between the Psalm and its citation (heart and heart's, this generation and that generation, work and works); these are left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 95:7", "b": "Heb 3:7", "label": "To day if ye will hear his voice"},
+    {"a": "Ps 95:7", "b": "Heb 3:15", "label": "To day if ye will hear his voice"},
+    {"a": "Ps 95:7", "b": "Heb 4:7", "label": "To day if ye will hear his voice"},
+    {"a": "Heb 3:7", "b": "Heb 3:15", "label": "To day if ye will hear his voice"},
+    {"a": "Heb 3:7", "b": "Heb 4:7", "label": "To day if ye will hear his voice"},
+    {"a": "Heb 3:15", "b": "Heb 4:7", "label": "To day if ye will hear his voice"},
+    {"a": "Ps 95:8", "b": "Heb 3:8", "label": "Harden not your hearts as in the provocation ... in the day of temptation in the wilderness"},
+    {"a": "Ps 95:8", "b": "Heb 3:15", "label": "harden not your hearts as in the provocation"},
+    {"a": "Heb 3:8", "b": "Heb 3:15", "label": "harden not your hearts as in the provocation"},
+    {"a": "Ps 95:9", "b": "Heb 3:9", "label": "When your fathers tempted me proved me and saw my works"},
+    {"a": "Ps 95:10", "b": "Heb 3:10", "label": "they ... err in their heart and they have not known my ways"},
+    {"a": "Ps 95:11", "b": "Heb 3:11", "label": "I sware in my wrath ... they shall not enter into my rest"},
+    {"a": "Ps 95:11", "b": "Heb 4:3", "label": "I have sworn in my wrath ... they shall enter into my rest"},
+    {"a": "Ps 95:11", "b": "Heb 4:5", "label": "they shall not enter into my rest"},
+    {"a": "Heb 3:11", "b": "Heb 4:3", "label": "sworn in my wrath ... they shall enter into my rest"},
+    {"a": "Heb 3:11", "b": "Heb 4:5", "label": "they shall ... enter into my rest"},
+    {"a": "Heb 4:3", "b": "Heb 4:5", "label": "if they shall enter into my rest"}
+  ]
+}

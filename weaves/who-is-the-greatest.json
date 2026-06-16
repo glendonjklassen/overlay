@@ -1,0 +1,22 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Who is the greatest",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel of the disciples' dispute over who should be the greatest, answered by Jesus setting a little child in the midst. All three accounts share the same core: the question of greatness, the child taken and set among them, and the saying that whosoever receives such a child in Jesus' name receives him. The vantages are complementary: Matthew frames it as the disciples' direct question and alone preserves the fuller teaching to be converted and become as little children and to humble oneself as the greatest. Mark supplies the setting at Capernaum, the disciples' silence, and the saying that he who would be first must be last of all and servant of all; Luke notes that Jesus perceived the thought of their heart and closes with he that is least the same shall be great. Mark and Luke together extend the receiving saying to whosoever receives Jesus receives him that sent him, where Matthew stops at receiveth me; this fuller and unique material is left in place and unlinked.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 18:1", "b": "Mark 9:34", "label": "who should be the greatest"},
+    {"a": "Matt 18:1", "b": "Luke 9:46", "label": "which of them should be greatest"},
+    {"a": "Mark 9:34", "b": "Luke 9:46", "label": "who should be the greatest"},
+
+    {"a": "Matt 18:2", "b": "Mark 9:36", "label": "set him in the midst of them"},
+    {"a": "Matt 18:2", "b": "Luke 9:47", "label": "a little child ... set him"},
+    {"a": "Mark 9:36", "b": "Luke 9:47", "label": "took a child and set him"},
+
+    {"a": "Matt 18:5", "b": "Mark 9:37", "label": "receive ... such ... in my name receiveth me"},
+    {"a": "Matt 18:5", "b": "Luke 9:48", "label": "receive ... child in my name receiveth me"},
+    {"a": "Mark 9:37", "b": "Luke 9:48", "label": "whosoever shall receive me receiveth ... him that sent me"}
+  ]
+}

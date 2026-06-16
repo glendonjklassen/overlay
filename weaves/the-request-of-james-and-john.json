@@ -1,0 +1,22 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The request of James and John",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew and Mark give the same scene on the road to Jerusalem: a request for the two highest places beside Jesus in his coming glory, his answer about the cup and the baptism, the indignation of the ten, and his teaching that greatness among his own is service, sealed by the Son of man giving his life a ransom for many. The shared core is linked pair by pair. The accounts differ in vantage on the asker: Matthew records the mother of Zebedee's children making the request with her sons, while Mark records James and John themselves asking; these are complementary vantages on one petition by the family of Zebedee, and the linked phrase is the shared request to sit on the right hand and on the left. Matthew speaks of sitting in thy kingdom, Mark of sitting in thy glory; Matthew has them moved with indignation, Mark much displeased; Matthew names the chief as servant, Mark the chiefest as servant of all. Each keeps its own wording while telling one event.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 20:20", "b": "Mark 10:35", "label": "the sons of Zebedee ... desiring a certain thing of him"},
+    {"a": "Matt 20:21", "b": "Mark 10:37", "label": "Grant ... the one on thy right hand and the other on the left"},
+    {"a": "Matt 20:22", "b": "Mark 10:38", "label": "Ye know not what ye ask ... drink of the cup that I"},
+    {"a": "Matt 20:22", "b": "Mark 10:39", "label": "be baptized with the baptism that I am baptized with"},
+    {"a": "Matt 20:23", "b": "Mark 10:39", "label": "Ye shall ... drink ... of my cup"},
+    {"a": "Matt 20:23", "b": "Mark 10:40", "label": "to sit on my right hand and on my left is not mine to give but it shall be given to them for whom it is prepared"},
+    {"a": "Matt 20:24", "b": "Mark 10:41", "label": "when the ten heard it"},
+    {"a": "Matt 20:25", "b": "Mark 10:42", "label": "Jesus called them ... they that are great exercise authority upon them"},
+    {"a": "Matt 20:26", "b": "Mark 10:43", "label": "it shall not be so among you ... whosoever will be great among you ... your minister"},
+    {"a": "Matt 20:27", "b": "Mark 10:44", "label": "whosoever will be chief ... let him be your servant"},
+    {"a": "Matt 20:28", "b": "Mark 10:45", "label": "the Son of man came not to be ministered unto but to minister and to give his life a ransom for many"}
+  ]
+}

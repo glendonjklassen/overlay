@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Every knee shall bow",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Isaiah's oracle of the LORD swearing by Himself that to Him every knee shall bow and every tongue shall swear is taken up twice by Paul. In Romans 14:11 he cites it almost verbatim, prefaced 'As I live, saith the Lord,' to ground the certainty that all will give account at God's judgment seat. In Philippians 2:10-11 he weaves the same words into the exaltation of Christ, where every knee bows at the name of Jesus and every tongue confesses Him Lord to the glory of God the Father. The shared core is the universal homage of knee and tongue; Romans keeps Isaiah's pairing of bowing and confessing in one breath, while Philippians splits it across two verses (knee in v10, tongue in v11). Where Isaiah has the tongue 'swear' and Paul has it 'confess,' the apostle reads the homage as glad acknowledgment of the Lord; the precise force of that swearing is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 45:23", "b": "Rom 14:11", "label": "every knee shall bow ... every tongue shall"},
+    {"a": "Isa 45:23", "b": "Phil 2:10", "label": "every knee ... bow"},
+    {"a": "Isa 45:23", "b": "Phil 2:11", "label": "every tongue"}
+  ]
+}

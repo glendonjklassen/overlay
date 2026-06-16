@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Out of Egypt and Rachel weeping",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew gathers two prophetic words from the prophets and shows them fulfilled in the childhood of Jesus. Hosea's word, spoken first of Israel called up from bondage, is fulfilled when the holy family flees to Egypt and is afterward called back, so that of the Son it is written 'Out of Egypt have I called my son.' Jeremiah's lament, a voice heard in Ramah with Rachel weeping for her children, is fulfilled in Herod's slaughter of the children of Bethlehem, whose mothers 'would not be comforted, because they are not.' The shared hooks are the called son out of Egypt and Rachel weeping inconsolably for her children. Matthew renders the names as Rama and Rachel where Jeremiah has Ramah and Rahel; this spelling is left as a matter for further study. Each prophet keeps his own setting while Matthew shows the fuller reach of the word in the Christ child.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Hos 11:1", "b": "Matt 2:15", "label": "called my son ... out of Egypt"},
+    {"a": "Jer 31:15", "b": "Matt 2:18", "label": "lamentation and ... weeping for her children"}
+  ]
+}

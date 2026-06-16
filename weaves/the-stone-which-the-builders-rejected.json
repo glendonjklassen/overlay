@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The stone which the builders rejected",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 118:22-23 hails a rejected stone made the chief cornerstone, the LORD's marvellous doing. It is among the most-quoted Old Testament texts in the New, applied to Christ Himself: by the Lord in the three Synoptic accounts of the vineyard parable (Matt 21:42, Mark 12:10-11, Luke 20:17), by Peter before the council (Acts 4:11), and again in 1 Peter 2:7. The shared core is the builders' rejection of the stone that becomes the head of the corner. The citing verbs vary as complementary vantages on the one act: refused (Ps), rejected (Synoptics), set at nought (Acts), disallowed (1 Pet). The Lord's-doing acclamation of v23 is carried over in Matthew and Mark, while Luke, Acts, and 1 Peter draw out the cornerstone clause alone.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 118:22", "b": "Matt 21:42", "label": "The stone which the builders ... is become the head ... of the corner"},
+    {"a": "Ps 118:22", "b": "Mark 12:10", "label": "The stone which the builders ... is become the head ... of the corner"},
+    {"a": "Ps 118:22", "b": "Luke 20:17", "label": "The stone which the builders ... is become the head ... of the corner"},
+    {"a": "Ps 118:22", "b": "Acts 4:11", "label": "the stone which was set at nought ... is become the head of the corner"},
+    {"a": "Ps 118:22", "b": "1Pet 2:7", "label": "the stone which the builders disallowed ... is made the head of the corner"},
+    {"a": "Ps 118:23", "b": "Matt 21:42", "label": "this is the Lord's doing and it is marvellous in our eyes"},
+    {"a": "Ps 118:23", "b": "Mark 12:11", "label": "the Lord's doing and it is marvellous in our eyes"}
+  ]
+}

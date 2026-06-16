@@ -1,0 +1,66 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The parable of the wicked husbandmen",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jesus tells the parable of the wicked husbandmen in all three synoptic gospels during the temple confrontations of His final week. The shared core is constant: a man plants a vineyard and lets it to husbandmen, sends servants at the season to receive the fruit, the husbandmen beat and kill them, and last of all he sends his beloved son, whom they cast out and slay, saying the inheritance shall be theirs; the lord will then destroy them and give the vineyard to others, and Jesus seals it with the rejected stone of Psalm 118. Matthew gives the fullest setting of the vineyard (hedge, winepress, tower) and uniquely has the hearers pronounce their own judgment and adds the kingdom given to a nation bringing forth fruit. Mark traces the servants singly and dwells on the beloved son sent last of all, while Luke compresses the vineyard's setting and uniquely records the crowd's cry of 'God forbid.' These are complementary vantages on one parable; the Psalm 118 'head of the corner' citation, shared here by all three, is also gathered in the separate stone weave. The chief priests perceive He spake of them and seek to lay hold on Him but fear the people.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 21:33", "b": "Mark 12:1", "label": "planted a vineyard ... let it out to husbandmen and went into a far country"},
+    {"a": "Matt 21:33", "b": "Luke 20:9", "label": "planted a vineyard ... and went into a far country"},
+    {"a": "Mark 12:1", "b": "Luke 20:9", "label": "planted a vineyard ... and went into a far country"},
+
+    {"a": "Matt 21:33", "b": "Mark 12:1", "label": "hedged it round about ... built a tower"},
+
+    {"a": "Matt 21:34", "b": "Mark 12:2", "label": "he sent his servants to the husbandmen that they might receive the fruits"},
+    {"a": "Matt 21:34", "b": "Luke 20:10", "label": "at the season he sent ... that they should give him of the fruit"},
+    {"a": "Mark 12:2", "b": "Luke 20:10", "label": "at the season he sent to the husbandmen ... of the fruit of the vineyard"},
+
+    {"a": "Matt 21:35", "b": "Mark 12:3", "label": "they caught him and beat"},
+    {"a": "Matt 21:35", "b": "Mark 12:4", "label": "stoned ... they cast stones"},
+    {"a": "Matt 21:35", "b": "Mark 12:5", "label": "killed another ... him they killed"},
+    {"a": "Matt 21:35", "b": "Luke 20:10", "label": "beat ... the husbandmen beat him"},
+    {"a": "Mark 12:3", "b": "Luke 20:10", "label": "beat him and sent him away empty"},
+    {"a": "Mark 12:4", "b": "Luke 20:11", "label": "again he sent ... shamefully handled ... entreated him shamefully"},
+    {"a": "Mark 12:5", "b": "Luke 20:12", "label": "again he sent another ... again he sent a third"},
+
+    {"a": "Matt 21:36", "b": "Mark 12:5", "label": "Again he sent other servants ... many others beating some and killing some"},
+    {"a": "Matt 21:36", "b": "Luke 20:11", "label": "Again he sent ... they did unto them likewise ... they beat him also"},
+
+    {"a": "Matt 21:37", "b": "Mark 12:6", "label": "last of all he sent unto them his son saying They will reverence my son"},
+    {"a": "Matt 21:37", "b": "Luke 20:13", "label": "his son ... my beloved son ... they will reverence"},
+    {"a": "Mark 12:6", "b": "Luke 20:13", "label": "one son his wellbeloved ... my beloved son ... reverence"},
+
+    {"a": "Matt 21:38", "b": "Mark 12:7", "label": "said among themselves This is the heir come let us kill him"},
+    {"a": "Matt 21:38", "b": "Luke 20:14", "label": "when the husbandmen saw the son ... This is the heir come let us kill him"},
+    {"a": "Mark 12:7", "b": "Luke 20:14", "label": "This is the heir come let us kill him and the inheritance shall be ours"},
+
+    {"a": "Matt 21:39", "b": "Mark 12:8", "label": "cast him out of the vineyard and slew him"},
+    {"a": "Matt 21:39", "b": "Luke 20:15", "label": "cast him out of the vineyard ... and killed him"},
+    {"a": "Mark 12:8", "b": "Luke 20:15", "label": "they took him and killed him and cast him out of the vineyard"},
+
+    {"a": "Matt 21:40", "b": "Mark 12:9", "label": "what will the lord of the vineyard do unto those husbandmen"},
+    {"a": "Matt 21:40", "b": "Luke 20:15", "label": "what ... shall the lord of the vineyard do unto them"},
+    {"a": "Mark 12:9", "b": "Luke 20:15", "label": "What shall therefore the lord of the vineyard do"},
+
+    {"a": "Matt 21:41", "b": "Mark 12:9", "label": "destroy those wicked men and will let out his vineyard unto other"},
+    {"a": "Matt 21:41", "b": "Luke 20:16", "label": "destroy ... and shall give the vineyard to others"},
+    {"a": "Mark 12:9", "b": "Luke 20:16", "label": "he will come and destroy the husbandmen and will give the vineyard unto others"},
+
+    {"a": "Matt 21:42", "b": "Mark 12:10", "label": "Did ye never read in the scriptures The stone which the builders rejected ... is become the head of the corner"},
+    {"a": "Matt 21:42", "b": "Mark 12:11", "label": "this is the Lord's doing and it is marvellous in our eyes"},
+    {"a": "Matt 21:42", "b": "Luke 20:17", "label": "The stone which the builders rejected the same is become the head of the corner"},
+    {"a": "Mark 12:10", "b": "Luke 20:17", "label": "The stone which the builders rejected ... is become the head of the corner"},
+
+    {"a": "Matt 21:44", "b": "Luke 20:18", "label": "whosoever shall fall on this stone shall be broken ... it will grind him to powder"},
+
+    {"a": "Matt 21:45", "b": "Mark 12:12", "label": "perceived that he spake of them ... they knew that he had spoken the parable against them"},
+    {"a": "Matt 21:45", "b": "Luke 20:19", "label": "they perceived that he spake of them ... he had spoken this parable against them"},
+    {"a": "Mark 12:12", "b": "Luke 20:19", "label": "the chief priests ... had spoken the parable against them"},
+
+    {"a": "Matt 21:46", "b": "Mark 12:12", "label": "they sought to lay hands on him they feared the multitude ... feared the people"},
+    {"a": "Matt 21:46", "b": "Luke 20:19", "label": "sought to lay hands on him ... feared the people"},
+    {"a": "Mark 12:12", "b": "Luke 20:19", "label": "sought to lay hold on him but feared the people"}
+  ]
+}

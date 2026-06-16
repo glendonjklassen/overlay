@@ -1,0 +1,45 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Walking on the water",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "After the feeding of the five thousand, Matthew, Mark, and John all recount Jesus walking on the sea to the disciples in the storm-tossed ship. The shared core runs from his sending the disciples ahead and withdrawing to a mountain, through the contrary wind in the midst of the sea, to his coming to them walking on the water, the word 'It is I; be not afraid,' and his entering the ship. Each evangelist keeps his own vantage: Matthew and Mark detail the constraining of the disciples and the multitude sent away, John alone notes the crowd's purpose to make him a king and the measured five and twenty or thirty furlongs they had rowed. Matthew alone tells of Peter walking on the water, his cry 'Lord, save me,' and the worship 'Thou art the Son of God,' which stand without parallel and are left to read in place. Mark closes with the disciples' amazement and the hardness of heart concerning the loaves, a complementary closing vantage on the same night.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 14:22", "b": "Mark 6:45", "label": "constrained his disciples to get into a ship ... while he sent the multitudes away"},
+
+    {"a": "Matt 14:23", "b": "Mark 6:46", "label": "he went up into a mountain apart to pray"},
+    {"a": "Matt 14:23", "b": "John 6:15", "label": "into a mountain ... alone"},
+    {"a": "Mark 6:46", "b": "John 6:15", "label": "departed into a mountain"},
+
+    {"a": "Matt 14:23", "b": "Mark 6:47", "label": "when the evening was come"},
+    {"a": "Matt 14:23", "b": "John 6:16", "label": "when the evening was come"},
+    {"a": "Mark 6:47", "b": "John 6:16", "label": "when even was come"},
+
+    {"a": "Matt 14:24", "b": "Mark 6:47", "label": "the ship was now in the midst of the sea"},
+
+    {"a": "Matt 14:24", "b": "Mark 6:48", "label": "the wind was contrary"},
+    {"a": "Matt 14:24", "b": "John 6:18", "label": "tossed with waves ... a great wind"},
+    {"a": "Mark 6:48", "b": "John 6:18", "label": "the wind was contrary ... a great wind"},
+
+    {"a": "Mark 6:48", "b": "John 6:19", "label": "toiling in rowing ... they had rowed about five and twenty or thirty furlongs"},
+
+    {"a": "Matt 14:25", "b": "Mark 6:48", "label": "Jesus went unto them walking on the sea"},
+    {"a": "Matt 14:25", "b": "John 6:19", "label": "walking on the sea"},
+    {"a": "Mark 6:48", "b": "John 6:19", "label": "he cometh unto them walking upon the sea"},
+
+    {"a": "Matt 14:26", "b": "Mark 6:49", "label": "they supposed it had been a spirit"},
+    {"a": "Matt 14:26", "b": "Mark 6:50", "label": "they were troubled ... cried out for fear"},
+    {"a": "Matt 14:26", "b": "John 6:19", "label": "they were afraid"},
+    {"a": "Mark 6:49", "b": "John 6:19", "label": "drawing nigh unto the ship and they were afraid"},
+
+    {"a": "Matt 14:27", "b": "Mark 6:50", "label": "Be of good cheer it is I be not afraid"},
+    {"a": "Matt 14:27", "b": "John 6:20", "label": "It is I be not afraid"},
+    {"a": "Mark 6:50", "b": "John 6:20", "label": "It is I be not afraid"},
+
+    {"a": "Matt 14:32", "b": "Mark 6:51", "label": "come into the ship the wind ceased"},
+    {"a": "Matt 14:32", "b": "John 6:21", "label": "come into the ship"},
+    {"a": "Mark 6:51", "b": "John 6:21", "label": "went up unto them into the ship"}
+  ]
+}

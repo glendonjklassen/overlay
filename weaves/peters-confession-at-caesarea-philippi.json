@@ -1,0 +1,32 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Peter's confession at Caesarea Philippi",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic account of Jesus questioning his disciples and Peter confessing him as the Christ. The shared core runs the same way in all three: the question of who men say Jesus is, the people's answers (John the Baptist, Elias, and the prophets), the sharper question to the disciples, Peter's confession, and the charge to tell no man. Matthew and Mark both name the setting near Caesarea Philippi, while Luke instead opens with Jesus alone praying, his disciples with him; these are complementary vantages on the same occasion. Peter's confession is given as 'Thou art the Christ' in Matthew and Mark and as 'The Christ of God' in Luke, all confessing the one Messiah. Matthew alone records the fuller confession 'the Son of the living God' and the Lord's answering blessing of Peter ('Thou art Peter ... the keys of the kingdom of heaven', 16:17-19), which has no synoptic parallel and reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 16:13", "b": "Mark 8:27", "label": "Caesarea Philippi"},
+
+    {"a": "Matt 16:13", "b": "Mark 8:27", "label": "Whom do men say that I ... am"},
+    {"a": "Matt 16:13", "b": "Luke 9:18", "label": "Whom do men say that I ... am"},
+    {"a": "Mark 8:27", "b": "Luke 9:18", "label": "Whom do men say that I am"},
+
+    {"a": "Matt 16:14", "b": "Mark 8:28", "label": "John the Baptist ... Elias ... one of the prophets"},
+    {"a": "Matt 16:14", "b": "Luke 9:19", "label": "John the Baptist ... Elias ... one of the ... prophets"},
+    {"a": "Mark 8:28", "b": "Luke 9:19", "label": "John the Baptist ... Elias ... one of the ... prophets"},
+
+    {"a": "Matt 16:15", "b": "Mark 8:29", "label": "But whom say ye that I am"},
+    {"a": "Matt 16:15", "b": "Luke 9:20", "label": "But whom say ye that I am"},
+    {"a": "Mark 8:29", "b": "Luke 9:20", "label": "But whom say ye that I am"},
+
+    {"a": "Matt 16:16", "b": "Mark 8:29", "label": "Thou art the Christ"},
+    {"a": "Matt 16:16", "b": "Luke 9:20", "label": "the Christ"},
+    {"a": "Mark 8:29", "b": "Luke 9:20", "label": "the Christ"},
+
+    {"a": "Matt 16:20", "b": "Mark 8:30", "label": "tell no man"},
+    {"a": "Matt 16:20", "b": "Luke 9:21", "label": "tell no man"},
+    {"a": "Mark 8:30", "b": "Luke 9:21", "label": "tell no man"}
+  ]
+}

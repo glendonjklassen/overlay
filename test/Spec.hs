@@ -247,7 +247,7 @@ main = hspec $ do
                     , pSpan = (1, 1)
                     , pOriginal = ["fourscore"], pReplacement = ["eighty"]
                     } POwn
-                rv = toRVerse "me" [lp] [] [] [] verse
+                rv = toRVerse "me" [lp] [] [] [] 0 verse
                 ws = rvTokens rv
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
             tokPost (rtTok (ws !! 1)) `shouldBe` ","
@@ -264,7 +264,7 @@ main = hspec $ do
                     , pOriginal = ["fourscore", "years"]
                     , pReplacement = ["eighty", "long", "years"]
                     } POwn
-                rv = toRVerse "me" [lp] [] [] [] verse
+                rv = toRVerse "me" [lp] [] [] [] 0 verse
                 ws = rvTokens rv
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "long", "years"]
             -- punctuation of the original span ends up on the edges
@@ -272,7 +272,7 @@ main = hspec $ do
             tokStrongs (rtTok (ws !! 1)) `shouldBe` ["H8084", "H8141"]
 
         it "marks thread spans, leaving other words unmarked" $ do
-            let rv = toRVerse "me" [] [] [(1, 2)] [] verse
+            let rv = toRVerse "me" [] [] [(1, 2)] [] 0 verse
             map rtMark (rvTokens rv) `shouldBe` [False, True, True]
 
     describe "ref keys" $ do
@@ -392,7 +392,7 @@ main = hspec $ do
                 ]
         it "rewrites matches with punctuation and Strong's intact" $ do
             let lr = mkLR "r.json" ["fourscore"] ["eighty"] [] POwn
-                ws = rvTokens (toRVerse "me" [] [lr] [] [] verse)
+                ws = rvTokens (toRVerse "me" [] [lr] [] [] 0 verse)
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
             tokPost (rtTok (ws !! 1)) `shouldBe` ","
             tokStrongs (rtTok (ws !! 1)) `shouldBe` ["H8084"]
@@ -406,7 +406,7 @@ main = hspec $ do
                     , pOriginal = ["fourscore"], pReplacement = ["eighty"]
                     } POwn
                 lr = mkLR "r.json" ["fourscore"] ["XXX"] [] POwn
-                ws = rvTokens (toRVerse "me" [lp] [lr] [] [] verse)
+                ws = rvTokens (toRVerse "me" [lp] [lr] [] [] 0 verse)
             map (tokWord . rtTok) ws `shouldBe` ["was", "eighty", "years"]
 
     describe "threads" $ do
@@ -428,17 +428,15 @@ main = hspec $ do
         let sampleWeave = Weave "Test" Retelling "test-tok1" "notes"
                 "2026-06-14T00:00:00Z"
                 [canonLink ("Exod", 20, 4) ("Deut", 5, 8)]
-                False ""
+                False
             emptyW = emptyWeave "x" Retelling "t" "now"
 
         it "JSON roundtrips weaves with links" $
             decode (encode sampleWeave) `shouldBe` Just sampleWeave
 
-        it "weaves default to unapproved and round-trip approval + tension" $ do
+        it "weaves default to unapproved and round-trip approval" $ do
             wApproved emptyW `shouldBe` False
-            wTension emptyW `shouldBe` ""
-            let w = emptyW { wApproved = True
-                           , wTension = "Satan provoked / the LORD moved" }
+            let w = emptyW { wApproved = True }
             decode (encode w) `shouldBe` Just w
 
         it "JSON roundtrips a labelled link and keeps its label" $ do
@@ -614,3 +612,30 @@ main = hspec $ do
             kindLabel Prophecy `shouldBe` "prophecy & fulfillment"
             kindLabel Retelling `shouldBe` "retelling"
             parseKind "nonsense" `shouldBe` Nothing
+
+        it "approving every link approves the whole weave" $ do
+            wApproved harmony `shouldBe` False
+            let w = setAllApproval True harmony
+            wApproved w `shouldBe` True
+            approvedCount w `shouldBe` 2
+            wApproved (setAllApproval False w) `shouldBe` False
+
+        it "approves one link at a time; the weave flag follows the last one" $ do
+            let ls = wLinks harmony
+                w1 = setLinkApproval (head ls) True harmony
+            approvedCount w1 `shouldBe` 1
+            wApproved w1 `shouldBe` False                       -- not all yet
+            let w2 = setLinkApproval (ls !! 1) True w1
+            wApproved w2 `shouldBe` True                        -- now all approved
+
+        it "link identity ignores approval (no duplicate edges, clean removal)" $ do
+            let w = setAllApproval True (addLinks [mark] emptyW)
+            -- re-adding the same edge unapproved must not duplicate it
+            length (wLinks (addLinks [mark] w)) `shouldBe` 1
+            -- removeLink matches regardless of approval state
+            wLinks (removeLink mark w) `shouldBe` []
+
+        it "per-link approval round-trips through JSON" $ do
+            let w = setAllApproval True (addLinks [mark] emptyW)
+            decode (encode w) `shouldBe` Just w
+            (lApproved . head . wLinks <$> decode (encode w)) `shouldBe` Just True

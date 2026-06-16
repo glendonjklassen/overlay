@@ -1,0 +1,211 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Sennacherib and Hezekiah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Assyrian invasion under Sennacherib, Rabshakeh's blasphemous siege-speech, Hezekiah's prayer, the LORD's deliverance by the angel, Hezekiah's sickness and the sign of the shadow, and the Babylonian envoys, told nearly word-for-word in 2 Kings 18-20 and Isaiah 36-39. This is the Old Testament's most sustained near-verbatim parallel: long stretches match clause for clause, so most links carry the shared KJV wording. Each book also keeps unique material that reads in place and is left unlinked: Kings preserves Hezekiah's tribute and the stripping of the temple gold (2Kgs 18:14-16), Isaiah preserves Hezekiah's own writing or psalm of thanksgiving after recovery (Isa 38:9-20), and 2 Chronicles 32 gives a compressed summary that adds Hezekiah's water-works and defensive preparations. Small differences of arrangement and wording, such as Isaiah placing the figs-and-boil and the sign-question at the close of chapter 38 where Kings keeps them within the healing account, are complementary vantages on one event and are left as a matter for further study. The Chronicles verses are attached to their Kings and Isaiah counterparts at each shared beat.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 18:13", "b": "Isa 36:1", "label": "in the fourteenth year of king Hezekiah ... Sennacherib king of Assyria came up against all the ... cities of Judah and took them"},
+    {"a": "2Kgs 18:13", "b": "2Chr 32:1", "label": "Sennacherib king of Assyria ... against the fenced cities"},
+    {"a": "Isa 36:1", "b": "2Chr 32:1", "label": "Sennacherib king of Assyria ... the fenced cities"},
+
+    {"a": "2Kgs 18:17", "b": "Isa 36:2", "label": "the king of Assyria sent ... from Lachish ... to Jerusalem ... by the conduit of the upper pool ... in the highway of the fuller's field"},
+    {"a": "2Kgs 18:17", "b": "2Chr 32:9", "label": "the king of Assyria send his servants to Jerusalem but he himself laid siege against Lachish"},
+    {"a": "Isa 36:2", "b": "2Chr 32:9", "label": "from Lachish to Jerusalem"},
+
+    {"a": "2Kgs 18:18", "b": "Isa 36:3", "label": "Eliakim the son of Hilkiah which was over the household and Shebna the scribe and Joah the son of Asaph the recorder"},
+
+    {"a": "2Kgs 18:19", "b": "Isa 36:4", "label": "Thus saith the great king the king of Assyria What confidence is this wherein thou trustest"},
+    {"a": "2Kgs 18:19", "b": "2Chr 32:10", "label": "Whereon ... trust"},
+    {"a": "Isa 36:4", "b": "2Chr 32:10", "label": "Whereon ... trust"},
+
+    {"a": "2Kgs 18:20", "b": "Isa 36:5", "label": "they are but vain words I have counsel and strength for ... war ... on whom dost thou trust that thou rebellest against me"},
+    {"a": "2Kgs 18:20", "b": "2Chr 32:10", "label": "Whereon do ye trust"},
+    {"a": "Isa 36:5", "b": "2Chr 32:10", "label": "Whereon do ye trust"},
+
+    {"a": "2Kgs 18:21", "b": "Isa 36:6", "label": "thou trustest upon the staff of this ... reed ... upon Egypt ... so is Pharaoh king of Egypt unto all that trust ... him"},
+
+    {"a": "2Kgs 18:22", "b": "Isa 36:7", "label": "We trust in the LORD our God ... whose high places and whose altars Hezekiah hath taken away ... Ye shall worship before this altar"},
+    {"a": "2Kgs 18:22", "b": "2Chr 32:12", "label": "Hezekiah ... high places ... altars ... worship before ... altar"},
+    {"a": "Isa 36:7", "b": "2Chr 32:12", "label": "high places and ... altars ... worship before ... altar"},
+
+    {"a": "2Kgs 18:23", "b": "Isa 36:8", "label": "give pledges ... I will deliver thee two thousand horses if thou be able on thy part to set riders upon them"},
+
+    {"a": "2Kgs 18:24", "b": "Isa 36:9", "label": "How then wilt thou turn away the face of one captain of the least of my master's servants and put thy trust on Egypt for chariots and for horsemen"},
+
+    {"a": "2Kgs 18:25", "b": "Isa 36:10", "label": "Am I now come up without the LORD against this ... to destroy it The LORD said ... Go up against this land and destroy it"},
+
+    {"a": "2Kgs 18:26", "b": "Isa 36:11", "label": "Speak ... unto thy servants in the Syrian language for we understand it ... not ... in the Jews language in the ears of the people that are on the wall"},
+
+    {"a": "2Kgs 18:27", "b": "Isa 36:12", "label": "Hath my master sent me to thy master and to thee to speak these words ... to the men ... on the wall that they may eat their own dung and drink their own piss with you"},
+
+    {"a": "2Kgs 18:28", "b": "Isa 36:13", "label": "Rab-shakeh stood and cried with a loud voice in the Jews language ... Hear ... the great king the king of Assyria"},
+    {"a": "2Kgs 18:28", "b": "2Chr 32:18", "label": "cried with a loud voice in the Jews ... unto the people ... on the wall"},
+    {"a": "Isa 36:13", "b": "2Chr 32:18", "label": "cried with a loud voice in the Jews ... on the wall"},
+
+    {"a": "2Kgs 18:29", "b": "Isa 36:14", "label": "Let not Hezekiah deceive you for he shall not be able to deliver you"},
+    {"a": "2Kgs 18:29", "b": "2Chr 32:15", "label": "let not Hezekiah deceive you"},
+    {"a": "Isa 36:14", "b": "2Chr 32:15", "label": "let not Hezekiah deceive you"},
+
+    {"a": "2Kgs 18:30", "b": "Isa 36:15", "label": "Neither let Hezekiah make you trust in the LORD ... The LORD will surely deliver us ... this city shall not be delivered into the hand of the king of Assyria"},
+    {"a": "2Kgs 18:30", "b": "2Chr 32:11", "label": "The LORD our God shall deliver us out of the hand of the king of Assyria"},
+    {"a": "Isa 36:15", "b": "2Chr 32:11", "label": "deliver us out of the hand of the king of Assyria"},
+
+    {"a": "2Kgs 18:31", "b": "Isa 36:16", "label": "Make an agreement with me by a present and come out to me and ... eat ye every ... of his ... vine and every one ... fig tree and drink ye every one the waters of his ... cistern"},
+
+    {"a": "2Kgs 18:32", "b": "Isa 36:17", "label": "Until I come and take you away to a land like your own land a land of corn and wine a land of bread and vineyards"},
+    {"a": "2Kgs 18:32", "b": "2Chr 32:11", "label": "Hezekiah persuade you ... The LORD ... deliver"},
+    {"a": "Isa 36:18", "b": "2Chr 32:11", "label": "lest Hezekiah persuade you ... The LORD will deliver us"},
+
+    {"a": "2Kgs 18:33", "b": "Isa 36:18", "label": "Hath any of the gods of the nations delivered ... his land out of the hand of the king of Assyria"},
+    {"a": "2Kgs 18:33", "b": "2Chr 32:13", "label": "the gods of the nations of those lands any ways able to deliver their lands out of mine hand"},
+    {"a": "Isa 36:18", "b": "2Chr 32:13", "label": "the gods of the nations delivered his land out of the hand of the king of Assyria"},
+
+    {"a": "2Kgs 18:34", "b": "Isa 36:19", "label": "Where are the gods of Hamath and ... Arpad where are the gods of Sepharvaim ... have they delivered Samaria out of mine hand"},
+
+    {"a": "2Kgs 18:35", "b": "Isa 36:20", "label": "Who are they among all the gods of the ... lands that have delivered their ... out of mine hand that the LORD should deliver Jerusalem out of mine hand"},
+    {"a": "2Kgs 18:35", "b": "2Chr 32:14", "label": "deliver his people out of mine hand that your God should be able to deliver you"},
+    {"a": "Isa 36:20", "b": "2Chr 32:14", "label": "deliver ... out of ... hand that ... God should ... deliver"},
+
+    {"a": "2Kgs 18:36", "b": "Isa 36:21", "label": "the people held their peace and answered him not a word for the king's commandment was saying Answer him not"},
+
+    {"a": "2Kgs 18:37", "b": "Isa 36:22", "label": "Eliakim the son of Hilkiah which was over the household and Shebna the scribe and Joah the son of Asaph the recorder to Hezekiah with their clothes rent and told him the words of Rab-shakeh"},
+
+    {"a": "2Kgs 19:1", "b": "Isa 37:1", "label": "when king Hezekiah heard it ... he rent his clothes and covered himself with sackcloth and went into the house of the LORD"},
+
+    {"a": "2Kgs 19:2", "b": "Isa 37:2", "label": "Eliakim ... over the household and Shebna the scribe and the elders of the priests covered with sackcloth ... unto Isaiah the prophet the son of Amoz"},
+
+    {"a": "2Kgs 19:3", "b": "Isa 37:3", "label": "This day is a day of trouble and of rebuke and ... blasphemy for the children are come to the birth and there is not strength to bring forth"},
+
+    {"a": "2Kgs 19:4", "b": "Isa 37:4", "label": "the LORD thy God will hear ... the words of Rab-shakeh whom the king of Assyria ... hath sent to reproach the living God ... lift up thy prayer for the remnant that ... left"},
+
+    {"a": "2Kgs 19:5", "b": "Isa 37:5", "label": "So the servants of king Hezekiah came to Isaiah"},
+
+    {"a": "2Kgs 19:6", "b": "Isa 37:6", "label": "Thus shall ye say ... your master Thus saith the LORD Be not afraid of the words ... thou hast heard ... the servants of the king of Assyria have blasphemed me"},
+
+    {"a": "2Kgs 19:7", "b": "Isa 37:7", "label": "Behold I will send a blast upon him and he shall hear a rumour and ... return to his own land and I will cause him to fall by the sword in his own land"},
+
+    {"a": "2Kgs 19:8", "b": "Isa 37:8", "label": "So Rab-shakeh returned and found the king of Assyria warring against Libnah for he had heard that he was departed from Lachish"},
+
+    {"a": "2Kgs 19:9", "b": "Isa 37:9", "label": "Tirhakah king of Ethiopia ... he sent messengers ... unto Hezekiah saying"},
+    {"a": "2Kgs 19:9", "b": "2Chr 32:17", "label": "He wrote ... letters to rail on the LORD God of Israel"},
+    {"a": "Isa 37:9", "b": "2Chr 32:17", "label": "letters to rail on the LORD"},
+
+    {"a": "2Kgs 19:10", "b": "Isa 37:10", "label": "Let not thy God in whom thou trustest deceive thee saying Jerusalem shall not be ... into the hand of the king of Assyria"},
+
+    {"a": "2Kgs 19:11", "b": "Isa 37:11", "label": "thou hast heard what the kings of Assyria have done to all lands by destroying them utterly and shalt thou be delivered"},
+
+    {"a": "2Kgs 19:12", "b": "Isa 37:12", "label": "Have the gods of the nations delivered them which my fathers have destroyed as Gozan and Haran and Rezeph and the children of Eden"},
+
+    {"a": "2Kgs 19:13", "b": "Isa 37:13", "label": "Where is the king of Hamath and the king of Arpad and the king of the city of Sepharvaim ... Hena and Ivah"},
+
+    {"a": "2Kgs 19:14", "b": "Isa 37:14", "label": "Hezekiah received the letter ... of the messengers and read it and Hezekiah went up ... the house of the LORD and spread it before the LORD"},
+    {"a": "2Kgs 19:14", "b": "2Chr 32:17", "label": "He wrote ... letters"},
+    {"a": "Isa 37:14", "b": "2Chr 32:17", "label": "letters"},
+
+    {"a": "2Kgs 19:15", "b": "Isa 37:15", "label": "Hezekiah prayed before the LORD"},
+    {"a": "2Kgs 19:15", "b": "Isa 37:16", "label": "O LORD God of Israel which dwellest between the cherubims thou art the God even thou alone of all the kingdoms of the earth thou hast made heaven and earth"},
+    {"a": "2Kgs 19:15", "b": "2Chr 32:20", "label": "Hezekiah the king ... prayed and cried to heaven"},
+    {"a": "Isa 37:15", "b": "2Chr 32:20", "label": "Hezekiah ... prayed"},
+
+    {"a": "2Kgs 19:16", "b": "Isa 37:17", "label": "bow down thine ear and hear open LORD thine eyes and see and hear the words of Sennacherib which hath sent ... to reproach the living God"},
+
+    {"a": "2Kgs 19:17", "b": "Isa 37:18", "label": "Of a truth LORD the kings of Assyria have ... the nations and their ..."},
+
+    {"a": "2Kgs 19:18", "b": "Isa 37:19", "label": "have cast their gods into the fire for they were no gods but the work of men's hands wood and stone therefore they have destroyed them"},
+
+    {"a": "2Kgs 19:19", "b": "Isa 37:20", "label": "Now therefore O LORD our God ... save ... us ... his hand that all the kingdoms of the earth may know that thou art the LORD ... even thou only"},
+
+    {"a": "2Kgs 19:20", "b": "Isa 37:21", "label": "Then Isaiah the son of Amoz sent ... to Hezekiah saying Thus saith the LORD God of Israel ... thou hast prayed to me against Sennacherib king of Assyria"},
+    {"a": "2Kgs 19:20", "b": "2Chr 32:20", "label": "the prophet Isaiah the son of Amoz"},
+    {"a": "Isa 37:21", "b": "2Chr 32:20", "label": "the prophet Isaiah the son of Amoz"},
+
+    {"a": "2Kgs 19:21", "b": "Isa 37:22", "label": "The virgin the daughter of Zion hath despised thee and laughed thee to scorn the daughter of Jerusalem hath shaken her head at thee"},
+
+    {"a": "2Kgs 19:22", "b": "Isa 37:23", "label": "Whom hast thou reproached and blasphemed and against whom hast thou exalted thy voice and lifted up thine eyes on high even against the Holy One of Israel"},
+
+    {"a": "2Kgs 19:23", "b": "Isa 37:24", "label": "the multitude of my chariots ... come up to the height of the mountains to the sides of Lebanon and ... cut down the tall ... trees thereof and the choice fir trees thereof ... the forest of his Carmel"},
+
+    {"a": "2Kgs 19:24", "b": "Isa 37:25", "label": "I have digged and drunk ... waters and with the sole of my feet have I dried up all the rivers of ... besieged places"},
+
+    {"a": "2Kgs 19:25", "b": "Isa 37:26", "label": "Hast thou not heard long ago how I have done it and of ancient times that I have formed it now have I brought it to pass that thou shouldest be to lay waste ... cities into ruinous heaps"},
+
+    {"a": "2Kgs 19:26", "b": "Isa 37:27", "label": "their inhabitants were of small power they were dismayed and confounded they were as the grass of the field ... the grass on the housetops and as corn blasted before it be grown up"},
+
+    {"a": "2Kgs 19:27", "b": "Isa 37:28", "label": "But I know thy abode and thy going out and thy coming in and thy rage against me"},
+
+    {"a": "2Kgs 19:28", "b": "Isa 37:29", "label": "thy rage against me and thy tumult is come up into mine ears therefore ... put my hook in thy nose and my bridle in thy lips and I will turn thee back by the way by which thou camest"},
+
+    {"a": "2Kgs 19:29", "b": "Isa 37:30", "label": "this shall be a sign unto thee Ye shall eat this year ... and in the ... year ... and in the third year sow ye and reap and plant vineyards and eat the fruit ... thereof"},
+
+    {"a": "2Kgs 19:30", "b": "Isa 37:31", "label": "the remnant that is escaped of the house of Judah shall ... again take root downward and bear fruit upward"},
+
+    {"a": "2Kgs 19:31", "b": "Isa 37:32", "label": "out of Jerusalem shall go forth a remnant and they that escape out of mount Zion the zeal of the LORD of hosts shall do this"},
+
+    {"a": "2Kgs 19:32", "b": "Isa 37:33", "label": "He shall not come into this city nor shoot an arrow there nor come before it with ... shield nor cast a bank against it"},
+
+    {"a": "2Kgs 19:33", "b": "Isa 37:34", "label": "By the way that he came by the same shall he return and shall not come into this city saith the LORD"},
+
+    {"a": "2Kgs 19:34", "b": "Isa 37:35", "label": "I will defend this city to save it for mine own sake and for my servant David's sake"},
+
+    {"a": "2Kgs 19:35", "b": "Isa 37:36", "label": "the angel of the LORD went ... and smote in the camp of the Assyrians an hundred fourscore and five thousand and when they arose early in the morning behold they were all dead corpses"},
+    {"a": "2Kgs 19:35", "b": "2Chr 32:21", "label": "the LORD sent an angel which cut off ... in the camp of the king of Assyria"},
+    {"a": "Isa 37:36", "b": "2Chr 32:21", "label": "an angel which cut off ... in the camp of the king of Assyria"},
+
+    {"a": "2Kgs 19:36", "b": "Isa 37:37", "label": "So Sennacherib king of Assyria departed and went and returned and dwelt at Nineveh"},
+    {"a": "2Kgs 19:36", "b": "2Chr 32:21", "label": "he returned with shame of face to his own land"},
+    {"a": "Isa 37:37", "b": "2Chr 32:21", "label": "Sennacherib ... departed ... returned ... to his own land"},
+
+    {"a": "2Kgs 19:37", "b": "Isa 37:38", "label": "as he was worshipping in the house of Nisroch his god ... Adrammelech and Sharezer his sons smote him with the sword ... Esar-haddon his son reigned in his stead"},
+    {"a": "2Kgs 19:37", "b": "2Chr 32:21", "label": "when he was come into the house of his god they that came forth of his own bowels slew him there with the sword"},
+    {"a": "Isa 37:38", "b": "2Chr 32:21", "label": "the house of his god ... slew him ... with the sword"},
+
+    {"a": "2Kgs 20:1", "b": "Isa 38:1", "label": "In those days was Hezekiah sick unto death And ... Isaiah the prophet the son of Amoz came ... unto him ... Thus saith the LORD Set thine house in order for thou shalt die and not live"},
+    {"a": "2Kgs 20:1", "b": "2Chr 32:24", "label": "Hezekiah was sick to the death"},
+    {"a": "Isa 38:1", "b": "2Chr 32:24", "label": "Hezekiah was sick to the death"},
+
+    {"a": "2Kgs 20:2", "b": "Isa 38:2", "label": "he turned his face ... the wall and prayed unto the LORD"},
+    {"a": "2Kgs 20:2", "b": "2Chr 32:24", "label": "prayed unto the LORD"},
+    {"a": "Isa 38:2", "b": "2Chr 32:24", "label": "prayed unto the LORD"},
+
+    {"a": "2Kgs 20:3", "b": "Isa 38:3", "label": "remember now ... O LORD ... how I have walked before thee in truth and with a perfect heart and have done that which is good in thy sight And Hezekiah wept sore"},
+
+    {"a": "2Kgs 20:4", "b": "Isa 38:4", "label": "the word of the LORD came to him saying"},
+
+    {"a": "2Kgs 20:5", "b": "Isa 38:5", "label": "tell Hezekiah ... Thus saith the LORD the God of David thy father I have heard thy prayer I have seen thy tears ... I will ... add unto thy days fifteen years"},
+
+    {"a": "2Kgs 20:6", "b": "Isa 38:6", "label": "I will deliver thee and this city out of the hand of the king of Assyria and I will defend this city"},
+
+    {"a": "2Kgs 20:7", "b": "Isa 38:21", "label": "Take a lump of figs ... laid it ... upon the boil and he ... recover"},
+
+    {"a": "2Kgs 20:8", "b": "Isa 38:22", "label": "What ... the sign that ... I shall go up ... the house of the LORD"},
+    {"a": "2Kgs 20:8", "b": "2Chr 32:24", "label": "he gave him a sign"},
+    {"a": "Isa 38:22", "b": "2Chr 32:24", "label": "a sign"},
+
+    {"a": "2Kgs 20:9", "b": "Isa 38:7", "label": "This sign shalt thou have ... the LORD that the LORD will do the thing that he hath spoken"},
+
+    {"a": "2Kgs 20:11", "b": "Isa 38:8", "label": "the shadow ten degrees backward ... gone down in the ... dial of Ahaz"},
+
+    {"a": "2Kgs 20:12", "b": "Isa 39:1", "label": "the son of Baladan king of Babylon sent letters and a present ... unto Hezekiah for he had heard that ... Hezekiah had been sick"},
+    {"a": "2Kgs 20:12", "b": "2Chr 32:31", "label": "the ambassadors of the princes of Babylon who sent unto him"},
+    {"a": "Isa 39:1", "b": "2Chr 32:31", "label": "the ambassadors of the princes of Babylon who sent unto him"},
+
+    {"a": "2Kgs 20:13", "b": "Isa 39:2", "label": "shewed them all the house of his precious things the silver and the gold and the spices and the precious ointment and all the house of his armour ... there was nothing in his house ... that Hezekiah shewed them not"},
+    {"a": "2Kgs 20:13", "b": "2Chr 32:31", "label": "to enquire of the wonder that was done in the land"},
+    {"a": "Isa 39:2", "b": "2Chr 32:31", "label": "to enquire of the wonder that was done in the land"},
+
+    {"a": "2Kgs 20:14", "b": "Isa 39:3", "label": "came Isaiah the prophet unto king Hezekiah ... What said these men and from whence came they unto thee ... They are come from a far country ... from Babylon"},
+
+    {"a": "2Kgs 20:15", "b": "Isa 39:4", "label": "What have they seen in thine house ... All ... that are in mine house have they seen there is nothing among my treasures that I have not shewed them"},
+
+    {"a": "2Kgs 20:16", "b": "Isa 39:5", "label": "Isaiah ... unto Hezekiah Hear the word of the LORD"},
+
+    {"a": "2Kgs 20:17", "b": "Isa 39:6", "label": "the days come that all that is in thine house and that which thy fathers have laid up in store ... shall be carried into Babylon nothing shall be left saith the LORD"},
+
+    {"a": "2Kgs 20:18", "b": "Isa 39:7", "label": "of thy sons that ... issue from thee which thou shalt beget shall they take away and they shall be eunuchs in the palace of the king of Babylon"},
+
+    {"a": "2Kgs 20:19", "b": "Isa 39:8", "label": "Good is the word of the LORD which thou hast spoken ... peace and truth ... my days"}
+  ]
+}

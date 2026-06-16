@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "To him that hath shall be given",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Lord's saying on having and receiving more, recorded as He taught in parables. All three accounts share the same proverb in two halves: the one who hath receives more, and from the one who hath not is taken even what he hath. Mark and Luke set it amid the call to hear rightly, while Matthew gives it as the reason the mysteries of the kingdom are granted to some and not others. The closing clause varies in vantage: Mark hath \"that which he hath,\" Matthew \"that he hath,\" and Luke \"that which he seemeth to have\" — complementary windows on the same loss. Matthew alone adds \"and he shall have more abundance,\" and Luke alone opens with \"Take heed therefore how ye hear\"; these unique notes read in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Mark 4:25", "b": "Luke 8:18", "label": "for ... hath to him shall be given"},
+    {"a": "Mark 4:25", "b": "Matt 13:12", "label": "hath to him shall be given"},
+    {"a": "Luke 8:18", "b": "Matt 13:12", "label": "whosoever hath to him shall be given"},
+    {"a": "Mark 4:25", "b": "Luke 8:18", "label": "hath not from him shall be taken"},
+    {"a": "Mark 4:25", "b": "Matt 13:12", "label": "hath not from him shall be taken"},
+    {"a": "Luke 8:18", "b": "Matt 13:12", "label": "whosoever hath not from him shall be taken"},
+    {"a": "Mark 4:25", "b": "Luke 8:18", "label": "even that which he hath / even that which he seemeth to have"},
+    {"a": "Mark 4:25", "b": "Matt 13:12", "label": "even that which he hath / even that he hath"},
+    {"a": "Luke 8:18", "b": "Matt 13:12", "label": "even that which he seemeth to have / even that he hath"}
+  ]
+}

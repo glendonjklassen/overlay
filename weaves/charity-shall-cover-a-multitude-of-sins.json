@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Charity shall cover a multitude of sins",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Solomon's proverb that 'love covereth all sins' (Prov 10:12) is taken up by two apostles writing of the same grace. Peter exhorts fervent charity 'for charity shall cover the multitude of sins' (1Pet 4:8), and James says he who turns a sinner from his way 'shall hide a multitude of sins' (Jas 5:20). The shared core is the covering or hiding of sins by love. Peter and James share the near-identical phrase 'multitude of sins,' the apostolic echo of the proverb's 'all sins.' Each keeps its own vantage: Solomon contrasts love with strife-stirring hatred, Peter grounds the covering in mutual charity, and James in the saving of a soul from death.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Prov 10:12", "b": "1Pet 4:8", "label": "cover ... sins"},
+    {"a": "Prov 10:12", "b": "Jas 5:20", "label": "sins"},
+    {"a": "1Pet 4:8", "b": "Jas 5:20", "label": "multitude of sins"}
+  ]
+}
