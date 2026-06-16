@@ -77,6 +77,9 @@ data AppModel = AppModel
     , _amStatus      :: Text
     -- weaves: a graph of verse links, shown across reading panes
     , _amPanes       :: [PaneState]
+    , _amPrevPanes   :: Maybe [PaneState]
+      -- ^ reading layout stashed when a weave reshaped the panes, so closing the
+      -- weave can put it back
     , _amWeaves      :: [LoadedWeave]
     , _amWeaveNew    :: Text       -- ^ new weave name
     , _amWeaveKind   :: WeaveKind  -- ^ draft kind for the next new / linked weave

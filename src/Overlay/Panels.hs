@@ -444,7 +444,7 @@ weaveViewPanel model pw file =
                 `styleBasic` [textSize (10 * sc), textColor muted]
             ]
         ]
-        <> [ wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
+        <> [ wrapLabel "opening a weave points the panes at its passages and draws its lines; closing it restores your previous panes"
             `styleBasic` [textSize (10 * sc), textColor muted, width piw]
         , label "comparing" `styleBasic` [textSize (10 * sc), textColor muted]
         , vstack_ [childSpacing_ 1]

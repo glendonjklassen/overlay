@@ -2,6 +2,7 @@
 
 module Overlay.Events where
 
+import Control.Applicative ((<|>))
 import Control.Lens hiding ((.=))
 import Data.List (delete, find, nub)
 import qualified Data.Map.Strict as M
@@ -47,7 +48,10 @@ handleEvent env _wenv _node model evt = case evt of
         , SetFocusOnKey "reader"
         ]
     EvClosePanel ->
-        [ Model (model & amPanel .~ PNone), SetFocusOnKey "reader" ]
+        -- closing the weave list/detail brings the pre-weave reading layout back
+        let m0 = model & amPanel .~ PNone
+            m1 = if inWeaveContext (model ^. amPanel) then restoreReading m0 else m0
+        in [ Model m1, SetFocusOnKey "reader", saveLater ]
     EvToggleOptions ->
         [Model (model & amPanel %~ \pm ->
             if pm == POptions then PNone else POptions)]
@@ -124,7 +128,10 @@ handleEvent env _wenv _node model evt = case evt of
     EvSetMaxCols n ->
         let m = clampMaxCols n
         in [Model (model & amMaxCols .~ m & amPanes %~ take m), saveLater]
-    EvToggleWeaves -> [Model (model & amPanel %~ toggleWeaves)]
+    EvToggleWeaves ->
+        let pm' = toggleWeaves (model ^. amPanel)
+            m0 = model & amPanel .~ pm'
+        in [Model (if pm' == PNone then restoreReading m0 else m0), saveLater]
     EvShowWeaves -> [Model (model & amPanel .~ PWeaves)]
     EvOpenWeave file -> case find ((== file) . lwFile) (model ^. amWeaves) of
         Nothing -> [Model (model & amStatus .~ "weave not found")]
@@ -135,6 +142,10 @@ handleEvent env _wenv _node model evt = case evt of
                            | (b, c) <- take (clampMaxCols (model ^. amMaxCols)) tracks ]
             in [Model (model
                     & amPanel .~ PWeaveView file
+                    -- stash the reading layout once, the first time a weave
+                    -- reshapes the panes, so it survives weave→weave switches
+                    & amPrevPanes .~ (if null newPanes then model ^. amPrevPanes
+                        else model ^. amPrevPanes <|> Just (model ^. amPanes))
                     & amPanes .~ (if null newPanes then model ^. amPanes else newPanes)
                     & amWeaveViewKind .~ wKind w
                     & amWeaveNotes .~ wNotes w
@@ -229,6 +240,17 @@ handleEvent env _wenv _node model evt = case evt of
         PWeaves -> PNone
         PWeaveView _ -> PNone
         _ -> PWeaves
+
+    -- the weave list and detail are the states from which the panes belong to a
+    -- weave; leaving them is when we put the reader's own layout back
+    inWeaveContext pm = case pm of
+        PWeaves -> True
+        PWeaveView _ -> True
+        _ -> False
+
+    restoreReading m = case m ^. amPrevPanes of
+        Just ps -> m & amPanes .~ ps & amPrevPanes .~ Nothing
+        Nothing -> m
 
     adjustThreadPanel lts pm = case pm of
         PEdit _ -> PNone
