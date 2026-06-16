@@ -69,9 +69,15 @@ panelHeader sc title closeEvt = hstack
 -- One look per role, used by every panel so threads, weaves, patches and the
 -- editor read as one family: same section labels, help text, rules and buttons.
 
--- | A small muted section heading.
+-- | A small muted caption label (sub-headings within a section).
 sectionLabel :: Double -> Text -> WidgetNode AppModel AppEvent
 sectionLabel sc t = label t `styleBasic` [textSize (10 * sc), textColor muted]
+
+-- | A prominent block heading — uppercased and in a warm accent — so a busy
+-- panel reads as clearly separated sections rather than one undifferentiated run.
+panelSection :: Double -> Text -> WidgetNode AppModel AppEvent
+panelSection sc t = label (T.toUpper t)
+    `styleBasic` [textSize (10 * sc), textColor (rgbHex "#C9A86A")]
 
 -- | Wrapped muted help/explanatory text, sized to the panel's inner width.
 panelHint :: Double -> Double -> Text -> WidgetNode AppModel AppEvent
@@ -217,7 +223,7 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
                     Hapax  -> Just "hapax — occurs once (among tagged words)"
                     Rare k -> Just ("rare — " <> showt k <> " occurrences")
                     Common -> Nothing
-            in  [ sectionLabel sc "distribution"
+            in  [ panelSection sc "distribution"
                 , label ("OT " <> showt ot <> "   ·   NT " <> showt nt)
                     `styleBasic` [textSize (13 * sc), textColor lightGray]
                 ]
@@ -261,12 +267,10 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
     bridgeSection
         | null partners && null pendingCands = []
         | otherwise =
-            [ sectionLabel sc "cross-testament" ]
-            <> [ label "linked" `styleBasic` [textSize (10 * sc), textColor muted]
-               | not (null partners) ]
+            [ panelSection sc "cross-testament" ]
+            <> [ sectionLabel sc "linked" | not (null partners) ]
             <> map partnerRow partners
-            <> [ label "candidates — 1769 renderings"
-                    `styleBasic` [textSize (10 * sc), textColor muted]
+            <> [ sectionLabel sc "candidates — 1769 renderings"
                | not (null pendingCands) ]
             <> map candRow pendingCands
             <> [hrule]
@@ -281,20 +285,20 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
     verseSection =
-        [ sectionLabel sc "this verse"
+        [ panelSection sc "this verse"
         , label (refText vref) `styleBasic` [textSize (14 * sc), textColor lightGray]
-        , label (showt (length witnesses) <> " cross-reference"
-                <> (if length witnesses == 1 then "" else "s")
-                <> " (witnesses)")
-            `styleBasic` [textSize (11 * sc), textColor muted]
+        , sectionLabel sc (showt (length witnesses) <> " linked passage"
+                <> (if length witnesses == 1 then "" else "s") <> " (weave cross-references)")
         ]
         <> map witRow witnesses
         <> [ panelHint sc piw "no linked passages yet — add weave links to build them"
            | null witnesses ]
         <> [hrule]
 
-    wordSection =
-        [ sectionLabel sc ("word — " <> ref)
+    -- the lexical entry for this Strong's number: lemma, transliteration, and
+    -- the 1890 dictionary's derivation / definition / KJV renderings.
+    entrySection =
+        [ panelSection sc ("Strong's " <> ref)
         , widgetMaybe (entry >>= seLemma) $ \l ->
             label l `styleBasic` [textSize (22 * sc)]
         , hstack_ [childSpacing_ 8]
@@ -306,11 +310,15 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
         , captionField sc piw "derivation" (entry >>= seDeriv)
         , captionField sc piw "definition" (entry >>= seDef)
         , captionField sc piw "KJV renderings" (entry >>= seKjv)
-        , label (showt (length occs) <> " occurrences")
-            `styleBasic` [textSize (11 * sc), textColor muted]
+        , hrule
         ]
-        <> dispersionSection
-        <> bridgeSection
+
+    -- every verse carrying this Strong's number (the concordance), listed last
+    -- since it can be long; its own heading so it never blurs into the analysis.
+    occurrencesSection =
+        [ panelSection sc ("occurrences — " <> showt (length occs))
+        , sectionLabel sc "every verse with this word; click to jump"
+        ]
         <> [occRow r | r <- occShown]
         <> [label ("… and " <> showt occMore <> " more")
                 `styleBasic` [textSize (11 * sc), textColor muted]
@@ -318,7 +326,9 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
 
     panel = panelBox pw
         [ panelHeader sc (refText vref <> " — " <> word) EvClosePanel
-        , vscroll $ vstack_ [childSpacing_ 8] (verseSection <> wordSection)
+        , vscroll $ vstack_ [childSpacing_ 8]
+            (verseSection <> entrySection <> dispersionSection
+                <> bridgeSection <> occurrencesSection)
         ]
 
 editorPanel :: AppModel -> Double -> EditTarget -> WidgetNode AppModel AppEvent
