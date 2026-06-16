@@ -41,9 +41,10 @@ handleEvent env _wenv _node model evt = case evt of
     EvWordAlt rt -> altClickAt (rtRef rt) (rtIx rt)
     EvSpanSelected ref span_ -> openEditor ref span_
     EvVerseClicked i (_, _, v) shift ->
-        [Model (setPane i (verseClickPane v shift))]
+        [Model (setPane i (verseClickPane v shift) & amActivePane .~ i)]
     EvGoRef b c ->
-        [ Model (setPane (0 :: Int) (\p -> p & psBook .~ b & psChapter .~ c
+        -- jump the pane the reader last worked in, not always the first one
+        [ Model (setPane activeIdx (\p -> p & psBook .~ b & psChapter .~ c
             & psAnchor .~ Nothing & psSel .~ []))
         , SetFocusOnKey "reader"
         ]
@@ -111,19 +112,30 @@ handleEvent env _wenv _node model evt = case evt of
     EvThreadsLoaded lts msg ->
         [Model (model & amThreads .~ lts & amPanel %~ adjustThreadPanel lts
             & amStatus .~ msg)]
-    EvAddPane i -> [Model (model & amPanes %~ insertPaneAfter i), saveLater]
-    EvClosePane i -> [Model (model & amPanes %~ closePane i), saveLater]
+    EvAddPane i ->
+        let ps' = insertPaneAfter i (model ^. amPanes)
+        in [ Model (model & amPanes .~ ps' & amActivePane .~ min (i + 1) (length ps' - 1))
+           , SetFocusOnKey "reader", saveLater ]
+    EvClosePane i ->
+        [ Model (model & amPanes %~ closePane i
+            & amActivePane %~ \a -> max 0 (min a (length (closePane i (model ^. amPanes)) - 1)))
+        , SetFocusOnKey "reader", saveLater ]
     EvPaneBook i b -> [Model (setPane i (\p ->
-        p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ []))
+        p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ [])
+        & amActivePane .~ i)
         , SetFocusOnKey "reader", saveLater]
     EvPaneChapter i c -> [Model (setPane i (\p ->
-        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ []))
+        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ [])
+        & amActivePane .~ i)
         , SetFocusOnKey "reader", saveLater]
-    EvPanePrev i -> [Model (stepPane i (-1)), saveLater]
-    EvPaneNext i -> [Model (stepPane i 1), saveLater]
+    EvPanePrev i -> [Model (stepPane i (-1) & amActivePane .~ i)
+        , SetFocusOnKey "reader", saveLater]
+    EvPaneNext i -> [Model (stepPane i 1 & amActivePane .~ i)
+        , SetFocusOnKey "reader", saveLater]
     EvPaneTrack i (b, c) ->
         [ Model (setPane i (\p -> p & psBook .~ b & psChapter .~ c
-                & psAnchor .~ Nothing & psSel .~ []))
+                & psAnchor .~ Nothing & psSel .~ [])
+            & amActivePane .~ i)
         , SetFocusOnKey "reader", saveLater ]
     EvSetMaxCols n ->
         let m = clampMaxCols n
@@ -272,6 +284,9 @@ handleEvent env _wenv _node model evt = case evt of
     autoName refs = case refs of
         (r : _) -> "parallel: " <> refText r
         [] -> "parallel"
+
+    -- the active pane, clamped to a valid index in case panes have since closed
+    activeIdx = max 0 (min (model ^. amActivePane) (length (model ^. amPanes) - 1))
 
     setPane i f = model & amPanes %~ \ps ->
         [ if j == i then f p else p | (j, p) <- zip [0 ..] ps ]

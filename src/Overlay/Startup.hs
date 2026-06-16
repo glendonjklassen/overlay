@@ -60,7 +60,7 @@ guiMain = do
             , if null werrs then "" else weaveErrText werrs ])
         model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
             status panes Nothing weaves "" Retelling Retelling "" "" Nothing
-            (sBodySize (envSettings env)) maxCols
+            (sBodySize (envSettings env)) maxCols 0
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized

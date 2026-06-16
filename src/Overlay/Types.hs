@@ -90,6 +90,8 @@ data AppModel = AppModel
       -- ^ hovered linked verse + window x,y, for the floating compare card
     , _amBodySize    :: Double   -- ^ live scripture text size (Ctrl +/-/0 zoom)
     , _amMaxCols     :: Int      -- ^ live cap on reading columns, 1…maxColsCap
+    , _amActivePane  :: Int      -- ^ last pane the user acted in; cross-reference
+                                 -- jumps and the canon map target it
     } deriving (Eq, Show)
 
 data AppEvent
