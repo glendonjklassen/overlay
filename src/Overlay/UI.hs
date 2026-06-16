@@ -239,6 +239,7 @@ buildUI env wenv model = widgetTree
         , cmcPins = [ CanonPin (canonPosOf p) (_psBook p) (paneColor i)
                     | (i, p) <- zip [0 :: Int ..] panes ]
         , cmcDivider = fromIntegral otNT / nb
+        , cmcOnClick = Just EvCanonGoto
         }
       where nb = fromIntegral (length bookIds)
             otNT = 39  -- Matthew is the 40th book (index 39)

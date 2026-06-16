@@ -11,6 +11,7 @@ import qualified Data.Text as T
 import qualified Data.Vector as V
 import Monomer
 
+import Overlay.Canon (bookIds)
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Patch
@@ -140,6 +141,17 @@ handleEvent env _wenv _node model evt = case evt of
     EvSetMaxCols n ->
         let m = clampMaxCols n
         in [Model (model & amMaxCols .~ m & amPanes %~ take m), saveLater]
+    EvCanonGoto frac ->
+        -- fraction 0…1 across the 66 books → (book, chapter); inverse of canonPosOf
+        let nb = length bookIds
+            bi = max 0 (min (nb - 1) (floor (frac * fromIntegral nb)))
+            bk = bookIds !! bi
+            nc = max 1 (chapterCount (envCorpus env) bk)
+            within = frac * fromIntegral nb - fromIntegral bi
+            ch = max 1 (min nc (floor (within * fromIntegral nc) + 1))
+        in [ Model (setPane activeIdx (\p -> p & psBook .~ bk & psChapter .~ ch
+                & psAnchor .~ Nothing & psSel .~ []))
+           , SetFocusOnKey "reader", saveLater ]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

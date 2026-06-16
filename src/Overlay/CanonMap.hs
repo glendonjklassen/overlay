@@ -37,10 +37,12 @@ data CanonPin = CanonPin
     , cpColor :: !Color
     }
 
-data CanonMapCfg = CanonMapCfg
+data CanonMapCfg e = CanonMapCfg
     { cmcSegs    :: ![CanonSeg]
     , cmcPins    :: ![CanonPin]
     , cmcDivider :: !Double      -- ^ fraction at the Old/New Testament seam
+    , cmcOnClick :: !(Maybe (Double -> e))
+      -- ^ click anywhere on the strip to jump there; carries the fraction 0…1
     }
 
 mapH :: Double
@@ -61,15 +63,27 @@ testTextColor = rgba 150 146 138 0.9
 mapFont :: Font
 mapFont = "Regular"
 
-canonMapView :: CanonMapCfg -> WidgetNode s e
+canonMapView :: WidgetEvent e => CanonMapCfg e -> WidgetNode s e
 canonMapView cfg = defaultWidgetNode (WidgetType "canonMap") widget
   where
     widget = createSingle () def
         { singleGetSizeReq = getSizeReq
+        , singleHandleEvent = handleEvent
         , singleRender = render
         }
 
     getSizeReq _wenv _node = (expandSize 100 1, fixedSize mapH)
+
+    -- a click anywhere on the strip jumps to that point in the canon
+    handleEvent wenv node _target evt = case evt of
+        Click (Point px _) BtnLeft _ -> case cmcOnClick cfg of
+            Just toEvent ->
+                let style = currentStyle wenv node
+                    Rect cx _ cw _ = getContentArea node style
+                    frac = max 0 (min 1 ((px - cx) / max 1 cw))
+                in Just (resultEvts node [toEvent frac])
+            Nothing -> Nothing
+        _ -> Nothing
 
     render wenv node renderer = do
         let style = currentStyle wenv node

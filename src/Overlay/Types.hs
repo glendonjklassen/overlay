@@ -127,6 +127,7 @@ data AppEvent
     | EvPaneNext Int
     | EvPaneTrack Int (Text, Int)  -- ^ point pane i at one of a weave's passages
     | EvSetMaxCols Int             -- ^ change the live reading-column limit
+    | EvCanonGoto Double           -- ^ jump the active pane to a canon fraction 0…1
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves
