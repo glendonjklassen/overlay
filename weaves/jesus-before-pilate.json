@@ -1,0 +1,76 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Jesus before Pilate",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All four Gospels recount the trial of Jesus before Pilate, and their shared core runs in close parallel: Pilate's question \"Art thou the King of the Jews?\" and Jesus' answer \"Thou sayest\"; the governor's wonder that turns to a verdict of no fault; the feast-time custom of releasing a prisoner; the choosing of Barabbas; the cry \"Crucify him\"; Pilate's \"Why, what evil hath he done?\"; and his final yielding, scourging Jesus and delivering him to be crucified. Each account keeps its own vantage: Matthew alone records Pilate washing his hands and his wife's dream-warning about the just man; Luke alone tells of the sending to Herod and back; and John alone preserves the extended dialogue (\"My kingdom is not of this world,\" \"What is truth,\" \"Behold the man,\" and \"Thou couldest have no power at all against me, except it were given thee from above\"). These unique portions are complementary windows on the one trial, each evangelist drawing out what the Spirit moved him to record, and they read in place unlinked.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 27:11", "b": "Mark 15:2", "label": "Art thou the King of the Jews ... Thou sayest"},
+    {"a": "Matt 27:11", "b": "Luke 23:3", "label": "Art thou the King of the Jews ... Thou sayest"},
+    {"a": "Matt 27:11", "b": "John 18:33", "label": "Art thou the King of the Jews"},
+    {"a": "Mark 15:2", "b": "Luke 23:3", "label": "Art thou the King of the Jews ... Thou sayest it"},
+    {"a": "Mark 15:2", "b": "John 18:33", "label": "Art thou the King of the Jews"},
+    {"a": "Luke 23:3", "b": "John 18:33", "label": "Art thou the King of the Jews"},
+    {"a": "Matt 27:11", "b": "John 18:37", "label": "Thou sayest ... Art thou a king then"},
+    {"a": "Mark 15:2", "b": "John 18:37", "label": "Thou sayest ... Art thou a king then"},
+    {"a": "Luke 23:3", "b": "John 18:37", "label": "Thou sayest ... Art thou a king then"},
+
+    {"a": "Matt 27:12", "b": "Mark 15:3", "label": "accused of the chief priests ... he answered nothing"},
+    {"a": "Matt 27:13", "b": "Mark 15:4", "label": "how many things they witness against thee"},
+    {"a": "Matt 27:14", "b": "Mark 15:5", "label": "the governor marvelled ... Pilate marvelled"},
+
+    {"a": "Matt 27:14", "b": "Luke 23:4", "label": "marvelled ... I find no fault in this man"},
+    {"a": "Mark 15:5", "b": "Luke 23:4", "label": "marvelled ... I find no fault in this man"},
+    {"a": "Matt 27:14", "b": "John 18:38", "label": "marvelled ... I find in him no fault at all"},
+    {"a": "Mark 15:5", "b": "John 18:38", "label": "marvelled ... I find in him no fault at all"},
+    {"a": "Luke 23:4", "b": "John 18:38", "label": "I find no fault in this man ... I find in him no fault at all"},
+
+    {"a": "Matt 27:15", "b": "Mark 15:6", "label": "at that feast ... release ... a prisoner"},
+    {"a": "Matt 27:15", "b": "Luke 23:17", "label": "release one unto them at the feast"},
+    {"a": "Matt 27:15", "b": "John 18:39", "label": "a custom that I should release unto you one at the passover"},
+    {"a": "Mark 15:6", "b": "Luke 23:17", "label": "release one unto them at the feast"},
+    {"a": "Mark 15:6", "b": "John 18:39", "label": "release unto them one prisoner ... at the passover"},
+    {"a": "Luke 23:17", "b": "John 18:39", "label": "release one unto them at the feast ... at the passover"},
+
+    {"a": "Matt 27:16", "b": "Mark 15:7", "label": "Barabbas"},
+    {"a": "Matt 27:16", "b": "Luke 23:18", "label": "Barabbas"},
+    {"a": "Matt 27:16", "b": "John 18:40", "label": "Barabbas"},
+    {"a": "Mark 15:7", "b": "Luke 23:18", "label": "Barabbas"},
+    {"a": "Mark 15:7", "b": "John 18:40", "label": "Barabbas"},
+    {"a": "Luke 23:18", "b": "John 18:40", "label": "release unto us Barabbas ... Not this man but Barabbas"},
+
+    {"a": "Matt 27:18", "b": "Mark 15:10", "label": "for envy they had delivered him"},
+
+    {"a": "Matt 27:20", "b": "Mark 15:11", "label": "the chief priests ... moved the people ... Barabbas"},
+
+    {"a": "Matt 27:22", "b": "Mark 15:13", "label": "Let him be crucified ... Crucify him"},
+    {"a": "Matt 27:22", "b": "Luke 23:21", "label": "Let him be crucified ... Crucify him"},
+    {"a": "Matt 27:22", "b": "John 19:6", "label": "Let him be crucified ... Crucify him"},
+    {"a": "Mark 15:13", "b": "Luke 23:21", "label": "Crucify him"},
+    {"a": "Mark 15:13", "b": "John 19:6", "label": "Crucify him"},
+    {"a": "Luke 23:21", "b": "John 19:6", "label": "Crucify him crucify him"},
+
+    {"a": "Matt 27:23", "b": "Mark 15:14", "label": "Why what evil hath he done"},
+    {"a": "Matt 27:23", "b": "Luke 23:22", "label": "Why what evil hath he done"},
+    {"a": "Mark 15:14", "b": "Luke 23:22", "label": "Why what evil hath he done"},
+
+    {"a": "Matt 27:23", "b": "John 19:15", "label": "crucified ... away with him crucify him"},
+    {"a": "Mark 15:14", "b": "John 19:15", "label": "Crucify him ... away with him crucify him"},
+    {"a": "Luke 23:21", "b": "John 19:15", "label": "Crucify him ... crucify him"},
+
+    {"a": "Matt 27:26", "b": "Mark 15:15", "label": "released ... Barabbas ... scourged ... delivered him to be crucified"},
+    {"a": "Matt 27:26", "b": "Luke 23:24", "label": "delivered ... to be crucified ... gave sentence that it should be as they required"},
+    {"a": "Matt 27:26", "b": "John 19:16", "label": "delivered he him ... to be crucified"},
+    {"a": "Mark 15:15", "b": "Luke 23:24", "label": "willing to content the people ... gave sentence as they required"},
+    {"a": "Mark 15:15", "b": "John 19:16", "label": "delivered Jesus ... to be crucified"},
+    {"a": "Luke 23:24", "b": "John 19:16", "label": "gave sentence ... delivered Jesus ... to be crucified"},
+
+    {"a": "Matt 27:26", "b": "John 19:1", "label": "when he had scourged Jesus ... scourged him"},
+    {"a": "Mark 15:15", "b": "John 19:1", "label": "scourged ... scourged him"},
+
+    {"a": "Luke 23:20", "b": "John 19:12", "label": "willing to release Jesus ... Pilate sought to release him"},
+    {"a": "Luke 23:25", "b": "Mark 15:15", "label": "released ... whom they had desired ... released Barabbas unto them"}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Stephen's witness",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In his defence before the council (Acts 7), Stephen rehearses Israel's history and grounds it in the Scriptures, citing three passages. To Abraham's vision he ties God's word that his seed should be a stranger four hundred years and that the afflicting nation would be judged (Gen 15:13-14 -> Acts 7:6-7). Against the council he turns Amos' rebuke for offering sacrifices forty years in the wilderness while bearing the tabernacle of Moloch and the star of their god (Amos 5:25-27 -> Acts 7:42-43). He closes with Isaiah's word that heaven is God's throne and earth his footstool, so no house built by hands contains him (Isa 66:1-2 -> Acts 7:49-50). Where Amos says captivity 'beyond Damascus' and Stephen says 'beyond Babylon,' the two name complementary stages of the same exile, left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 15:13", "b": "Acts 7:6", "label": "his seed ... a strange land ... four hundred years"},
+    {"a": "Gen 15:14", "b": "Acts 7:7", "label": "the nation ... will I judge"},
+    {"a": "Amos 5:25", "b": "Acts 7:42", "label": "have ye offered ... forty years ... in the wilderness ... O ... house of Israel"},
+    {"a": "Amos 5:26", "b": "Acts 7:43", "label": "the tabernacle of ... Moloch ... the star of your god ... which ye made"},
+    {"a": "Amos 5:27", "b": "Acts 7:43", "label": "will I cause you to go into captivity beyond Damascus ... I will carry you away beyond Babylon"},
+    {"a": "Isa 66:1", "b": "Acts 7:49", "label": "is my throne ... is my footstool ... the place of my rest"},
+    {"a": "Isa 66:2", "b": "Acts 7:50", "label": "mine hand made ... my hand made all these things"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Vengeance is mine",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Song of Moses declares that vengeance and recompence belong to the LORD, who shall judge his people. Two New Testament epistles draw on these words from Deuteronomy 32. Paul in Romans 12:19 cites the verse to forbid the believer's private revenge, quoting it as 'Vengeance is mine; I will repay, saith the Lord.' Hebrews 10:30 cites the same passage more fully, joining the vengeance saying to the following verse, 'The Lord shall judge his people,' as a warning to those who would draw back. The shared core is the divine prerogative of vengeance and judgment reserved to God alone; the epistles apply that one Song to distinct exhortations.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 32:35", "b": "Rom 12:19", "label": "vengeance ... saith the Lord"},
+    {"a": "Deut 32:35", "b": "Heb 10:30", "label": "belongeth vengeance and recompence"},
+    {"a": "Deut 32:36", "b": "Heb 10:30", "label": "The LORD shall judge his people"}
+  ]
+}

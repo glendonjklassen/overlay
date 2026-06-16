@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "They hated me without a cause",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In the upper-room discourse Jesus tells his disciples that the world's hatred of him fulfils what was written in their law. He cites the psalmist's complaint that those who hate him do so without a cause, drawing the words of David's lament onto himself. Two psalms carry this same hook: Psalm 69:4 says they that hate me without a cause are more than the hairs of mine head, and Psalm 35:19 prays that them that hate me without a cause not wink with the eye. Both psalms voice the righteous sufferer hated by enemies wrongfully, and Jesus gathers them into the single saying recorded in John 15:25. The shared core is the causeless hatred of the innocent; each psalm keeps its own surrounding vantage, David's vast multitude of foes in Psalm 69 and the mocking gesture of the eye in Psalm 35.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 69:4", "b": "John 15:25", "label": "hate me without a cause ... hated me without a cause"},
+    {"a": "Ps 35:19", "b": "John 15:25", "label": "hate me without a cause ... hated me without a cause"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Be ye holy; for I am holy",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Peter grounds his call to holy living by quoting the refrain that runs through Leviticus: \"Be ye holy; for I am holy.\" The shared core is the LORD's own holiness as the ground and pattern for His people's holiness, expressed in the words \"ye shall be holy, for ... am holy.\" Leviticus 11:44 sets this refrain amid the laws of clean and unclean, while Leviticus 19:2 opens the holiness code spoken to all the congregation; the two refrains echo one another within the law itself. First Peter 1:16 lifts the refrain into the new covenant, applying it to the scattered believers as the written warrant for their conduct. Each Leviticus verse keeps its own surrounding setting, and Peter abbreviates the refrain to its essential command and reason.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Lev 11:44", "b": "1Pet 1:16", "label": "ye shall be holy for I am holy"},
+    {"a": "Lev 19:2", "b": "1Pet 1:16", "label": "Ye shall be holy for ... am holy"},
+    {"a": "Lev 11:44", "b": "Lev 19:2", "label": "ye shall be holy for ... am holy"}
+  ]
+}

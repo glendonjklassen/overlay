@@ -1,0 +1,23 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Seeing they see not",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Isaiah's commission (Isa 6:9-10) is among the most-cited Old Testament passages in the New Testament, applied wherever men hear the word yet do not perceive. Isaiah 6:9 supplies the paired refrain of hearing without understanding and seeing without perceiving, echoed in Matt 13:14, Mark 4:12, Luke 8:10, and Acts 28:26. Isaiah 6:10 supplies the heart waxed gross, the eyes closed, and the purpose 'lest they should see ... and be converted, and be healed,' echoed in Matt 13:15, John 12:40, and Acts 28:27. The citations stand in complementary form: Matthew and Acts quote Isaiah at fullest length, Mark and Luke compress the refrain, and John reads it as God's act ('He hath blinded their eyes, and hardened their heart'), each a true vantage on the same prophecy. The differing forms in which the Spirit recorded the citation are complementary and left as a matter for further study. Labels carry the exact wording shared by each linked pair.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 6:9", "b": "Matt 13:14", "label": "ye shall ... and shall not understand ... ye shall see ... and shall not perceive"},
+    {"a": "Isa 6:9", "b": "Mark 4:12", "label": "seeing ... see ... and not perceive ... hearing ... hear ... and not understand"},
+    {"a": "Isa 6:9", "b": "Luke 8:10", "label": "seeing ... not see ... hearing ... not understand"},
+    {"a": "Isa 6:9", "b": "Acts 28:26", "label": "ye shall ... and shall not understand ... ye shall see ... and ... not perceive"},
+    {"a": "Matt 13:14", "b": "Acts 28:26", "label": "ye shall hear, and shall not understand: and seeing ye shall see"},
+    {"a": "Mark 4:12", "b": "Luke 8:10", "label": "that seeing they ... see ... and hearing they ... hear ... not understand"},
+    {"a": "Isa 6:10", "b": "Matt 13:15", "label": "shut their eyes ... lest ... see with their eyes ... understand with their heart"},
+    {"a": "Isa 6:10", "b": "John 12:40", "label": "see with their eyes ... understand with their heart and ... be healed"},
+    {"a": "Isa 6:10", "b": "Acts 28:27", "label": "shut their eyes; lest ... see with their eyes ... understand with their heart"},
+    {"a": "Matt 13:15", "b": "Acts 28:27", "label": "heart ... is waxed gross, and their ears are dull of hearing, and their eyes ... closed"},
+    {"a": "Matt 13:15", "b": "John 12:40", "label": "see with their eyes ... understand with their heart, and should be converted, and I should heal them"},
+    {"a": "John 12:40", "b": "Acts 28:27", "label": "see with their eyes ... understand with their heart, and should be converted, and I should heal them"}
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The cleansing of the leper",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel of Jesus cleansing a leper, told in Matthew 8:1-4, Mark 1:40-45, and Luke 5:12-16. The shared core runs in lockstep: the leper comes and humbles himself, pleads 'Lord, if thou wilt, thou canst make me clean,' Jesus puts forth his hand, touches him, and says 'I will; be thou clean,' the leprosy immediately departs, and Jesus charges him to tell no man but to shew himself to the priest and offer the gift Moses commanded for a testimony. Each writer keeps his own vantage: Matthew sets it as the multitudes follow Jesus down from the mountain and notes the leper worshipped him; Mark adds that Jesus was moved with compassion and that he straitly charged and sent the man away; Luke calls him a man full of leprosy who fell on his face. Mark and Luke alone carry the aftermath, sharing the man's fame spreading abroad and Jesus withdrawing to the desert places to pray, while Matthew is silent there. The complementary details fill out one event and are left as a matter for further study where they do not overlap.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 8:2", "b": "Mark 1:40", "label": "there came a leper"},
+    {"a": "Mark 1:40", "b": "Luke 5:12", "label": "beseeching him ... besought him"},
+
+    {"a": "Matt 8:2", "b": "Mark 1:40", "label": "If thou wilt thou canst make me clean"},
+    {"a": "Matt 8:2", "b": "Luke 5:12", "label": "Lord if thou wilt thou canst make me clean"},
+    {"a": "Mark 1:40", "b": "Luke 5:12", "label": "If thou wilt thou canst make me clean"},
+
+    {"a": "Matt 8:3", "b": "Mark 1:41", "label": "put forth his hand and touched him ... I will be thou clean"},
+    {"a": "Matt 8:3", "b": "Luke 5:13", "label": "put forth his hand and touched him saying I will be thou clean"},
+    {"a": "Mark 1:41", "b": "Luke 5:13", "label": "put forth his hand and touched him ... I will be thou clean"},
+
+    {"a": "Matt 8:3", "b": "Mark 1:42", "label": "immediately his leprosy was cleansed ... and he was cleansed"},
+    {"a": "Matt 8:3", "b": "Luke 5:13", "label": "immediately his leprosy was cleansed ... the leprosy departed"},
+    {"a": "Mark 1:42", "b": "Luke 5:13", "label": "immediately the leprosy departed from him"},
+
+    {"a": "Matt 8:4", "b": "Mark 1:44", "label": "See thou tell no man ... See thou say nothing to any man"},
+    {"a": "Matt 8:4", "b": "Luke 5:14", "label": "tell no man"},
+    {"a": "Mark 1:44", "b": "Luke 5:14", "label": "say nothing to any man ... to tell no man"},
+
+    {"a": "Matt 8:4", "b": "Mark 1:44", "label": "shew thyself to the priest and offer ... that Moses commanded for a testimony unto them"},
+    {"a": "Matt 8:4", "b": "Luke 5:14", "label": "shew thyself to the priest and offer ... Moses commanded for a testimony unto them"},
+    {"a": "Mark 1:44", "b": "Luke 5:14", "label": "shew thyself to the priest and offer for thy cleansing ... Moses commanded for a testimony unto them"},
+
+    {"a": "Mark 1:45", "b": "Luke 5:15", "label": "blaze abroad the matter ... went there a fame abroad of him"},
+
+    {"a": "Mark 1:45", "b": "Luke 5:16", "label": "in desert places ... into the wilderness"}
+  ]
+}

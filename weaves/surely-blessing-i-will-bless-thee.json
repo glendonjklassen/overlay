@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Surely blessing I will bless thee",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "After the binding of Isaac, the LORD swears an oath to Abraham, and Hebrews 6 cites that very oath as the ground of the believer's hope. The shared core is the divine self-oath and its substance: God, having none greater to swear by, swears by himself, then declares \"blessing I will bless thee, and multiplying I will multiply\" (Gen 22:16-17; Heb 6:13-14). Hebrews quotes the promise nearly verbatim, while Genesis keeps the fuller scene with the added clauses about Abraham's seed possessing the gate of his enemies. The Genesis oath is spoken in the moment on the mountain; Hebrews looks back to interpret it as God's unchangeable confirmation of promise. The two vantages are complementary: the historical oath and its inspired application.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 22:16", "b": "Heb 6:13"},
+    {"a": "Gen 22:17", "b": "Heb 6:14", "label": "blessing I will bless thee and ... multiplying I will multiply"}
+  ]
+}

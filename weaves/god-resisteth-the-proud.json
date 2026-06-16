@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "God resisteth the proud",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Both apostles ground their exhortation to humility in the same proverb. Proverbs 3:34 declares that God scorneth the scorners but giveth grace unto the lowly; James and Peter each cite this, rendering the contrast as 'God resisteth the proud, but giveth grace to the humble.' Following the sense of the passage, the apostles name 'the proud' as those whom God scorneth and 'the humble' as 'the lowly' to whom He giveth grace. The two New Testament citations agree word for word in 'God resisteth the proud' and in giving grace to 'the humble.' James sets the saying within his call to submit to God and resist the devil, while Peter sets it within his charge to the younger to submit and be clothed with humility, two complementary vantages on one truth.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Prov 3:34", "b": "Jas 4:6", "label": "giveth grace unto the lowly ... giveth grace unto the humble"},
+    {"a": "Prov 3:34", "b": "1Pet 5:5", "label": "giveth grace unto the lowly ... giveth grace to the humble"},
+    {"a": "Jas 4:6", "b": "1Pet 5:5", "label": "God resisteth the proud ... giveth grace ... the humble"}
+  ]
+}

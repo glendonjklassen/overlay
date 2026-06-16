@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The pattern in the mount",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "When the LORD gave Moses the design of the tabernacle and its furnishings, He charged him to make them exactly after the pattern shewed him in the mount (Exod 25:40). The writer to the Hebrews cites this very command to show that the earthly sanctuary was a copy, serving unto the example and shadow of heavenly things (Heb 8:5). The shared core is the charge to make according to the pattern shewed in the mount, binding the two passages word for word. Exodus keeps the original setting of the command upon Sinai, while Hebrews supplies the inspired interpretation that the pattern points to the heavenly things themselves. Together they read as one witness: the form of the earthly tabernacle was no human invention but a divinely shewn copy of heavenly realities.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Exod 25:40", "b": "Heb 8:5", "label": "the pattern ... shewed ... in the mount"}
+  ]
+}

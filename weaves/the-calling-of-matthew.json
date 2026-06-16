@@ -1,0 +1,34 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The calling of Matthew",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic account of Jesus calling the tax-gatherer from the receipt of custom and dining at the feast with publicans and sinners. The shared core runs verse by verse: the seeing of the man and the word \"Follow me,\" his rising to follow, the feast in the house, the murmuring of the scribes and Pharisees, the saying of the physician, and the declaration that He came to call sinners. Matthew names the called man Matthew, while Mark and Luke name him Levi (Mark adds \"the son of Alphaeus\"); these are complementary vantages on the same call, the one apostle remembered under two names. Matthew alone records \"I will have mercy, and not sacrifice,\" which reads in place and is left unlinked. Where Luke splits the rising and following across two verses, the single verse in the others links to both.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 9:9", "b": "Mark 2:14", "label": "sitting at the receipt of custom ... Follow me"},
+    {"a": "Matt 9:9", "b": "Luke 5:27", "label": "sitting at the receipt of custom ... Follow me"},
+    {"a": "Mark 2:14", "b": "Luke 5:27", "label": "sitting at the receipt of custom ... Follow me"},
+
+    {"a": "Matt 9:9", "b": "Mark 2:14", "label": "And he arose and followed him"},
+    {"a": "Matt 9:9", "b": "Luke 5:28", "label": "rose up and followed him"},
+    {"a": "Mark 2:14", "b": "Luke 5:28", "label": "rose up and followed him"},
+
+    {"a": "Matt 9:10", "b": "Mark 2:15", "label": "many publicans and sinners ... sat ... with ... his disciples"},
+    {"a": "Matt 9:10", "b": "Luke 5:29", "label": "publicans and ... others that sat down with them"},
+    {"a": "Mark 2:15", "b": "Luke 5:29", "label": "many publicans ... sat ... in his ... house"},
+
+    {"a": "Matt 9:11", "b": "Mark 2:16", "label": "Why eateth your Master with publicans and sinners"},
+    {"a": "Matt 9:11", "b": "Luke 5:30", "label": "eat ... with publicans and sinners"},
+    {"a": "Mark 2:16", "b": "Luke 5:30", "label": "the scribes and Pharisees ... eat ... with publicans and sinners"},
+
+    {"a": "Matt 9:12", "b": "Mark 2:17", "label": "They that be whole need not a physician but they that are sick"},
+    {"a": "Matt 9:12", "b": "Luke 5:31", "label": "They that are whole need not a physician but they that are sick"},
+    {"a": "Mark 2:17", "b": "Luke 5:31", "label": "They that are whole ... need ... the physician but they that are sick"},
+
+    {"a": "Matt 9:13", "b": "Mark 2:17", "label": "I am not come to call the righteous but sinners to repentance"},
+    {"a": "Matt 9:13", "b": "Luke 5:32", "label": "I am not come to call the righteous but sinners to repentance"},
+    {"a": "Mark 2:17", "b": "Luke 5:32", "label": "I came not to call the righteous but sinners to repentance"}
+  ]
+}

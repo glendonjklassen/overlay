@@ -1,0 +1,29 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The line of Perez to David",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The closing genealogy of Ruth and the genealogy of Chronicles preserve the same ten-generation line from Pharez (Perez), son of Judah, down to David. Ruth traces it forward begat by begat across five verses; Chronicles folds the same names into its larger record of Judah's house, splitting some men across adjacent verses and naming David last as the seventh of Jesse's sons. Each man is matched by name across the two lists, with the spelling variants Ram/Aram and Salmon/Salma standing as complementary forms of the same names. Chronicles adds detail Ruth does not, naming Nahshon prince of the children of Judah and listing Jesse's elder sons before David; this fuller vantage reads in place. Together the two passages confirm one unbroken line of promise leading to the king.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ruth 4:18", "b": "1Chr 2:5", "label": "Pharez"},
+    {"a": "Ruth 4:18", "b": "1Chr 2:5", "label": "Hezron"},
+    {"a": "Ruth 4:19", "b": "1Chr 2:9", "label": "Hezron"},
+    {"a": "Ruth 4:19", "b": "1Chr 2:9", "label": "Ram"},
+    {"a": "Ruth 4:19", "b": "1Chr 2:10", "label": "Ram"},
+    {"a": "Ruth 4:19", "b": "1Chr 2:10", "label": "Amminadab"},
+    {"a": "Ruth 4:20", "b": "1Chr 2:10", "label": "Amminadab"},
+    {"a": "Ruth 4:20", "b": "1Chr 2:10", "label": "Nahshon"},
+    {"a": "Ruth 4:20", "b": "1Chr 2:11", "label": "Nahshon"},
+    {"a": "Ruth 4:20", "b": "1Chr 2:11", "label": "Salmon"},
+    {"a": "Ruth 4:21", "b": "1Chr 2:11", "label": "Salmon"},
+    {"a": "Ruth 4:21", "b": "1Chr 2:11", "label": "Boaz"},
+    {"a": "Ruth 4:21", "b": "1Chr 2:12", "label": "Boaz"},
+    {"a": "Ruth 4:21", "b": "1Chr 2:12", "label": "Obed"},
+    {"a": "Ruth 4:22", "b": "1Chr 2:12", "label": "Obed"},
+    {"a": "Ruth 4:22", "b": "1Chr 2:12", "label": "Jesse"},
+    {"a": "Ruth 4:22", "b": "1Chr 2:13", "label": "Jesse"},
+    {"a": "Ruth 4:22", "b": "1Chr 2:15", "label": "David"}
+  ]
+}

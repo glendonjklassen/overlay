@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The widow's two mites",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Mark and Luke both record Jesus, near the temple treasury, beholding the rich cast in their gifts and a certain poor widow cast in two mites, then declaring that she had given more than all the rest because she gave of her want, all her living, while they gave of their abundance. The shared core runs pair-by-pair across all four verses of each account: the scene at the treasury, the widow and her two mites, the solemn saying that she cast in more than they all, and the contrast of abundance with want. The two evangelists offer complementary vantages: Mark notes that he sat over against the treasury and beheld how the people cast money, and explains that the two mites \"make a farthing,\" and that he called his disciples to him; Luke frames it as he \"looked up and saw the rich men,\" and speaks of \"the offerings of God,\" and of her \"penury\" where Mark says \"want.\" These differing words and details are complementary, each preserving a true facet of the one event.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Mark 12:41", "b": "Luke 21:1", "label": "the rich ... cast ... into the treasury"},
+    {"a": "Mark 12:42", "b": "Luke 21:2", "label": "a certain poor widow ... two mites"},
+    {"a": "Mark 12:43", "b": "Luke 21:3", "label": "this poor widow hath cast ... more ... than ... all they"},
+    {"a": "Mark 12:44", "b": "Luke 21:4", "label": "all ... did cast in of their abundance but she ... did cast in all ... her living"}
+  ]
+}

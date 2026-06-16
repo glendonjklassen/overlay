@@ -1,0 +1,25 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The genealogy of Jesus",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Two complementary genealogies of the one Lord Jesus Christ. Matthew descends from Abraham through David to Joseph, arranged in three fourteens, tracing the legal and royal succession through Solomon and the kings of Judah; Luke ascends from Jesus up through David to Abraham and on to Adam and to God, tracing the natural descent (most understand it as Mary's line, through David's son Nathan), and showing Jesus as son of David, son of Abraham, and son of Adam, kinsman of all mankind. The two lists run in opposite directions and share one common spine, Abraham through David, where they name the same patriarchs in the same order: those shared names are linked here verse to verse, matched by name (Luke listing them in reverse). The lines diverge before Abraham (Luke alone climbs back to Adam and God) and again after David (Matthew through Solomon and the throne, Luke through Nathan), and these unique portions read in place. The difference between the lines, such as Joseph being called the son of Jacob in Matthew and the son of Heli in Luke, is long and soundly accounted for by this two-lines understanding, whether as legal versus natural descent or by levirate succession, and is a matter of which harmonization one prefers, never a defect in the infallible text.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 1:2", "b": "Luke 3:34", "label": "Abraham"},
+    {"a": "Matt 1:2", "b": "Luke 3:34", "label": "Isaac"},
+    {"a": "Matt 1:2", "b": "Luke 3:34", "label": "Jacob"},
+    {"a": "Matt 1:2", "b": "Luke 3:33", "label": "Judas"},
+    {"a": "Matt 1:3", "b": "Luke 3:33", "label": "Phares"},
+    {"a": "Matt 1:3", "b": "Luke 3:33", "label": "Esrom"},
+    {"a": "Matt 1:3", "b": "Luke 3:33", "label": "Aram"},
+    {"a": "Matt 1:4", "b": "Luke 3:33", "label": "Aminadab"},
+    {"a": "Matt 1:4", "b": "Luke 3:32", "label": "Naasson"},
+    {"a": "Matt 1:4", "b": "Luke 3:32", "label": "Salmon"},
+    {"a": "Matt 1:5", "b": "Luke 3:32", "label": "Booz"},
+    {"a": "Matt 1:5", "b": "Luke 3:32", "label": "Obed"},
+    {"a": "Matt 1:5", "b": "Luke 3:32", "label": "Jesse"},
+    {"a": "Matt 1:6", "b": "Luke 3:31", "label": "David"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Death swallowed up in victory",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul, proclaiming the resurrection of the body, gathers two prophets into one triumph-song. Isaiah's promise that the LORD \"will swallow up death in victory\" is brought to pass when the corruptible puts on incorruption (Isa 25:8 -> 1Cor 15:54). To this Paul joins Hosea's address to the grave, keeping the exact double vocative \"O death ... O grave\" (Hos 13:14 -> 1Cor 15:55). Hosea voices it as the LORD's sentence of judgment upon death itself (\"I will be thy plagues ... thy destruction\"); Paul renders the same vantage as a victor's taunt over a defeated foe (\"where is thy sting ... thy victory\"). The shared address with the complementary wording is a matter for further study. The shared core is the certain abolition of death in the risen Christ.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 25:8", "b": "1Cor 15:54", "label": "swallow up death in victory ... Death is swallowed up in victory"},
+    {"a": "Hos 13:14", "b": "1Cor 15:55", "label": "O death ... O grave"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The candle and the bushel",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Lord's saying that a lighted candle is not hidden but set on a candlestick to give light, here drawn from the three synoptic occurrences outside the Sermon on the Mount. All three share the candle, the covering it is not put under, the candlestick it is set upon, and the purpose of giving light. Mark 4:21 frames it as a question (under a bushel or under a bed), Luke 8:16 names a vessel and a bed with light for those who enter in, and Luke 11:33 names a secret place and a bushel with light for those who come in. The differing settings (vessel, bed, bushel, secret place; entering versus coming in) are complementary vantages on the one teaching, each preserving its own emphasis. No detail is forced; wording unique to a single account reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Mark 4:21", "b": "Luke 8:16", "label": "a candle"},
+    {"a": "Mark 4:21", "b": "Luke 11:33", "label": "a candle"},
+    {"a": "Luke 8:16", "b": "Luke 11:33", "label": "lighted a candle"},
+    {"a": "Mark 4:21", "b": "Luke 11:33", "label": "under a bushel"},
+    {"a": "Mark 4:21", "b": "Luke 8:16", "label": "under a bed"},
+    {"a": "Mark 4:21", "b": "Luke 8:16", "label": "set on a candlestick"},
+    {"a": "Mark 4:21", "b": "Luke 11:33", "label": "on a candlestick"},
+    {"a": "Luke 8:16", "b": "Luke 11:33", "label": "on a candlestick"},
+    {"a": "Luke 8:16", "b": "Luke 11:33", "label": "may see the light"}
+  ]
+}

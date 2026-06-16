@@ -1,0 +1,31 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The last supper",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The institution of the Lord's supper, told three times in the Gospels and once by Paul — the earliest written account of the four (1 Corinthians). Matthew and Mark run together almost word for word. Luke and Paul form the other pair: both alone carry \"this do in remembrance of me,\" both phrase the cup as \"the new testament in my blood\" taken after supper. Matthew alone adds \"for the remission of sins\"; Paul alone adds \"ye do shew the Lord's death till he come.\" John, at this point in the meal, tells the washing of feet instead and is not part of this weave.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:26", "b": "Mark 14:22", "label": "took bread, and blessed ... brake it ... Take, eat: this is my body"},
+    {"a": "Matt 26:26", "b": "Luke 22:19", "label": "took bread ... brake it ... this is my body"},
+    {"a": "Matt 26:26", "b": "1Cor 11:24", "label": "brake it ... Take, eat: this is my body"},
+    {"a": "Mark 14:22", "b": "Luke 22:19", "label": "took bread ... brake it ... this is my body"},
+    {"a": "Mark 14:22", "b": "1Cor 11:24", "label": "brake it ... this is my body"},
+    {"a": "Luke 22:19", "b": "1Cor 11:24", "label": "this is my body ... this do in remembrance of me"},
+
+    {"a": "Matt 26:27", "b": "Mark 14:23", "label": "took the cup ... gave thanks ... gave it to them"},
+    {"a": "Matt 26:27", "b": "Luke 22:17", "label": "took the cup, and gave thanks ... Take this"},
+
+    {"a": "Matt 26:28", "b": "Mark 14:24", "label": "this is my blood of the new testament, which is shed for many"},
+    {"a": "Matt 26:28", "b": "Luke 22:20", "label": "the new testament in my blood, which is shed"},
+    {"a": "Matt 26:28", "b": "1Cor 11:25", "label": "the new testament in my blood"},
+    {"a": "Mark 14:24", "b": "Luke 22:20", "label": "the new testament in my blood, which is shed"},
+    {"a": "Mark 14:24", "b": "1Cor 11:25", "label": "the new testament in my blood"},
+    {"a": "Luke 22:20", "b": "1Cor 11:25", "label": "This cup is the new testament in my blood ... in remembrance of me"},
+
+    {"a": "Matt 26:29", "b": "Mark 14:25", "label": "I will ... not drink ... of the fruit of the vine, until ... the kingdom"},
+    {"a": "Matt 26:29", "b": "Luke 22:18", "label": "the fruit of the vine, until ... the kingdom of God"},
+    {"a": "Mark 14:25", "b": "Luke 22:18", "label": "the fruit of the vine, until ... the kingdom of God"}
+  ]
+}

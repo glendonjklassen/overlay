@@ -1,0 +1,46 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Render unto Caesar",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The threefold synoptic account of the question of tribute, where adversaries try to trap Jesus between Rome and the people. All three share the same core: a plot to entangle him in his words, a flattering preface, the lawful-tribute question, Jesus perceiving their hypocrisy, the penny with its image and superscription, the answer to render unto Caesar and unto God, and their marvelling withdrawal. Matthew names the Pharisees' disciples with the Herodians and notes they marvelled and went their way; Mark presses the sharper double form 'Shall we give or shall we not give'; Luke supplies the vantage of spies feigning to be just men, aiming to deliver him to the governor's authority, and that they held their peace. These are complementary vantages of one encounter, each preserving detail the others leave out.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 22:15", "b": "Mark 12:13", "label": "entangle him in his talk ... catch him in his words"},
+    {"a": "Matt 22:15", "b": "Luke 20:20", "label": "entangle him ... take hold of his words"},
+    {"a": "Mark 12:13", "b": "Luke 20:20", "label": "catch him in his words ... take hold of his words"},
+
+    {"a": "Matt 22:16", "b": "Mark 12:14", "label": "Master we know that thou art true ... teachest the way of God in truth ... regardest not the person of men"},
+    {"a": "Matt 22:16", "b": "Luke 20:21", "label": "Master we know ... teachest the way of God ... the person"},
+    {"a": "Mark 12:14", "b": "Luke 20:21", "label": "Master we know ... teachest the way of God ... the person"},
+
+    {"a": "Matt 22:17", "b": "Mark 12:14", "label": "Is it lawful to give tribute ... unto Caesar or not"},
+    {"a": "Matt 22:17", "b": "Luke 20:22", "label": "Is it lawful ... to give tribute unto Caesar or no"},
+    {"a": "Mark 12:14", "b": "Luke 20:22", "label": "Is it lawful to give tribute to Caesar or not"},
+
+    {"a": "Matt 22:18", "b": "Mark 12:15", "label": "perceived their wickedness ... knowing their hypocrisy ... Why tempt ye me"},
+    {"a": "Matt 22:18", "b": "Luke 20:23", "label": "perceived their wickedness ... perceived their craftiness ... Why tempt ye me"},
+    {"a": "Mark 12:15", "b": "Luke 20:23", "label": "their hypocrisy ... their craftiness ... Why tempt ye me"},
+
+    {"a": "Matt 22:19", "b": "Mark 12:15", "label": "Shew me the tribute money ... bring me a penny"},
+    {"a": "Matt 22:19", "b": "Luke 20:24", "label": "Shew me the tribute money ... Shew me a penny"},
+    {"a": "Mark 12:15", "b": "Luke 20:24", "label": "bring me a penny ... Shew me a penny"},
+
+    {"a": "Matt 22:20", "b": "Mark 12:16", "label": "Whose is this image and superscription"},
+    {"a": "Matt 22:20", "b": "Luke 20:24", "label": "Whose is this image and superscription"},
+    {"a": "Mark 12:16", "b": "Luke 20:24", "label": "Whose is this image and superscription"},
+
+    {"a": "Matt 22:21", "b": "Mark 12:16", "label": "Caesar's"},
+    {"a": "Matt 22:21", "b": "Luke 20:24", "label": "Caesar's"},
+    {"a": "Mark 12:16", "b": "Luke 20:24", "label": "Caesar's"},
+
+    {"a": "Matt 22:21", "b": "Mark 12:17", "label": "Render therefore unto Caesar the things which are Caesar's and unto God the things that are God's"},
+    {"a": "Matt 22:21", "b": "Luke 20:25", "label": "Render therefore unto Caesar the things which ... are Caesar's and unto God the things ... God's"},
+    {"a": "Mark 12:17", "b": "Luke 20:25", "label": "Render to Caesar the things that are Caesar's and to God the things that are God's"},
+
+    {"a": "Matt 22:22", "b": "Mark 12:17", "label": "they marvelled"},
+    {"a": "Matt 22:22", "b": "Luke 20:26", "label": "they marvelled ... left him and went their way ... held their peace"},
+    {"a": "Mark 12:17", "b": "Luke 20:26", "label": "they marvelled at him ... they marvelled at his answer"}
+  ]
+}

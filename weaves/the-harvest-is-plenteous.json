@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The harvest is plenteous",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The same saying of the Lord on the abundance of the harvest and the fewness of the labourers, spoken on two distinct sending occasions: in Matthew as He looks on the multitudes just before sending forth the twelve, and in Luke before appointing the seventy. Matthew splits the word into two verses, first the observation of the plenteous harvest and then the charge to pray; Luke keeps both halves in a single verse. The shared core is twofold: the harvest is great but the labourers are few, and the disciples are to pray the Lord of the harvest to send forth labourers. The accounts offer complementary vantages of the one teaching, Matthew saying the harvest is 'plenteous' and that He 'will send forth,' Luke saying it is 'great' and that He 'would send forth.' Where the wording differs, the accounts stand as complementary witnesses to the same word spoken on two sending occasions.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 9:37", "b": "Luke 10:2", "label": "The harvest truly is ... but the labourers are few"},
+    {"a": "Matt 9:38", "b": "Luke 10:2", "label": "Pray ye therefore the Lord of the harvest ... send forth labourers into his harvest"}
+  ]
+}

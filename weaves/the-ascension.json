@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The ascension",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Luke alone records the ascension, and he records it twice: at the close of his Gospel (Luke 24:50-53) and again at the opening of Acts (Acts 1:6-12), the same author giving complementary detail. The shared core is the place from which the Lord ascended, the act of his being carried up into heaven with a cloud receiving him, and the disciples' return to Jerusalem. Luke 24 keeps the lifting up of his hands to bless them and their continual presence in the temple; Acts adds the promise of the Spirit, the charge that they should be witnesses, and the two men in white apparel declaring that this same Jesus shall so come. Bethany lay upon the mount called Olivet, so the two namings of the place are one location seen from complementary vantages.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Luke 24:50", "b": "Acts 1:12", "label": "led them out as far as to Bethany ... the mount called Olivet"},
+    {"a": "Luke 24:51", "b": "Acts 1:9", "label": "he was parted from them and carried up into heaven ... he was taken up and a cloud received him"},
+    {"a": "Luke 24:51", "b": "Acts 1:11", "label": "carried up into heaven ... taken up from you into heaven"},
+    {"a": "Luke 24:52", "b": "Acts 1:12", "label": "returned to Jerusalem ... returned they unto Jerusalem"}
+  ]
+}

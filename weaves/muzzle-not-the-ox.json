@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Muzzle not the ox",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul twice cites the law of Deuteronomy on the threshing ox to establish that those who labour in the gospel deserve material support. The shared core is the command itself, kept nearly word for word: thou shalt not muzzle the ox that treadeth out the corn. In 1 Corinthians 9:9 Paul names the source as the law of Moses and adds the rhetorical Doth God take care for oxen, opening the principle toward men. In 1 Timothy 5:18 he sets the same words under the heading the scripture saith and pairs them with a second saying, The labourer is worthy of his reward, applying the rule to elders. Deuteronomy preserves the original form with when he treadeth, while the two citations both read that treadeth out the corn; each apostolic use frames the verse for its own pastoral vantage.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 25:4", "b": "1Cor 9:9", "label": "muzzle the ox ... treadeth out the corn"},
+    {"a": "Deut 25:4", "b": "1Tim 5:18", "label": "Thou shalt not muzzle the ox ... treadeth out the corn"},
+    {"a": "1Cor 9:9", "b": "1Tim 5:18", "label": "muzzle the ... ox that treadeth out the corn"}
+  ]
+}

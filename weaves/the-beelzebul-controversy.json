@@ -1,0 +1,46 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Beelzebul controversy",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew, Mark, and Luke each record the charge that Jesus casts out devils by Beelzebub the prince of the devils, and His reply. The shared core runs through the same beats: the accusation, a kingdom or house divided against itself, Satan divided against himself, the strong man bound and his goods spoiled, and the warning of blasphemy against the Holy Ghost. Matthew and Luke open with the healing of the possessed dumb man and add the rebuttals 'by whom do your children cast them out' and 'if I by the Spirit/finger of God cast out devils, then the kingdom of God is come', along with 'he that is not with me is against me'. Mark gives the briefest frame but uniquely grounds the unpardonable sin in their saying 'He hath an unclean spirit'. Luke's parallel to the Holy Ghost saying sits later at 12:10 and is left for further study, so the blasphemy warning is linked here only between Matthew and Mark. Where each Gospel keeps its own emphasis (Luke's armed strong man keeping his palace, Matthew's son of David, Mark's scribes from Jerusalem) the accounts stand as complementary vantages on one occasion.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 12:22", "b": "Luke 11:14", "label": "possessed with a devil ... dumb ... the dumb spake"},
+
+    {"a": "Matt 12:24", "b": "Mark 3:22", "label": "by ... the prince of the devils ... cast out devils"},
+    {"a": "Matt 12:24", "b": "Luke 11:15", "label": "cast out devils but by Beelzebub the prince of the devils"},
+    {"a": "Mark 3:22", "b": "Luke 11:15", "label": "Beelzebub ... the prince of the devils casteth he out devils"},
+
+    {"a": "Matt 12:25", "b": "Luke 11:17", "label": "knew their thoughts ... Every kingdom divided against itself is brought to desolation"},
+
+    {"a": "Matt 12:25", "b": "Mark 3:24", "label": "kingdom divided against itself"},
+    {"a": "Matt 12:25", "b": "Mark 3:25", "label": "house divided against itself shall not stand"},
+    {"a": "Luke 11:17", "b": "Mark 3:24", "label": "kingdom divided against itself"},
+    {"a": "Luke 11:17", "b": "Mark 3:25", "label": "a house divided"},
+
+    {"a": "Matt 12:26", "b": "Mark 3:23", "label": "how can Satan cast out Satan"},
+    {"a": "Matt 12:26", "b": "Mark 3:26", "label": "if Satan ... be divided ... he cannot stand"},
+    {"a": "Matt 12:26", "b": "Luke 11:18", "label": "if Satan ... divided against himself how shall ... his kingdom stand"},
+    {"a": "Mark 3:23", "b": "Luke 11:18", "label": "Satan ... divided"},
+    {"a": "Mark 3:26", "b": "Luke 11:18", "label": "if Satan ... be divided ... how shall his kingdom stand"},
+
+    {"a": "Matt 12:27", "b": "Luke 11:19", "label": "if I by Beelzebub cast out devils by whom do your children ... cast them out"},
+
+    {"a": "Matt 12:28", "b": "Luke 11:20", "label": "if I ... cast out devils ... the kingdom of God is come"},
+
+    {"a": "Matt 12:29", "b": "Mark 3:27", "label": "enter into a strong man's house and spoil his goods except he ... bind the strong man"},
+    {"a": "Matt 12:29", "b": "Luke 11:21", "label": "strong man ... his goods"},
+    {"a": "Mark 3:27", "b": "Luke 11:21", "label": "strong man ... his goods"},
+    {"a": "Matt 12:29", "b": "Luke 11:22", "label": "spoil his goods"},
+    {"a": "Mark 3:27", "b": "Luke 11:22", "label": "spoil his goods"},
+
+    {"a": "Matt 12:30", "b": "Luke 11:23", "label": "He that is not with me is against me and he that gathereth not with me scattereth"},
+
+    {"a": "Matt 12:31", "b": "Mark 3:28", "label": "All ... blasphemy shall be forgiven unto men"},
+    {"a": "Matt 12:31", "b": "Mark 3:29", "label": "the blasphemy against the Holy Ghost shall not be forgiven"},
+    {"a": "Matt 12:32", "b": "Mark 3:29", "label": "speaketh against the Holy Ghost it shall not be forgiven"},
+    {"a": "Matt 12:31", "b": "Mark 3:30", "label": "blasphemy against the Holy Ghost"}
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "There is none righteous",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In Romans 3:10-18 Paul builds a catena, a chain of Old Testament quotations gathered as many witnesses to one verdict: that all, both Jew and Gentile, are under sin. He opens with the Psalter's twin testimony that none is righteous and none seeks God (Ps 14:1-3, echoed almost word for word in Ps 53:1-3), then indicts the tongue and throat (Ps 5:9; Ps 140:3), the mouth (Ps 10:7), and the feet swift to shed blood with their trail of destruction (Isa 59:7-8). He closes by naming the root of it all, that there is no fear of God before their eyes (Ps 36:1). Each Romans verse is linked here to its source so the reader can hear Paul summoning Law, Psalms, and Prophets together as one prosecuting chorus. The shared wording is exact enough that the apostle's quotation, not mere allusion, stands plain.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Rom 3:10", "b": "Ps 14:1", "label": "there is none that doeth good"},
+    {"a": "Rom 3:10", "b": "Ps 14:3", "label": "there is none that doeth good no not one"},
+    {"a": "Rom 3:10", "b": "Ps 53:1", "label": "there is none that doeth good"},
+    {"a": "Rom 3:10", "b": "Ps 53:3", "label": "there is none that doeth good no not one"},
+    {"a": "Rom 3:11", "b": "Ps 14:2", "label": "did understand and seek God"},
+    {"a": "Rom 3:11", "b": "Ps 53:2", "label": "did understand that did seek God"},
+    {"a": "Rom 3:12", "b": "Ps 14:3", "label": "They are all gone ... there is none that doeth good no not one"},
+    {"a": "Rom 3:12", "b": "Ps 53:3", "label": "gone ... there is none that doeth good no not one"},
+    {"a": "Rom 3:13", "b": "Ps 5:9", "label": "their throat is an open sepulchre"},
+    {"a": "Rom 3:13", "b": "Ps 140:3", "label": "is under their lips"},
+    {"a": "Rom 3:14", "b": "Ps 10:7", "label": "mouth is full of cursing"},
+    {"a": "Rom 3:15", "b": "Isa 59:7", "label": "swift to shed blood"},
+    {"a": "Rom 3:16", "b": "Isa 59:7", "label": "destruction are in their"},
+    {"a": "Rom 3:17", "b": "Isa 59:8", "label": "the way of peace"},
+    {"a": "Rom 3:18", "b": "Ps 36:1", "label": "no fear of God before"}
+  ]
+}

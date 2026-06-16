@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Yet once more I shake",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The writer of Hebrews cites Haggai's promise of a final, decisive shaking of creation. In Haggai the LORD of hosts declares, \"Yet once, it is a little while, and I will shake the heavens, and the earth,\" foretelling a coming upheaval; Hebrews takes up that same word as already promised and now pressing toward fulfilment. The shared core is the divine declaration \"Yet once\" and the act of shaking that reaches beyond the earth to heaven itself. Haggai keeps the fuller scope of the original oracle, naming the sea and the dry land along with the heavens and the earth, while Hebrews compresses the promise to its point: not the earth only, but also heaven. Hebrews adds the prior shaking at Sinai (\"Whose voice then shook the earth\") as the backdrop against which this final shaking is read.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Hag 2:6", "b": "Heb 12:26", "label": "Yet once"},
+    {"a": "Hag 2:6", "b": "Heb 12:26", "label": "shake"},
+    {"a": "Hag 2:6", "b": "Heb 12:26", "label": "the earth"}
+  ]
+}

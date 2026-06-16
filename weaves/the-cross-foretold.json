@@ -1,0 +1,39 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The cross foretold",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "This weave gathers the Old Testament words that foretold the crucifixion and joins them to the very verses where they were fulfilled at Calvary. The links are the explicit scriptural citations the Gospel writers themselves make ('that it might be fulfilled which was spoken by the prophet') together with the witness the New Testament elsewhere applies to the cross. The suffering of Psalm 22 and Psalm 69, the pierced one of Zechariah 12, the unbroken Passover lamb of Exodus 12 and Psalm 34, and the transgressor's portion of Isaiah 53 are seen here written long beforehand and answered in precise detail. Each account keeps its own vantage upon the scene, yet all bear one testimony: the Word of God spoke the cross before it came to pass, and not one word fell to the ground.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 22:18", "b": "Matt 27:35", "label": "They part my garments among them and cast lots"},
+    {"a": "Ps 22:18", "b": "Mark 15:24", "label": "parted his garments casting lots"},
+    {"a": "Ps 22:18", "b": "Luke 23:34", "label": "they parted his raiment and cast lots"},
+    {"a": "Ps 22:18", "b": "John 19:24", "label": "part my garments ... cast lots ... that the scripture might be fulfilled"},
+
+    {"a": "Ps 22:1", "b": "Matt 27:46", "label": "My God my God why hast thou forsaken me"},
+    {"a": "Ps 22:1", "b": "Mark 15:34", "label": "My God my God why hast thou forsaken me"},
+
+    {"a": "Ps 22:7", "b": "Matt 27:39", "label": "shake the head ... wagging their heads"},
+    {"a": "Ps 22:7", "b": "Mark 15:29", "label": "shake the head ... wagging their heads"},
+    {"a": "Ps 22:7", "b": "Luke 23:35", "label": "laugh me to scorn ... derided him"},
+
+    {"a": "Ps 22:8", "b": "Matt 27:43", "label": "He trusted ... let him deliver him"},
+
+    {"a": "Ps 69:21", "b": "Matt 27:34", "label": "gall for my meat ... vinegar to drink mingled with gall"},
+    {"a": "Ps 69:21", "b": "Matt 27:48", "label": "vinegar to drink"},
+    {"a": "Ps 69:21", "b": "Mark 15:23", "label": "in my thirst they gave me ... to drink"},
+    {"a": "Ps 69:21", "b": "Mark 15:36", "label": "vinegar ... gave him to drink"},
+    {"a": "Ps 69:21", "b": "Luke 23:36", "label": "vinegar to drink ... offering him vinegar"},
+    {"a": "Ps 69:21", "b": "John 19:29", "label": "vinegar to drink ... a spunge with vinegar"},
+
+    {"a": "Isa 53:12", "b": "Mark 15:28", "label": "he was numbered with the transgressors"},
+    {"a": "Isa 53:12", "b": "Luke 22:37", "label": "he was reckoned among the transgressors"},
+
+    {"a": "Ps 34:20", "b": "John 19:36", "label": "not one of them is broken ... A bone of him shall not be broken"},
+    {"a": "Exod 12:46", "b": "John 19:36", "label": "neither shall ye break a bone thereof ... A bone of him shall not be broken"},
+
+    {"a": "Zech 12:10", "b": "John 19:37", "label": "they shall look upon me whom they have pierced"}
+  ]
+}

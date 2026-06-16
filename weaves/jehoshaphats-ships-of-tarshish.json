@@ -1,0 +1,21 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Jehoshaphat's ships of Tarshish",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles each summarize Jehoshaphat's reign and close with his ill-fated navy. The shared core is the same king: thirty-five at his accession, reigning twenty-five years in Jerusalem, son of Azubah, walking in the way of Asa his father and doing right before the LORD, though the high places were not taken away; both note the rest of his acts are written. Both record that ships were made to sail for gold and were broken at Ezion-geber so that they went not. The two accounts give complementary vantages on the venture: Kings observes that Jehoshaphat would not let Ahaziah's servants sail with his, while Chronicles records Eliezer's prophecy that the LORD broke the works because Jehoshaphat had joined himself with Ahaziah. How these vantages on the king's dealing with Ahaziah fit together is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "1Kgs 22:42", "b": "2Chr 20:31", "label": "thirty and five years old when he began to reign"},
+    {"a": "1Kgs 22:42", "b": "2Chr 20:31", "label": "reigned twenty and five years in Jerusalem"},
+    {"a": "1Kgs 22:42", "b": "2Chr 20:31", "label": "his mother's name was Azubah the daughter of Shilhi"},
+    {"a": "1Kgs 22:43", "b": "2Chr 20:32", "label": "walked in ... the way of Asa his father ... doing that which was right"},
+    {"a": "1Kgs 22:43", "b": "2Chr 20:33", "label": "the high places were not taken away"},
+    {"a": "1Kgs 22:45", "b": "2Chr 20:34", "label": "the rest of the acts of Jehoshaphat ... are they not written"},
+    {"a": "1Kgs 22:48", "b": "2Chr 20:36", "label": "ships ... to go to ... Tarshish"},
+    {"a": "1Kgs 22:48", "b": "2Chr 20:37", "label": "the ships were broken ... they went not"},
+    {"a": "1Kgs 22:49", "b": "2Chr 20:35", "label": "Ahaziah the son of Ahab"},
+    {"a": "1Kgs 22:49", "b": "2Chr 20:37", "label": "Jehoshaphat ... joined thyself with Ahaziah"}
+  ]
+}

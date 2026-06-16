@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The sons of Levi",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Exodus 6 and 1 Chronicles 6 both record the Levitical and priestly line descending from Levi. Each names Levi's three sons Gershon, Kohath, and Merari, traces Kohath to Amram, Amram to Aaron and Moses, Aaron to his four sons Nadab, Abihu, Eleazar, and Ithamar, and Eleazar to Phinehas. Exodus sets the genealogy within the account of Moses and Aaron's commission, adding the lifespans of Levi, Kohath, and Amram and the wider Kohathite families. Where Exodus splits Amram's children and Aaron's sons across two verses, Chronicles gathers them into one, so each single verse links to both. Chronicles uniquely carries the priestly succession on past Phinehas to Jehozadak and the captivity under Nebuchadnezzar; that continuation has no parallel and reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Exod 6:16", "b": "1Chr 6:1", "label": "Gershon and Kohath and Merari"},
+    {"a": "Exod 6:18", "b": "1Chr 6:2", "label": "Amram and Izhar and Hebron and Uzziel"},
+    {"a": "Exod 6:20", "b": "1Chr 6:3", "label": "Aaron and Moses"},
+    {"a": "Exod 6:23", "b": "1Chr 6:3", "label": "Nadab and Abihu Eleazar and Ithamar"},
+    {"a": "Exod 6:25", "b": "1Chr 6:4", "label": "Eleazar ... Phinehas"}
+  ]
+}

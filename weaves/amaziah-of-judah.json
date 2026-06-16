@@ -1,0 +1,26 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Amaziah of Judah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles together recount the reign of Amaziah son of Joash: his accession at twenty-five, his doing right yet imperfectly, his sparing the murderers' children by the law of Moses, his victory over Edom in the valley of salt, his ill-fated challenge to Jehoash of Israel, the thistle-and-cedar fable, his defeat at Beth-shemesh, the breaching of Jerusalem's wall and spoiling of the temple, and at last the conspiracy that slew him at Lachish. The shared core runs in close verbal parallel, Kings often naming the king Jehoash where Chronicles writes Joash, and Selah/Edom where Chronicles writes the children of Seir. Chronicles preserves much that Kings does not: the hired Israelite army sent home at the word of the man of God, the further slaughter of Edomites at the rock, and Amaziah's turning to the gods of Seir which sets the spiritual cause of his fall (25:5-16); this unique matter is left unlinked to read in place. The two accounts offer complementary vantages, Kings giving the political annal and Chronicles drawing out the heart and the LORD's hand behind the defeat.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 14:2", "b": "2Chr 25:1", "label": "twenty and five years old when he began to reign ... twenty and nine years in Jerusalem"},
+    {"a": "2Kgs 14:3", "b": "2Chr 25:2", "label": "he did that which was right in the sight of the LORD"},
+    {"a": "2Kgs 14:5", "b": "2Chr 25:3", "label": "he slew his servants which had slain the king his father"},
+    {"a": "2Kgs 14:6", "b": "2Chr 25:4", "label": "The fathers shall not be put to death for the children ... every man shall be put to death for his own sin"},
+    {"a": "2Kgs 14:7", "b": "2Chr 25:11", "label": "the valley of salt ten thousand"},
+    {"a": "2Kgs 14:8", "b": "2Chr 25:17", "label": "Come let us look one another in the face"},
+    {"a": "2Kgs 14:9", "b": "2Chr 25:18", "label": "The thistle that was in Lebanon sent to the cedar that was in Lebanon"},
+    {"a": "2Kgs 14:10", "b": "2Chr 25:19", "label": "thine heart hath lifted thee up ... why shouldest thou meddle to thy hurt"},
+    {"a": "2Kgs 14:11", "b": "2Chr 25:21", "label": "Beth-shemesh which belongeth to Judah"},
+    {"a": "2Kgs 14:12", "b": "2Chr 25:22", "label": "Judah was put to the worse before Israel and they fled"},
+    {"a": "2Kgs 14:13", "b": "2Chr 25:23", "label": "brake down the wall of Jerusalem from the gate of Ephraim unto the corner gate four hundred cubits"},
+    {"a": "2Kgs 14:14", "b": "2Chr 25:24", "label": "all the gold and silver and all the vessels that were found in the house of the LORD ... and returned to Samaria"},
+    {"a": "2Kgs 14:17", "b": "2Chr 25:25", "label": "lived after the death of Joash ... fifteen years"},
+    {"a": "2Kgs 14:19", "b": "2Chr 25:27", "label": "they made a conspiracy against him in Jerusalem and he fled to Lachish ... and slew him there"},
+    {"a": "2Kgs 14:20", "b": "2Chr 25:28", "label": "they brought him ... horses ... buried ... with his fathers"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The rejection at Nazareth",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew and Mark recount the same visit of Jesus to his own country, where he taught in the synagogue and the townsfolk, though astonished at his wisdom and mighty works, took offence because they knew his family. The shared core runs in parallel: his coming home and teaching, the people's astonished question about the source of his wisdom and works, their pointing to the carpenter and his named kin, their being offended, his proverb that a prophet lacks honour in his own country and house, and the few mighty works done there because of their unbelief. The two keep complementary vantages: Matthew names him 'the carpenter's son' and reports he 'did not many mighty works there,' while Mark calls him 'the carpenter, the son of Mary,' adds that his disciples followed and that he yet laid hands on a few sick folk, and says plainly he 'could there do no mighty work,' marvelling at their unbelief. Luke 4:16-30 records a fuller, earlier visit to Nazareth (the reading of Isaiah, the proverb 'Physician, heal thyself,' and the attempt to cast him from the brow of the hill) that is often treated as a separate occasion; it is intentionally not linked here.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 13:54", "b": "Mark 6:1", "label": "come into his own country"},
+    {"a": "Matt 13:54", "b": "Mark 6:2", "label": "taught them in their synagogue ... began to teach in the synagogue"},
+    {"a": "Matt 13:54", "b": "Mark 6:2", "label": "they were astonished ... were astonished"},
+    {"a": "Matt 13:54", "b": "Mark 6:2", "label": "Whence hath this man this wisdom and these mighty works ... what wisdom is this ... such mighty works"},
+    {"a": "Matt 13:55", "b": "Mark 6:3", "label": "Is not this the carpenter's son ... Is not this the carpenter the son of Mary"},
+    {"a": "Matt 13:55", "b": "Mark 6:3", "label": "James and Joses and Simon and Judas ... James and Joses and of Juda and Simon"},
+    {"a": "Matt 13:56", "b": "Mark 6:3", "label": "his sisters are they not all with us ... are not his sisters here with us"},
+    {"a": "Matt 13:57", "b": "Mark 6:3", "label": "they were offended in him ... they were offended at him"},
+    {"a": "Matt 13:57", "b": "Mark 6:4", "label": "A prophet is not without honour save in his own country and in his own house"},
+    {"a": "Matt 13:58", "b": "Mark 6:5", "label": "he did not many mighty works there ... he could there do no mighty work"},
+    {"a": "Matt 13:58", "b": "Mark 6:6", "label": "because of their unbelief"}
+  ]
+}

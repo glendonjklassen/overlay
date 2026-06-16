@@ -1,0 +1,48 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The death of John the Baptist",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The threefold synoptic account of Herod hearing of the fame of Jesus and the beheading of John the Baptist. Matthew and Mark share a full core: Herod hears of Jesus and supposes John is risen, the prior imprisonment for Herodias' sake (his brother Philip's wife), John's word that it was not lawful, the birthday feast, the dancing daughter, the rash oath, the head asked in a charger, the king sorry yet bound by his oath, the beheading in the prison, and the disciples taking up the body. Luke's account is brief and is linked only at the genuine overlap, Herod's perplexity and his word 'John have I beheaded', with the full backstory of the feast left unstated in Luke. The accounts give complementary vantages: Matthew notes Herod feared the multitude that counted John a prophet, while Mark adds that Herod himself feared John as a just and holy man and heard him gladly, two angles on the one king's divided heart.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 14:1", "b": "Mark 6:14", "label": "Herod ... heard of ... Jesus"},
+    {"a": "Matt 14:1", "b": "Luke 9:7", "label": "Herod the tetrarch heard of"},
+    {"a": "Mark 6:14", "b": "Luke 9:7", "label": "Herod heard of him"},
+
+    {"a": "Matt 14:2", "b": "Mark 6:14", "label": "John the Baptist ... risen from the dead"},
+    {"a": "Matt 14:2", "b": "Mark 6:16", "label": "he is risen from the dead"},
+    {"a": "Matt 14:2", "b": "Luke 9:7", "label": "John was risen from the dead"},
+    {"a": "Mark 6:14", "b": "Luke 9:7", "label": "was risen from the dead"},
+    {"a": "Mark 6:16", "b": "Luke 9:7", "label": "John ... risen from the dead"},
+
+    {"a": "Matt 14:2", "b": "Mark 6:14", "label": "mighty works do shew forth themselves in him"},
+
+    {"a": "Mark 6:16", "b": "Luke 9:9", "label": "John ... I beheaded"},
+
+    {"a": "Matt 14:3", "b": "Mark 6:17", "label": "Herod ... had laid hold ... on John and bound him ... for Herodias sake his brother Philip's wife"},
+
+    {"a": "Matt 14:4", "b": "Mark 6:18", "label": "It is not lawful for thee to have her"},
+
+    {"a": "Matt 14:5", "b": "Mark 6:20"},
+
+    {"a": "Matt 14:6", "b": "Mark 6:21", "label": "Herod['s] ... birthday"},
+
+    {"a": "Matt 14:6", "b": "Mark 6:22", "label": "the daughter of ... Herodias ... danced ... pleased Herod"},
+
+    {"a": "Matt 14:7", "b": "Mark 6:22", "label": "give ... whatsoever she would ask"},
+    {"a": "Matt 14:7", "b": "Mark 6:23", "label": "with an oath ... whatsoever ... I will give"},
+
+    {"a": "Matt 14:8", "b": "Mark 6:24", "label": "John Baptist's head ... the head of John the Baptist"},
+    {"a": "Matt 14:8", "b": "Mark 6:25", "label": "in a charger ... the head of John the Baptist"},
+
+    {"a": "Matt 14:9", "b": "Mark 6:26", "label": "the king was ... sorry ... for ... the oath's sake ... them which sat with him"},
+
+    {"a": "Matt 14:10", "b": "Mark 6:27", "label": "beheaded ... in the prison"},
+
+    {"a": "Matt 14:11", "b": "Mark 6:28", "label": "his head ... in a charger ... given to the damsel and she ... to her mother"},
+
+    {"a": "Matt 14:12", "b": "Mark 6:29", "label": "his disciples ... took up the body ... buried it ... laid it in a tomb"}
+  ]
+}

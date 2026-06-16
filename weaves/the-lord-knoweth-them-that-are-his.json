@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Lord knoweth them that are his",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul, sealing the foundation of God, echoes Moses' words spoken at Korah's rebellion. In Numbers, when Korah and his company rose against the priesthood, Moses declared that on the morrow the LORD would shew who are his and who is holy. In 2 Timothy that same assurance becomes the first half of the seal upon God's sure foundation: 'The Lord knoweth them that are his.' The shared core is the LORD's own knowledge and vindication of those who truly belong to him over against pretenders. Numbers keeps the immediate setting of the contested censers and Moses' appointed test on the morrow, while 2 Timothy adds the companion clause unique to its vantage, 'Let every one that nameth the name of Christ depart from iniquity,' pressing the truth toward holy living; that clause has no Numbers parallel and reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Num 16:5", "b": "2Tim 2:19", "label": "the LORD will shew who are his ... The Lord knoweth them that are his"}
+  ]
+}

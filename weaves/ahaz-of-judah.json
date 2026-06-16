@@ -1,0 +1,21 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Ahaz of Judah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The reign of the wicked king Ahaz of Judah, told in 2 Kings 16 and again in 2 Chronicles 28. Both accounts share a core frame: his age and sixteen-year reign, his refusal to do right like David his father, his walking in the way of the kings of Israel, his burning of his son(s) in the fire after the abominations of the heathen, his sacrificing in the high places and under every green tree, the war brought by Rezin of Syria and Pekah of Israel, his appeal to Assyria with the silver and gold of the house of the LORD, and his death and burial with Hezekiah reigning in his stead. Each writer keeps his own vantage: Kings dwells on the altar of Damascus and the despoiling of the temple furniture (16:10-18), while Chronicles enlarges on the great slaughter in Judah, the prophet Oded and the captives sent home, the inroads of Edom and the Philistines, and Ahaz's further trespass with the gods of Damascus (28:5-15,17-25). These are complementary portraits of one king, the same record viewed from the throne and from the temple.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 16:2", "b": "2Chr 28:1", "label": "Twenty years old ... reigned sixteen years in Jerusalem ... did not that which was right in the sight of the LORD ... like David his father"},
+    {"a": "2Kgs 16:3", "b": "2Chr 28:2", "label": "he walked in the way of the kings of Israel"},
+    {"a": "2Kgs 16:3", "b": "2Chr 28:3", "label": "to pass through the fire according to the abominations of the heathen whom the LORD cast out from before the children of Israel"},
+    {"a": "2Kgs 16:4", "b": "2Chr 28:4", "label": "burnt incense in the high places and on the hills and under every green tree"},
+    {"a": "2Kgs 16:5", "b": "2Chr 28:5", "label": "Rezin king of Syria ... came up to Jerusalem to war"},
+    {"a": "2Kgs 16:5", "b": "2Chr 28:6", "label": "Pekah son of Remaliah king of Israel"},
+    {"a": "2Kgs 16:7", "b": "2Chr 28:16", "label": "Ahaz sent ... to ... king of Assyria"},
+    {"a": "2Kgs 16:8", "b": "2Chr 28:21", "label": "the silver and gold that was found in the house of the LORD ... sent it ... to the king of Assyria"},
+    {"a": "2Kgs 16:19", "b": "2Chr 28:26", "label": "the rest of ... his ... acts ... written in the book of the ... kings of Judah"},
+    {"a": "2Kgs 16:20", "b": "2Chr 28:27", "label": "Ahaz slept with his fathers ... and Hezekiah his son reigned in his stead"}
+  ]
+}

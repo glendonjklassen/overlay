@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "They shall be all taught of God",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In the bread of life discourse of John 6, Jesus grounds His teaching that the Father draws men to the Son by appealing to the prophets, citing Isaiah 54:13. Isaiah promises the restored people that all thy children shall be taught of the LORD, with great peace following. Jesus carries that promise forward as they shall be all taught of God, then applies it: every man that hath heard and learned of the Father comes to Him. Isaiah keeps the unique note of the children's peace, while John keeps the unique application that this taught-of-God learning leads to coming unto Christ. The two stand as one promise of divine instruction, the prophet sounding it and the Lord fulfilling it.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 54:13", "b": "John 6:45", "label": "shall be ... taught of the LORD ... taught of God"}
+  ]
+}

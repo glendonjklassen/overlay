@@ -1,0 +1,50 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Gethsemane",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The threefold synoptic account of the agony in the garden, before the arrest. The shared core runs: coming to the place, the charge to sit and pray, the cup prayer of full submission to the Father's will, the returns to find the disciples sleeping, and the warning to watch and pray lest they enter into temptation. Matthew and Mark together preserve the taking of Peter, James, and John, the soul exceeding sorrowful unto death, the threefold prayer of the same words, the rebuke 'could ye not watch one hour,' the saying 'the spirit indeed is willing, but the flesh is weak,' and the closing 'sleep on now ... the hour is at hand ... he is at hand that doth betray me.' Luke gives the complementary vantage of the mount of Olives, the stone's cast, and uniquely the angel from heaven strengthening him and the great drops of blood, which read in place. Where Matthew keeps in one verse what Mark or Luke spreads across two, the single verse is linked to both.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:36", "b": "Mark 14:32", "label": "a place called Gethsemane"},
+    {"a": "Matt 26:36", "b": "Luke 22:39", "label": "cometh ... unto a place ... he came out and went"},
+    {"a": "Mark 14:32", "b": "Luke 22:39", "label": "they came to a place ... he came out and went"},
+    {"a": "Matt 26:36", "b": "Luke 22:40", "label": "I go and pray ... Pray that ye enter not"},
+    {"a": "Mark 14:32", "b": "Luke 22:40", "label": "while I shall pray ... Pray that ye enter not"},
+
+    {"a": "Matt 26:36", "b": "Mark 14:32", "label": "Sit ye here while I ... pray"},
+
+    {"a": "Matt 26:37", "b": "Mark 14:33", "label": "took with him Peter ... and ... very heavy"},
+    {"a": "Matt 26:38", "b": "Mark 14:34", "label": "My soul is exceeding sorrowful ... unto death ... watch"},
+
+    {"a": "Matt 26:39", "b": "Mark 14:35", "label": "went a little further and fell on his face ... on the ground"},
+    {"a": "Matt 26:39", "b": "Luke 22:41", "label": "fell on his face and prayed ... kneeled down and prayed"},
+    {"a": "Mark 14:35", "b": "Luke 22:41", "label": "fell on the ground and prayed ... kneeled down and prayed"},
+
+    {"a": "Matt 26:39", "b": "Mark 14:36", "label": "let this cup pass from me ... take away this cup from me"},
+    {"a": "Matt 26:39", "b": "Luke 22:42", "label": "let this cup pass from me ... remove this cup from me"},
+    {"a": "Mark 14:36", "b": "Luke 22:42", "label": "take away this cup ... remove this cup"},
+    {"a": "Matt 26:39", "b": "Mark 14:36", "label": "nevertheless not as I will but as thou wilt ... not what I will but what thou wilt"},
+    {"a": "Matt 26:39", "b": "Luke 22:42", "label": "not as I will but as thou wilt ... not my will but thine be done"},
+    {"a": "Mark 14:36", "b": "Luke 22:42", "label": "not what I will but what thou wilt ... not my will but thine be done"},
+
+    {"a": "Matt 26:40", "b": "Mark 14:37", "label": "findeth them asleep ... findeth them sleeping"},
+    {"a": "Matt 26:40", "b": "Luke 22:45", "label": "findeth them asleep ... he found them sleeping"},
+    {"a": "Mark 14:37", "b": "Luke 22:45", "label": "findeth them sleeping ... he found them sleeping"},
+
+    {"a": "Matt 26:40", "b": "Mark 14:37", "label": "could ye not watch with me one hour ... couldest not thou watch one hour"},
+
+    {"a": "Matt 26:41", "b": "Mark 14:38", "label": "Watch and pray that ye enter not into temptation"},
+    {"a": "Matt 26:41", "b": "Luke 22:46", "label": "pray that ye enter not into temptation ... pray lest ye enter into temptation"},
+    {"a": "Mark 14:38", "b": "Luke 22:46", "label": "pray lest ye enter into temptation"},
+
+    {"a": "Matt 26:41", "b": "Mark 14:38", "label": "the spirit indeed is willing but the flesh is weak"},
+
+    {"a": "Matt 26:42", "b": "Mark 14:39", "label": "the second time and prayed ... again he went away and prayed"},
+    {"a": "Matt 26:44", "b": "Mark 14:39", "label": "prayed the third time saying the same words ... spake the same words"},
+
+    {"a": "Matt 26:45", "b": "Mark 14:41", "label": "Sleep on now and take your rest ... the hour is at hand ... the Son of man is betrayed into the hands of sinners"},
+    {"a": "Matt 26:46", "b": "Mark 14:42", "label": "Rise ... he is at hand that doth betray me ... he that betrayeth me is at hand"}
+  ]
+}

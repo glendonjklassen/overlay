@@ -1,0 +1,38 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The man with the withered hand",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic retelling of the sabbath healing of the man with the withered hand, recounted in Matthew, Mark, and Luke. The shared core runs the same course in each: Jesus enters the synagogue, the man with the withered hand is present, the scribes and Pharisees watch whether he would heal on the sabbath that they might accuse him, Jesus answers with the question whether it is lawful to do good or evil on the sabbath, he bids the man stretch forth his hand, the hand is restored whole as the other, and his enemies plot against him. The accounts give complementary vantages: Matthew alone preserves the sheep-in-a-pit saying (left unlinked here), and frames the question as 'Is it lawful to heal,' while Mark and Luke widen it to 'do good or to do evil, to save life or to destroy it.' Mark uniquely records Jesus' looking on them with anger, grieved for the hardness of their hearts, and that the Pharisees took counsel with the Herodians; Luke uniquely tells that Jesus knew their thoughts and that they were filled with madness. Where Matthew gathers the watching and the accusation into a single verse while Mark and Luke set them in separate verses, the single verse is linked to both.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 12:9", "b": "Mark 3:1", "label": "into the synagogue"},
+    {"a": "Matt 12:9", "b": "Luke 6:6", "label": "into the synagogue"},
+    {"a": "Mark 3:1", "b": "Luke 6:6", "label": "into the synagogue"},
+
+    {"a": "Matt 12:10", "b": "Mark 3:1", "label": "a man which had ... a withered hand"},
+    {"a": "Matt 12:10", "b": "Luke 6:6", "label": "a man ... hand withered"},
+    {"a": "Mark 3:1", "b": "Luke 6:6", "label": "a man ... withered hand"},
+
+    {"a": "Matt 12:10", "b": "Mark 3:2", "label": "that they might accuse him"},
+    {"a": "Matt 12:10", "b": "Luke 6:7", "label": "whether he would heal ... that they might ... accuse"},
+    {"a": "Mark 3:2", "b": "Luke 6:7", "label": "watched him whether he would heal on the sabbath day"},
+
+    {"a": "Matt 12:10", "b": "Mark 3:4", "label": "Is it lawful ... on the sabbath days"},
+    {"a": "Matt 12:10", "b": "Luke 6:9", "label": "Is it lawful ... on the sabbath days"},
+    {"a": "Mark 3:4", "b": "Luke 6:9", "label": "Is it lawful ... to do good ... or to do evil"},
+
+    {"a": "Matt 12:13", "b": "Mark 3:5", "label": "Stretch forth thine hand"},
+    {"a": "Matt 12:13", "b": "Luke 6:10", "label": "Stretch forth th"},
+    {"a": "Mark 3:5", "b": "Luke 6:10", "label": "he saith unto the man Stretch forth"},
+
+    {"a": "Matt 12:13", "b": "Mark 3:5", "label": "it was restored whole ... as the other"},
+    {"a": "Matt 12:13", "b": "Luke 6:10", "label": "restored whole ... as the other"},
+    {"a": "Mark 3:5", "b": "Luke 6:10", "label": "his hand was restored whole as the other"},
+
+    {"a": "Matt 12:14", "b": "Mark 3:6", "label": "against him how they might destroy him"},
+    {"a": "Matt 12:14", "b": "Luke 6:11", "label": "how they might destroy him"},
+    {"a": "Mark 3:6", "b": "Luke 6:11", "label": "what they might do to"}
+  ]
+}

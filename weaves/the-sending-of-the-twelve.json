@@ -1,0 +1,49 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The sending of the Twelve",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel of the mission charge Jesus gave to His twelve apostles (Matt 10:1-15; Mark 6:7-13; Luke 9:1-6), distinct from the later sending of the seventy in Luke 10. All three accounts share the core: He called the Twelve and gave them power over unclean spirits and to heal, sent them forth (Mark adding 'by two and two'), charged them to take nothing for the journey, told them to abide in one house till they departed, and to shake off the dust of their feet for a testimony against those who received them not. Each evangelist preserves his own vantage: Matthew expands the charge into a long discourse (beyond v.15, out of scope) and records the apostles' names and the limit to the lost sheep of Israel; Mark and Luke alone narrate the apostles going out, preaching, and healing everywhere. The wording on the staff and sandals differs between the accounts (Mark permits a staff and sandals; Matthew and Luke list staves among what not to provide); these complementary vantages are left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 10:1", "b": "Mark 6:7", "label": "power ... over unclean spirits"},
+    {"a": "Matt 10:1", "b": "Luke 9:1", "label": "gave them power ... over ... spirits"},
+    {"a": "Mark 6:7", "b": "Luke 9:1", "label": "he called ... the twelve ... gave them power"},
+
+    {"a": "Matt 10:1", "b": "Luke 9:1", "label": "to heal all manner of sickness ... cure diseases"},
+
+    {"a": "Matt 10:5", "b": "Mark 6:7", "label": "sent ... forth"},
+    {"a": "Matt 10:5", "b": "Luke 9:2", "label": "Jesus sent forth ... he sent them"},
+    {"a": "Mark 6:7", "b": "Luke 9:2", "label": "send them forth ... he sent them"},
+
+    {"a": "Matt 10:7", "b": "Luke 9:2", "label": "preach ... The kingdom of heaven ... the kingdom of God"},
+
+    {"a": "Matt 10:9", "b": "Mark 6:8", "label": "no money in their purse"},
+    {"a": "Matt 10:9", "b": "Luke 9:3", "label": "neither money"},
+    {"a": "Mark 6:8", "b": "Luke 9:3", "label": "no money ... neither money"},
+
+    {"a": "Matt 10:10", "b": "Mark 6:8", "label": "scrip for your journey ... no scrip"},
+    {"a": "Matt 10:10", "b": "Luke 9:3", "label": "Nor scrip for your journey ... nor scrip"},
+    {"a": "Mark 6:8", "b": "Luke 9:3", "label": "no scrip no bread"},
+
+    {"a": "Matt 10:10", "b": "Mark 6:9", "label": "neither two coats ... not put on two coats"},
+    {"a": "Matt 10:10", "b": "Luke 9:3", "label": "neither two coats ... two coats apiece"},
+    {"a": "Mark 6:9", "b": "Luke 9:3", "label": "not put on two coats ... two coats apiece"},
+
+    {"a": "Matt 10:10", "b": "Mark 6:8", "label": "nor yet staves ... save a staff only"},
+    {"a": "Matt 10:10", "b": "Luke 9:3", "label": "nor yet staves ... neither staves"},
+    {"a": "Mark 6:8", "b": "Luke 9:3", "label": "save a staff only ... neither staves"},
+
+    {"a": "Matt 10:11", "b": "Mark 6:10", "label": "there abide till ye ... depart"},
+    {"a": "Matt 10:11", "b": "Luke 9:4", "label": "there abide ... thence depart"},
+    {"a": "Mark 6:10", "b": "Luke 9:4", "label": "there abide till ye depart"},
+
+    {"a": "Matt 10:14", "b": "Mark 6:11", "label": "shall not receive you nor hear ... shake off the dust"},
+    {"a": "Matt 10:14", "b": "Luke 9:5", "label": "shall not receive you ... shake off the ... dust of your feet"},
+    {"a": "Mark 6:11", "b": "Luke 9:5", "label": "shake off the dust ... for a testimony against them"},
+
+    {"a": "Mark 6:12", "b": "Luke 9:6", "label": "they went out and preached ... preaching the gospel"},
+    {"a": "Mark 6:13", "b": "Luke 9:6", "label": "healed them ... healing every where"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The reign of Amon",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles give parallel accounts of the brief reign of Amon king of Judah. They share the same core: his age and two-year reign in Jerusalem, his doing evil as his father Manasseh and serving the idols his father served, his forsaking of the LORD, the conspiracy of his own servants who slew him in his house, and the people of the land slaying the conspirators and making Josiah his son king in his stead. Kings keeps unique detail about his mother Meshullemeth and his burial in the garden of Uzza; Chronicles supplies the complementary vantage that Amon humbled not himself as Manasseh his father had, but trespassed more and more. The two records stand as complementary witnesses to the same king.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 21:19", "b": "2Chr 33:21", "label": "twenty and two years old when he began to reign ... reigned two years in Jerusalem"},
+    {"a": "2Kgs 21:20", "b": "2Chr 33:22", "label": "he did that which was evil in the sight of the LORD as ... Manasseh his father"},
+    {"a": "2Kgs 21:21", "b": "2Chr 33:22", "label": "served the idols ... and served them"},
+    {"a": "2Kgs 21:22", "b": "2Chr 33:23", "label": "he forsook the LORD ... humbled not himself before the LORD"},
+    {"a": "2Kgs 21:23", "b": "2Chr 33:24", "label": "the servants ... conspired against him and slew ... in his own house"},
+    {"a": "2Kgs 21:24", "b": "2Chr 33:25", "label": "the people of the land slew all them that had conspired against king Amon and the people of the land made Josiah his son king in his stead"}
+  ]
+}

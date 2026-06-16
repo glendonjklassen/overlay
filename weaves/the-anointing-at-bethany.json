@@ -1,0 +1,40 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The anointing at Bethany",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold parallel of the anointing of Jesus at Bethany, told by Matthew, Mark, and John. The shared core is one and the same occasion: a costly ointment of spikenard poured out upon Jesus, the disciples' objection that it might have been sold for the poor, Jesus' defense of the woman, and his word that the deed prepared him for his burial. Matthew and Mark give the broad vantage (the house of Simon the leper, the alabaster box poured on his head, and the promise that the deed will be told for a memorial wherever the gospel is preached), while John supplies complementary detail from up close (the supper where Lazarus sat, that the woman was Mary anointing Jesus' feet and wiping them with her hair, and that the objector was Judas Iscariot). The head-anointing of Matthew/Mark and the feet-anointing of John are complementary vantages of the abundant ointment, not competing reports. John records no memorial saying, which simply reads in place. The anointing in Luke 7 by a sinful woman in the house of a Pharisee in Galilee is a separate occasion and is intentionally not included here.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:6", "b": "Mark 14:3", "label": "in Bethany in the house of Simon the leper"},
+    {"a": "Matt 26:6", "b": "John 12:1", "label": "Bethany"},
+    {"a": "Mark 14:3", "b": "John 12:1", "label": "Bethany"},
+
+    {"a": "Matt 26:7", "b": "Mark 14:3", "label": "alabaster box of ... very precious ... ointment ... poured it on his head"},
+    {"a": "Mark 14:3", "b": "John 12:3", "label": "ointment of spikenard very precious"},
+    {"a": "Matt 26:7", "b": "John 12:3", "label": "very precious ointment ... very costly"},
+
+    {"a": "Matt 26:8", "b": "Mark 14:4", "label": "had indignation ... this waste"},
+    {"a": "Matt 26:8", "b": "John 12:5", "label": "To what purpose is this waste ... Why was not this ointment sold"},
+    {"a": "Mark 14:4", "b": "John 12:5", "label": "Why was this waste ... Why was not this ointment sold"},
+
+    {"a": "Matt 26:9", "b": "Mark 14:5", "label": "might have been sold for ... and given to the poor"},
+    {"a": "Mark 14:5", "b": "John 12:5", "label": "three hundred pence ... given to the poor"},
+    {"a": "Matt 26:9", "b": "John 12:5", "label": "sold ... and given to the poor"},
+
+    {"a": "Matt 26:10", "b": "Mark 14:6", "label": "Why trouble ye ... she hath wrought a good work"},
+    {"a": "Mark 14:6", "b": "John 12:7", "label": "Let her alone"},
+    {"a": "Matt 26:10", "b": "John 12:7", "label": "Why trouble ye the woman ... Let her alone"},
+
+    {"a": "Matt 26:11", "b": "Mark 14:7", "label": "ye have the poor ... always ... but me ye have not always"},
+    {"a": "Mark 14:7", "b": "John 12:8", "label": "the poor with you always ... but me ye have not always"},
+    {"a": "Matt 26:11", "b": "John 12:8", "label": "ye have the poor always with you but me ye have not always"},
+
+    {"a": "Matt 26:12", "b": "Mark 14:8", "label": "for my burial ... to the burying"},
+    {"a": "Mark 14:8", "b": "John 12:7", "label": "to the burying ... the day of my burying"},
+    {"a": "Matt 26:12", "b": "John 12:7", "label": "for my burial ... against the day of my burying"},
+
+    {"a": "Matt 26:13", "b": "Mark 14:9", "label": "Wheresoever this gospel shall be preached ... for a memorial of her"}
+  ]
+}

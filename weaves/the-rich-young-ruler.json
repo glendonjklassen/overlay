@@ -1,0 +1,72 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The rich young ruler",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic account of the man who asks how to inherit eternal life, told by Matthew, Mark, and Luke. The shared core runs through the same beads: the address \"Good Master,\" the reply about who alone is good, the commandments, the man's claim to have kept them, the call to sell all and follow with treasure in heaven, his sorrowful departure for his great riches, the saying on how hardly the rich enter the kingdom, the camel and the needle's eye, \"Who then can be saved,\" the answer that what is impossible with men is possible with God, Peter's \"we have left all,\" and the promise of manifold reward and eternal life. Each writer keeps complementary vantage: Matthew names him a young man and adds the twelve thrones and \"what lack I yet,\" Mark alone records that Jesus beholding him loved him and bids him take up the cross, and Luke alone calls him a ruler. Matthew and Mark close with \"many that are first shall be last,\" which Luke leaves in place without that closing line. The detail that Matthew has \"what good thing shall I do\" while Mark and Luke have \"what shall I do that I may inherit eternal life\" is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 19:16", "b": "Mark 10:17", "label": "Good Master ... that I may"},
+    {"a": "Matt 19:16", "b": "Luke 18:18", "label": "Good Master ... eternal life"},
+    {"a": "Mark 10:17", "b": "Luke 18:18", "label": "Good Master what shall I do ... inherit eternal life"},
+
+    {"a": "Matt 19:17", "b": "Mark 10:18", "label": "Why callest thou me good there is none good but one that is God"},
+    {"a": "Matt 19:17", "b": "Luke 18:19", "label": "Why callest thou me good"},
+    {"a": "Mark 10:18", "b": "Luke 18:19", "label": "Why callest thou me good ... one that is God"},
+
+    {"a": "Matt 19:17", "b": "Mark 10:19", "label": "the commandments"},
+    {"a": "Matt 19:17", "b": "Luke 18:20", "label": "the commandments"},
+    {"a": "Mark 10:19", "b": "Luke 18:20", "label": "Thou knowest the commandments"},
+
+    {"a": "Matt 19:18", "b": "Mark 10:19", "label": "not commit adultery ... not steal ... not bear false witness"},
+    {"a": "Matt 19:18", "b": "Luke 18:20", "label": "not commit adultery ... not steal ... not bear false witness"},
+    {"a": "Mark 10:19", "b": "Luke 18:20", "label": "Do not commit adultery Do not kill Do not steal Do not bear false witness"},
+
+    {"a": "Matt 19:19", "b": "Mark 10:19", "label": "Honour thy father and ... mother"},
+    {"a": "Matt 19:19", "b": "Luke 18:20", "label": "Honour thy father and thy mother"},
+    {"a": "Mark 10:19", "b": "Luke 18:20", "label": "Honour thy father and ... mother"},
+
+    {"a": "Matt 19:20", "b": "Mark 10:20", "label": "All these ... have I kept from my youth"},
+    {"a": "Matt 19:20", "b": "Luke 18:21", "label": "All these ... have I kept from my youth up"},
+    {"a": "Mark 10:20", "b": "Luke 18:21", "label": "All these have I ... from my youth"},
+
+    {"a": "Matt 19:21", "b": "Mark 10:21", "label": "sell ... give to the poor and thou shalt have treasure in heaven and come ... follow me"},
+    {"a": "Matt 19:21", "b": "Luke 18:22", "label": "sell ... give to the poor and thou shalt have treasure in heaven and come follow me"},
+    {"a": "Mark 10:21", "b": "Luke 18:22", "label": "One thing thou lackest ... sell ... thou shalt have treasure in heaven and come follow me"},
+
+    {"a": "Matt 19:22", "b": "Mark 10:22", "label": "went away ... for he had great possessions"},
+    {"a": "Matt 19:22", "b": "Luke 18:23", "label": "sorrowful for he had great possessions"},
+    {"a": "Mark 10:22", "b": "Luke 18:23", "label": "he was sad ... for he had great possessions"},
+
+    {"a": "Matt 19:23", "b": "Mark 10:23", "label": "hardly ... enter into the kingdom"},
+    {"a": "Matt 19:23", "b": "Luke 18:24", "label": "a rich man shall hardly enter into the kingdom"},
+    {"a": "Mark 10:23", "b": "Luke 18:24", "label": "How hardly shall they that have riches enter into the kingdom of God"},
+
+    {"a": "Matt 19:24", "b": "Mark 10:25", "label": "It is easier for a camel to go through the eye of a needle than for a rich man to enter into the kingdom of God"},
+    {"a": "Matt 19:24", "b": "Luke 18:25", "label": "easier for a camel to go through ... needle ... than for a rich man to enter into the kingdom of God"},
+    {"a": "Mark 10:25", "b": "Luke 18:25", "label": "easier for a camel to go through ... needle ... than for a rich man to enter into the kingdom of God"},
+
+    {"a": "Matt 19:25", "b": "Mark 10:26", "label": "Who then can be saved"},
+    {"a": "Matt 19:25", "b": "Luke 18:26", "label": "Who then can be saved"},
+    {"a": "Mark 10:26", "b": "Luke 18:26", "label": "Who then can be saved"},
+
+    {"a": "Matt 19:26", "b": "Mark 10:27", "label": "With men ... impossible but ... with God all things are possible"},
+    {"a": "Matt 19:26", "b": "Luke 18:27", "label": "impossible with men ... possible with God"},
+    {"a": "Mark 10:27", "b": "Luke 18:27", "label": "impossible with men ... possible with God"},
+
+    {"a": "Matt 19:27", "b": "Mark 10:28", "label": "we have ... all and followed thee"},
+    {"a": "Matt 19:27", "b": "Luke 18:28", "label": "Peter ... we have ... all and followed thee"},
+    {"a": "Mark 10:28", "b": "Luke 18:28", "label": "Peter ... Lo we have left all and ... followed thee"},
+
+    {"a": "Matt 19:29", "b": "Mark 10:29", "label": "left house ... brethren or sisters or father or mother or wife or children or lands"},
+    {"a": "Matt 19:29", "b": "Luke 18:29", "label": "hath ... house ... brethren or ... wife or children"},
+    {"a": "Mark 10:29", "b": "Luke 18:29", "label": "no man that hath left house ... brethren ... wife or children"},
+
+    {"a": "Matt 19:29", "b": "Mark 10:30", "label": "an hundredfold ... eternal life"},
+    {"a": "Matt 19:29", "b": "Luke 18:30", "label": "shall receive ... in the world to come ... life"},
+    {"a": "Mark 10:30", "b": "Luke 18:30", "label": "receive ... in this ... time ... and in the world to come ... life"},
+
+    {"a": "Matt 19:30", "b": "Mark 10:31", "label": "many that are first shall be last and the last ... first"}
+  ]
+}

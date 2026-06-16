@@ -1,0 +1,12 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Ye are gods",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "When the Jews take up stones against him for making himself God, Jesus answers from their own Scriptures, citing Psalm 82:6. He appeals to \"your law\" and presses that \"the scripture cannot be broken,\" so that the psalm's word stands as binding authority over his hearers. The shared core is the exact saying \"Ye are gods,\" which Jesus quotes verbatim and turns into the ground of his argument. The psalm addresses those \"to whom the word of God came\"; Jesus reasons from the lesser to the greater that the title hardly condemns him whom the Father sanctified and sent. The psalm keeps its own setting of God judging among the judges, while John keeps the courtroom of Jesus' defence, and the citation reads in place in both.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 82:6", "b": "John 10:34", "label": "I have said Ye are gods ... I said Ye are gods"}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Nothing covered that shall not be revealed",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Lord's saying that nothing hidden shall stay hidden recurs in all three Synoptics, and twice in Luke. Its shared core is that there is nothing covered or secret that shall not be revealed, made manifest, and known. Matthew and Luke 12 pair this with a second saying that what is heard in the ear shall be proclaimed upon the housetops, drawn out here between Matt 10:27 and Luke 12:3. The two Lukan settings are complementary vantages: Luke 8:17 follows the parable of the lamp and the seed, while Luke 12:2-3 is spoken to the disciples concerning the leaven of the Pharisees, hidden words brought to light. Mark 4:22 likewise grounds the saying in the lamp setting, that what is hidden should come abroad. Each account keeps its own occasion and wording in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 10:26", "b": "Mark 4:22", "label": "nothing ... that shall not be ... manifested"},
+    {"a": "Matt 10:26", "b": "Luke 8:17", "label": "hid that shall not be known"},
+    {"a": "Matt 10:26", "b": "Luke 12:2", "label": "there is nothing covered that shall not be revealed"},
+    {"a": "Mark 4:22", "b": "Luke 8:17", "label": "nothing ... hid which shall not be ... made manifest"},
+    {"a": "Mark 4:22", "b": "Luke 12:2", "label": "nothing ... that shall not be ... known"},
+    {"a": "Luke 8:17", "b": "Luke 12:2", "label": "hid that shall not be known"},
+    {"a": "Matt 10:27", "b": "Luke 12:3", "label": "what ye hear in the ear ... preach ye upon the housetops"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Blessed is he whose sin is covered",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In Romans 4 Paul cites David's beatitude from Psalm 32 to show that the blessedness of righteousness is reckoned apart from works, as a gift to the man whose sin God does not charge against him. The shared core is the twofold pronouncement: transgression forgiven and sin covered (Ps 32:1 / Rom 4:7), and iniquity not imputed (Ps 32:2 / Rom 4:8). David's psalm sings this as personal experience under the law, opening with its Maschil superscription and closing the thought with 'in whose spirit there is no guile.' Paul, quoting it in the third person to ground his doctrine of imputed righteousness, omits that final clause and renders the verbs of forgiveness and imputation as God's gracious act. The two read as one witness across the covenants, David in song and Paul in exposition.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 32:1", "b": "Rom 4:7", "label": "forgiven ... whose sin ... covered"},
+    {"a": "Ps 32:2", "b": "Rom 4:8", "label": "Blessed is the man ... whom the LORD ... impute"}
+  ]
+}

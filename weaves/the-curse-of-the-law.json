@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The curse of the law",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In Galatians 3 Paul builds his case that justification is by faith and not by works of the law, citing the law itself against any who would be justified by it. He quotes Deuteronomy 27:26 to show the law's curse falls on all who do not keep every word of it 'to do them,' then Leviticus 18:5 to show the law's own principle that the man who does its things 'shall live in them.' Paul cites that same Leviticus principle again in Romans 10:5, where Moses describes the righteousness which is of the law. Finally he draws on Deuteronomy 21:23, that the one hanged on a tree 'is accursed of God,' to declare that Christ redeemed us from the curse of the law by being made a curse for us. The shared exact wording marks each citation; the differing surrounding frames (Moses' covenant warnings, Paul's gospel argument) are complementary, the law's word standing in both as the very ground of Paul's gospel.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 27:26", "b": "Gal 3:10", "label": "Cursed ... to do them"},
+    {"a": "Lev 18:5", "b": "Gal 3:12", "label": "shall live in them"},
+    {"a": "Lev 18:5", "b": "Rom 10:5", "label": "a man ... shall live"},
+    {"a": "Deut 21:23", "b": "Gal 3:13", "label": "is accursed of God ... hangeth on a tree"}
+  ]
+}

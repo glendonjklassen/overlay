@@ -1,0 +1,50 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Sadducees and the resurrection",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All three Synoptics record the Sadducees, who say there is no resurrection, coming to Jesus with a riddle built on Moses' levirate law: seven brethren who in turn married one woman and died childless, then the woman herself. Their question is whose wife she shall be in the resurrection. Jesus answers that they err, not knowing the scriptures nor the power of God, for in the resurrection they neither marry nor are given in marriage but are as the angels, and He proves the resurrection from Moses at the bush, where God is the God of Abraham, Isaac, and Jacob, the God not of the dead but of the living. Matthew and Mark phrase the rebuke 'Ye do err, not knowing the scriptures, nor the power of God,' while Luke expands the angelic vantage, adding that they are the children of God and of the resurrection and can die no more, and these unique words read in place. Each account closes from its own vantage: Matthew with the multitude astonished at His doctrine, Luke with certain scribes saying 'Master, thou hast well said'; here only the shared core is linked.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 22:23", "b": "Mark 12:18", "label": "the Sadducees which say that there is no resurrection"},
+    {"a": "Matt 22:23", "b": "Luke 20:27", "label": "Sadducees which ... that there is ... resurrection ... they asked him"},
+    {"a": "Mark 12:18", "b": "Luke 20:27", "label": "the Sadducees which ... there is no resurrection ... they asked him"},
+
+    {"a": "Matt 22:24", "b": "Mark 12:19", "label": "Moses ... his brother shall ... his wife and raise up seed unto his brother"},
+    {"a": "Matt 22:24", "b": "Luke 20:28", "label": "Master Moses said ... raise up seed unto his brother"},
+    {"a": "Mark 12:19", "b": "Luke 20:28", "label": "Master Moses wrote unto us If ... his brother should take his wife and raise up seed unto his brother"},
+
+    {"a": "Matt 22:25", "b": "Mark 12:20", "label": "there were ... seven brethren and the first ... a wife"},
+    {"a": "Matt 22:25", "b": "Luke 20:29", "label": "seven brethren and the first ... a wife"},
+    {"a": "Mark 12:20", "b": "Luke 20:29", "label": "seven brethren and the first took a wife and ... left no ... died without children"},
+
+    {"a": "Matt 22:27", "b": "Mark 12:22", "label": "last of all the woman died also"},
+    {"a": "Matt 22:27", "b": "Luke 20:32", "label": "last of all the woman died also"},
+    {"a": "Mark 12:22", "b": "Luke 20:32", "label": "last of all the woman died also"},
+
+    {"a": "Matt 22:28", "b": "Mark 12:23", "label": "in the resurrection ... whose wife shall she be of ... them"},
+    {"a": "Matt 22:28", "b": "Luke 20:33", "label": "in the resurrection whose wife ... of ... seven ... her"},
+    {"a": "Mark 12:23", "b": "Luke 20:33", "label": "In the resurrection ... whose wife shall she be of them ... had her to wife"},
+
+    {"a": "Matt 22:29", "b": "Mark 12:24", "label": "err ... not knowing the scriptures nor the power of God"},
+
+    {"a": "Matt 22:30", "b": "Mark 12:25", "label": "they neither marry nor are given in marriage but are as the angels ... in heaven"},
+    {"a": "Matt 22:30", "b": "Luke 20:35", "label": "in the resurrection ... neither marry nor are given in marriage"},
+    {"a": "Mark 12:25", "b": "Luke 20:35", "label": "when they shall rise from the dead they neither marry nor are given in marriage"},
+    {"a": "Matt 22:30", "b": "Luke 20:36", "label": "are as the angels ... they are equal unto the angels"},
+    {"a": "Mark 12:25", "b": "Luke 20:36", "label": "are as the angels ... they are equal unto the angels"},
+
+    {"a": "Matt 22:31", "b": "Mark 12:26", "label": "as touching the ... dead ... have ye not read"},
+    {"a": "Matt 22:31", "b": "Luke 20:37", "label": "the resurrection of the dead ... that the dead are raised"},
+    {"a": "Mark 12:26", "b": "Luke 20:37", "label": "the dead that they rise ... Moses ... at the bush"},
+
+    {"a": "Matt 22:32", "b": "Mark 12:26", "label": "I am the God of Abraham and the God of Isaac and the God of Jacob"},
+    {"a": "Matt 22:32", "b": "Luke 20:37", "label": "the God of Abraham and the God of Isaac and the God of Jacob"},
+    {"a": "Mark 12:26", "b": "Luke 20:37", "label": "the God of Abraham and the God of Isaac and the God of Jacob"},
+
+    {"a": "Matt 22:32", "b": "Mark 12:27", "label": "not the God of the dead but ... of the living"},
+    {"a": "Matt 22:32", "b": "Luke 20:38", "label": "not ... God of the dead but of the living"},
+    {"a": "Mark 12:27", "b": "Luke 20:38", "label": "not the God of the dead but the God of the living"}
+  ]
+}

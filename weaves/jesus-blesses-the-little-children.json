@@ -1,0 +1,32 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Jesus blesses the little children",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel in which children are brought to Jesus to be touched and blessed. Matthew, Mark, and Luke share the core: the bringing of the little children (Luke specifies infants), the disciples' rebuke, the Lord's word to suffer them to come and forbid them not, and the saying that of such is the kingdom of God (Matthew: of heaven). Mark and Luke alone preserve the further saying that whosoever will not receive the kingdom as a little child shall in no wise enter therein. The accounts give complementary vantages on the touching and blessing: Matthew tells that he laid his hands on them, while Mark adds the fuller picture that he took them up in his arms, put his hands upon them, and blessed them. Mark also notes that Jesus was much displeased at the rebuke, a detail left as a matter for further study where the others are silent.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 19:13", "b": "Mark 10:13", "label": "brought ... little children ... young children to him"},
+    {"a": "Matt 19:13", "b": "Luke 18:15", "label": "brought unto him ... little children ... infants"},
+    {"a": "Mark 10:13", "b": "Luke 18:15", "label": "brought ... young children ... infants ... that he should touch them"},
+
+    {"a": "Mark 10:13", "b": "Luke 18:15", "label": "that he should touch them ... that he would touch them"},
+
+    {"a": "Matt 19:13", "b": "Mark 10:13", "label": "the disciples rebuked them ... his disciples rebuked those that brought them"},
+    {"a": "Matt 19:13", "b": "Luke 18:15", "label": "the disciples rebuked them"},
+    {"a": "Mark 10:13", "b": "Luke 18:15", "label": "his disciples rebuked those that brought them ... they rebuked them"},
+
+    {"a": "Matt 19:14", "b": "Mark 10:14", "label": "Suffer ... little children ... come unto me and forbid them not"},
+    {"a": "Matt 19:14", "b": "Luke 18:16", "label": "Suffer little children ... forbid them not to come unto me"},
+    {"a": "Mark 10:14", "b": "Luke 18:16", "label": "Suffer little children to come unto me and forbid them not"},
+
+    {"a": "Matt 19:14", "b": "Mark 10:14", "label": "for of such is the kingdom of heaven ... of God"},
+    {"a": "Matt 19:14", "b": "Luke 18:16", "label": "for of such is the kingdom of heaven ... of God"},
+    {"a": "Mark 10:14", "b": "Luke 18:16", "label": "for of such is the kingdom of God"},
+
+    {"a": "Mark 10:15", "b": "Luke 18:17", "label": "Whosoever shall not receive the kingdom of God as a little child"},
+
+    {"a": "Matt 19:15", "b": "Mark 10:16", "label": "laid his hands on them ... put his hands upon them"}
+  ]
+}

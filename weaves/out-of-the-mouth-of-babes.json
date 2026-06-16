@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Out of the mouth of babes",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Matthew anchors two scenes in the Psalms. At Matthew 13:35 the parabolic teaching of Jesus is declared a fulfilment of Psalm 78:2, the Asaph psalm that opens with a resolve to speak in a parable and utter dark sayings of old; the shared hook is 'I will open my mouth.' At Matthew 21:16, when the children cry out in the temple, Jesus answers the chief priests by citing Psalm 8:2, where praise rises out of the mouth of babes and sucklings. Where the Hebrew of Psalm 8:2 reads 'ordained strength,' Matthew follows the rendering 'perfected praise' (as in the Greek), a complementary rendering left as a matter for further study. Each side keeps its own vantage: the Psalms supply the prophetic word, and Matthew shows its appointed fulfilment in the ministry of Christ.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 78:2", "b": "Matt 13:35", "label": "I will open my mouth ... I will utter"},
+    {"a": "Ps 8:2", "b": "Matt 21:16", "label": "Out of the mouth of babes and sucklings"}
+  ]
+}

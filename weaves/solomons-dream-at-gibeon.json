@@ -1,0 +1,22 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Solomon's dream at Gibeon",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Kings and Chronicles together recount Solomon's worship at the great high place of Gibeon, where God appears and grants him an understanding heart. The shared core runs detail for detail: Solomon goes to Gibeon, offers a thousand burnt offerings, God says 'Ask what I shall give thee,' Solomon recalls God's great mercy to David his father and the people too great to number, asks not for riches or long life but for wisdom to judge, the request pleases God, and God grants wisdom together with riches and honour such as no king before or after should have. The two accounts give complementary vantages: Kings frames the encounter as a dream by night and adds Solomon's confession 'I am but a little child,' his awaking, and his return to Jerusalem before the ark (with the judgment of the two harlots following), while Chronicles frames it through the assembled congregation, the tabernacle of the wilderness, and the brasen altar of Bezaleel that David's tent for the ark stood apart from. These unique vantages read in place and are left unlinked, each enriching the one history the LORD has given.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "1Kgs 3:4", "b": "2Chr 1:3", "label": "the great high place ... at Gibeon"},
+    {"a": "1Kgs 3:4", "b": "2Chr 1:6", "label": "a thousand burnt offerings"},
+    {"a": "1Kgs 3:5", "b": "2Chr 1:7", "label": "Ask what I shall give thee"},
+    {"a": "1Kgs 3:6", "b": "2Chr 1:8", "label": "shewed ... mercy unto David my father"},
+    {"a": "1Kgs 3:8", "b": "2Chr 1:9", "label": "a people ... for multitude"},
+    {"a": "1Kgs 3:7", "b": "2Chr 1:10", "label": "to go out or come in"},
+    {"a": "1Kgs 3:9", "b": "2Chr 1:10", "label": "who is able to judge this thy so great a people"},
+    {"a": "1Kgs 3:11", "b": "2Chr 1:11", "label": "hast not asked ... riches ... nor ... the life of thine enemies"},
+    {"a": "1Kgs 3:12", "b": "2Chr 1:12", "label": "none like thee before thee neither after thee"},
+    {"a": "1Kgs 3:13", "b": "2Chr 1:12", "label": "riches and ... honour ... not be any among the kings like unto thee"},
+    {"a": "1Kgs 3:15", "b": "2Chr 1:13", "label": "he came to Jerusalem"}
+  ]
+}

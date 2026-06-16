@@ -1,0 +1,18 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The reign of Jotham",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The royal annals in Kings and the Chronicler both record the reign of Jotham king of Judah, agreeing on the core: he was twenty and five years old at his accession, reigned sixteen years in Jerusalem, his mother was Jerusha(h) the daughter of Zadok, and he did that which was right in the sight of the LORD as his father Uzziah had done. Both note the high places (Kings observing they were not removed and the people still sacrificed there; Chronicles that the people did yet corruptly) and his building the higher gate of the house of the LORD, and both close with the rest of his acts, his sleeping with his fathers, burial in the city of David, and Ahaz his son reigning in his stead. Each account keeps its own complementary vantage: Kings frames the reign by the synchronism with Pekah of Israel and notes that in those days the LORD began to send Rezin and Pekah against Judah, while Chronicles adds Jotham's building in Ophel and the cities and castles, his war with the Ammonites and their tribute of silver and grain, and the reflection that he became mighty because he prepared his ways before the LORD his God. These unique portions are left unlinked so they read in place, each writer telling the same reign from his own vantage.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 15:33", "b": "2Chr 27:1", "label": "five and twenty years old ... he reigned sixteen years in Jerusalem ... his mother's name"},
+    {"a": "2Kgs 15:33", "b": "2Chr 27:8", "label": "five and twenty years old ... he reigned sixteen years in Jerusalem"},
+    {"a": "2Kgs 15:34", "b": "2Chr 27:2", "label": "he did that which was right in the sight of the LORD ... his father Uzziah"},
+    {"a": "2Kgs 15:35", "b": "2Chr 27:2", "label": "the high places ... the people"},
+    {"a": "2Kgs 15:35", "b": "2Chr 27:3", "label": "He built the higher gate of the house of the LORD"},
+    {"a": "2Kgs 15:36", "b": "2Chr 27:7", "label": "the rest of the acts of Jotham and all"},
+    {"a": "2Kgs 15:38", "b": "2Chr 27:9", "label": "Jotham slept with his fathers ... buried ... in the city of David ... Ahaz his son reigned in his stead"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Honour thy father and mother",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul cites the fifth commandment in Eph 6:2-3, naming it the first commandment with promise. The commandment stands twice in the Law: Exod 20:12 in the Decalogue from Sinai, and Deut 5:16 in Moses' rehearsal of it on the plains of Moab. Both open with the same charge to honour father and mother and both close with the long life promised in the land the LORD gives. Deuteronomy adds the clause that it may go well with thee, and it is precisely this added blessing that Paul folds into his quotation when he writes that it may be well with thee. Thus Paul draws on both witnesses of the one commandment, the promise of well-being from the Deuteronomy form and the promise of long life from both. The slight differences in wording between the two Law passages are complementary vantages on the single commandment and left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Exod 20:12", "b": "Deut 5:16", "label": "Honour thy father and thy mother ... in the land which the LORD thy God giveth thee"},
+    {"a": "Exod 20:12", "b": "Eph 6:2", "label": "Honour thy father and mother"},
+    {"a": "Exod 20:12", "b": "Eph 6:3", "label": "that thy days may be long ... thou mayest live long"},
+    {"a": "Deut 5:16", "b": "Eph 6:2", "label": "Honour thy father and mother"},
+    {"a": "Deut 5:16", "b": "Eph 6:3", "label": "that it may go well with thee ... it may be well with thee"}
+  ]
+}

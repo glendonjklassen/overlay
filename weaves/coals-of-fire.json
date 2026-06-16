@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Coals of fire",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Paul cites the wisdom of Proverbs on overcoming evil with good, telling the Roman believers to feed a hungry enemy and give the thirsty drink. Proverbs splits the counsel across two verses: the deed of mercy in 25:21 and its result, heaping coals of fire upon the enemy's head, in 25:22; Paul gathers both the deed and the result into the single sentence of Romans 12:20. The shared core is exact: caring for an enemy's hunger and thirst, and the promised heaping of coals of fire upon his head. Proverbs adds that the LORD shall reward the doer, a vantage Paul leaves to the surrounding exhortation rather than quoting; this added clause is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Prov 25:21", "b": "Rom 12:20", "label": "if thine enemy ... drink"},
+    {"a": "Prov 25:22", "b": "Rom 12:20", "label": "thou shalt heap coals of fire ... his head"}
+  ]
+}

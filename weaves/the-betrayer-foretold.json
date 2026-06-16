@@ -1,0 +1,15 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The betrayer foretold",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Psalms foretell the betrayer, and the New Testament names him as Judas. David's lament that his own familiar friend, who did eat of his bread, lifted up his heel against him (Ps 41:9) is taken up by the Lord at the last supper, declaring the scripture fulfilled in the one who eateth bread with him (John 13:18). Peter then joins two further psalms to the vacancy left by Judas: 'Let his habitation be desolate' (Ps 69:25) and 'let another take his office' (Ps 109:8), reading them as scripture that must be fulfilled when Matthias is chosen to the bishoprick (Acts 1:20). The shared core is the foretelling of the betrayal and of the office made empty and then filled. Ps 69 speaks in the plural ('their habitation ... their tents') while Peter applies it in the singular to Judas, a complementary vantage left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 41:9", "b": "John 13:18", "label": "hath lifted up his heel against me"},
+    {"a": "Ps 41:9", "b": "John 13:18", "label": "did eat of my bread ... eateth bread with me"},
+    {"a": "Ps 69:25", "b": "Acts 1:20", "label": "Let his habitation be desolate"},
+    {"a": "Ps 109:8", "b": "Acts 1:20", "label": "let another take his office ... his bishoprick let another take"}
+  ]
+}

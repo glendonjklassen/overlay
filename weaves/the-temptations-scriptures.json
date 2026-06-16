@@ -1,0 +1,26 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "It is written: the temptation's scriptures",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "When the tempter assails the Son of God in the wilderness, the contest is fought with the written Word. To every assault the Lord answers \"It is written,\" and each answer is drawn from Deuteronomy: that man lives by every word of God (Deut 8:3), that the LORD is not to be tempted (Deut 6:16), and that Him only shall man worship and serve (Deut 6:13). The tempter, in turn, also quotes Scripture, urging the Lord to cast Himself down by citing the angels' charge of Psalm 91:11-12 -- yet he leaves off \"to keep thee in all thy ways,\" wresting the promise to a presumption it never bore. This weave links each Old Testament source to the Gospel verses that quote it, both the Lord's three rebuttals and the adversary's single citation. Matthew and Luke order the second and third temptations differently and Luke shortens the bread answer, vantages left as a matter for further study; both bear the same victory of the Word over the wilderness.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Deut 8:3", "b": "Matt 4:4", "label": "live by bread ... but by every word that proceedeth out of the mouth"},
+    {"a": "Deut 8:3", "b": "Luke 4:4", "label": "live by bread ... by every word"},
+    {"a": "Matt 4:4", "b": "Luke 4:4", "label": "It is written ... shall not live by bread alone but by every word"},
+    {"a": "Ps 91:11", "b": "Matt 4:6", "label": "give his angels charge"},
+    {"a": "Ps 91:11", "b": "Luke 4:10", "label": "give his angels charge over thee to keep thee"},
+    {"a": "Ps 91:12", "b": "Matt 4:6", "label": "in their hands they shall bear thee up ... dash thy foot against a stone"},
+    {"a": "Ps 91:12", "b": "Luke 4:11", "label": "in their hands they shall bear thee up ... dash thy foot against a stone"},
+    {"a": "Matt 4:6", "b": "Luke 4:10", "label": "He shall give his angels charge"},
+    {"a": "Matt 4:6", "b": "Luke 4:11", "label": "in their hands they shall bear thee up lest at any time thou dash thy foot against a stone"},
+    {"a": "Deut 6:16", "b": "Matt 4:7", "label": "not tempt the LORD ... God"},
+    {"a": "Deut 6:16", "b": "Luke 4:12", "label": "not tempt the LORD ... God"},
+    {"a": "Matt 4:7", "b": "Luke 4:12", "label": "Thou shalt not tempt the Lord thy God"},
+    {"a": "Deut 6:13", "b": "Matt 4:10", "label": "the LORD thy God ... serve"},
+    {"a": "Deut 6:13", "b": "Luke 4:8", "label": "the LORD thy God ... serve"},
+    {"a": "Matt 4:10", "b": "Luke 4:8", "label": "It is written Thou shalt worship the Lord thy God and him only shalt thou serve"}
+  ]
+}

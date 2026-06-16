@@ -1,0 +1,28 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The voice in the wilderness",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "One prophetic word of the forerunner, spoken by Isaiah and Malachi and cited by all four evangelists as fulfilled in John the Baptist. From Isaiah comes the cry of the voice in the wilderness to prepare ye the way of the LORD, which Matthew, Mark, Luke, and John each set upon John's ministry; Luke alone carries the quotation forward to every valley filled and all flesh seeing the salvation of God. Mark joins to it Malachi's word, Behold I send my messenger before thy face, the same word Jesus Himself applies to John in Matthew and Luke. The shared core is the single highway of preparation for the coming Lord, attested by prophet and Gospel alike. Each account keeps its own vantage: John's Gospel puts the words in the Baptist's own mouth as confession, while Luke extends the prophecy to its full saving compass. Together they show prophecy and fulfillment as one undivided witness.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 40:3", "b": "Matt 3:3", "label": "The voice of one crying in the wilderness, Prepare ye the way of the LORD"},
+    {"a": "Isa 40:3", "b": "Mark 1:3", "label": "The voice of one crying in the wilderness, Prepare ye the way of the LORD"},
+    {"a": "Isa 40:3", "b": "Luke 3:4", "label": "The voice of one crying in the wilderness, Prepare ye the way of the LORD"},
+    {"a": "Isa 40:3", "b": "John 1:23", "label": "the voice of one crying in the wilderness ... the way of the Lord"},
+    {"a": "Isa 40:3", "b": "Luke 3:5", "label": "make straight ... the crooked ... made straight"},
+    {"a": "Matt 3:3", "b": "Mark 1:3", "label": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight"},
+    {"a": "Matt 3:3", "b": "Luke 3:4", "label": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight"},
+    {"a": "Mark 1:3", "b": "Luke 3:4", "label": "The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight"},
+    {"a": "Matt 3:3", "b": "John 1:23", "label": "crying in the wilderness ... the way of the Lord"},
+    {"a": "Mark 1:3", "b": "John 1:23", "label": "crying in the wilderness ... the way of the Lord"},
+    {"a": "Luke 3:4", "b": "John 1:23", "label": "crying in the wilderness ... the way of the Lord"},
+    {"a": "Mal 3:1", "b": "Mark 1:2", "label": "Behold, I send my messenger ... prepare ... way before"},
+    {"a": "Mal 3:1", "b": "Matt 11:10", "label": "Behold, I send my messenger ... which shall prepare thy way before"},
+    {"a": "Mal 3:1", "b": "Luke 7:27", "label": "Behold, I send my messenger ... which shall prepare thy way before"},
+    {"a": "Mark 1:2", "b": "Matt 11:10", "label": "Behold, I send my messenger before thy face, which shall prepare thy way before thee"},
+    {"a": "Mark 1:2", "b": "Luke 7:27", "label": "Behold, I send my messenger before thy face, which shall prepare thy way before thee"},
+    {"a": "Matt 11:10", "b": "Luke 7:27", "label": "Behold, I send my messenger before thy face, which shall prepare thy way before thee"}
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The arrest in the garden",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All four Gospels recount Jesus' arrest in the garden across the brook Cedron, and their shared core runs in close parallel: Judas comes leading a great multitude or band with swords and staves from the chief priests, the betrayer's hand is laid on Jesus to take him, a sword is drawn and the servant of the high priest loses his ear, and Jesus answers his captors. Matthew and Mark stand nearest, agreeing nearly word for word on the kiss as the appointed sign, the rebuke 'Are ye come out as against a thief,' the reminder that he sat daily teaching in the temple, and the disciples all forsaking him and fleeing; Luke joins this synoptic block in the rebuke and the temple word, adding 'this is your hour, and the power of darkness.' Each account keeps its own vantage: Matthew alone records 'Friend, wherefore art thou come' and 'they that take the sword shall perish'; John supplies the complementary scene of 'Whom seek ye,' Jesus' 'I am he,' and the band falling backward, names Peter and Malchus where the synoptics leave the swordsman and servant unnamed, and Luke alone records the healing of the ear. Mark's young man fleeing naked is unique to his account. These differing details are complementary vantages on the one event, the fuller telling drawn from many eyes; the precise naming and the healing are each kept by a single writer and read in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:47", "b": "Mark 14:43", "label": "while he yet spake ... Judas one of the twelve ... a great multitude with swords and staves"},
+    {"a": "Matt 26:47", "b": "Luke 22:47", "label": "while he yet spake ... Judas one of the twelve"},
+    {"a": "Mark 14:43", "b": "Luke 22:47", "label": "while he yet spake ... Judas one of the twelve"},
+    {"a": "Matt 26:47", "b": "John 18:3", "label": "from the chief priests ... with swords and staves ... weapons"},
+    {"a": "Mark 14:43", "b": "John 18:3", "label": "from the chief priests ... with swords and staves ... weapons"},
+
+    {"a": "Matt 26:48", "b": "Mark 14:44", "label": "Whomsoever I shall kiss that same is he"},
+    {"a": "Matt 26:49", "b": "Mark 14:45", "label": "Master ... and kissed him"},
+    {"a": "Matt 26:49", "b": "Luke 22:47", "label": "to kiss him"},
+    {"a": "Mark 14:45", "b": "Luke 22:47", "label": "to kiss him"},
+    {"a": "Matt 26:48", "b": "Luke 22:48", "label": "betrayed ... with a kiss"},
+    {"a": "Mark 14:44", "b": "Luke 22:48", "label": "betrayed ... with a kiss"},
+
+    {"a": "Matt 26:50", "b": "John 18:4", "label": "wherefore art thou come ... Whom seek ye"},
+    {"a": "Luke 22:48", "b": "John 18:4", "label": "betrayest thou the Son of man ... Whom seek ye"},
+
+    {"a": "Matt 26:50", "b": "Mark 14:46", "label": "laid hands on ... and took him"},
+    {"a": "Matt 26:50", "b": "John 18:12", "label": "and took him ... took Jesus"},
+    {"a": "Mark 14:46", "b": "John 18:12", "label": "took him ... took Jesus"},
+
+    {"a": "Matt 26:51", "b": "Mark 14:47", "label": "drew ... sword ... a servant of the high priest ... his ear"},
+    {"a": "Matt 26:51", "b": "Luke 22:50", "label": "the servant of the high priest ... his ear"},
+    {"a": "Matt 26:51", "b": "John 18:10", "label": "drew ... sword ... the high priest's servant ... his ear"},
+    {"a": "Mark 14:47", "b": "Luke 22:50", "label": "smote ... the servant of the high priest ... cut off his ear"},
+    {"a": "Mark 14:47", "b": "John 18:10", "label": "drew a sword ... servant of the high priest ... cut off his ear"},
+    {"a": "Luke 22:50", "b": "John 18:10", "label": "the high priest's servant ... cut off his right ear"},
+
+    {"a": "Matt 26:52", "b": "John 18:11", "label": "Put up ... thy sword"},
+
+    {"a": "Matt 26:55", "b": "Mark 14:48", "label": "Are ye come out as against a thief with swords and staves"},
+    {"a": "Matt 26:55", "b": "Luke 22:52", "label": "Are ye come out as against a thief with swords and staves"},
+    {"a": "Mark 14:48", "b": "Luke 22:52", "label": "as against a thief with swords and ... staves"},
+    {"a": "Matt 26:55", "b": "Mark 14:49", "label": "I sat daily with you teaching in the temple"},
+    {"a": "Matt 26:55", "b": "Luke 22:53", "label": "daily with you ... in the temple"},
+    {"a": "Mark 14:49", "b": "Luke 22:53", "label": "daily with you in the temple"},
+
+    {"a": "Matt 26:54", "b": "Mark 14:49", "label": "the scriptures ... be fulfilled"},
+    {"a": "Matt 26:56", "b": "Mark 14:49", "label": "the scriptures ... fulfilled"},
+
+    {"a": "Matt 26:56", "b": "Mark 14:50", "label": "all ... forsook him and fled"}
+  ]
+}

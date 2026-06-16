@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The father of many nations",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In Romans 4 Paul grounds justification by faith in God's own promises to Abraham, citing Genesis directly. He quotes the renaming of Genesis 17:5, where God declares Abraham a father of many nations, and applies it to all who believe. He then reaches back to Genesis 15:5, where God brought Abraham out to number the stars and said, So shall thy seed be, as the measure of a hope held against hope. Genesis records the moments as spoken history to Abraham; Romans gathers them as written testimony to the gospel. The two accounts are complementary vantages on the one promise, the seed in Genesis opening toward the many nations Paul sees fulfilled.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 17:5", "b": "Rom 4:17", "label": "a father of many nations"},
+    {"a": "Gen 15:5", "b": "Rom 4:18", "label": "So shall thy seed be"}
+  ]
+}

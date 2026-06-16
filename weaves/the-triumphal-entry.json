@@ -1,0 +1,48 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The triumphal entry",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Jesus rides into Jerusalem to shouts of Hosanna, in all four Gospels. Matthew, Mark, and Luke share the errand for the colt almost word for word — the village over against you, the colt tied, \"The Lord hath need of him\" — while John skips the errand entirely and frames the entry by the crowd that had seen Lazarus raised. Mark and Luke alone narrate the owners questioning the disciples as they loose the colt; Luke alone adds the Pharisees' protest, the stones that would cry out, and the weeping over the city (19:39-44), left unlinked. Matthew and John each anchor the scene in Zechariah's prophecy, but quote it differently — Matthew \"Tell ye the daughter of Sion,\" John \"Fear not, daughter of Sion.\"",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 21:1", "b": "Mark 11:1", "label": "nigh ... Jerusalem ... Bethphage ... the mount of Olives ... sent ... two ... disciples"},
+    {"a": "Matt 21:1", "b": "Luke 19:29", "label": "Bethphage ... the mount of Olives ... sent two of his disciples"},
+    {"a": "Mark 11:1", "b": "Luke 19:29", "label": "Bethphage ... the mount of Olives ... two of his disciples"},
+
+    {"a": "Matt 21:2", "b": "Mark 11:2", "label": "the village over against you ... a colt tied ... loose ... bring"},
+    {"a": "Matt 21:2", "b": "Luke 19:30", "label": "the village over against you ... a colt tied ... loose him, and bring him"},
+    {"a": "Mark 11:2", "b": "Luke 19:30", "label": "a colt tied, whereon never man sat"},
+
+    {"a": "Matt 21:3", "b": "Mark 11:3", "label": "The Lord hath need of him"},
+    {"a": "Matt 21:3", "b": "Luke 19:31", "label": "The Lord hath need of him"},
+    {"a": "Mark 11:3", "b": "Luke 19:31", "label": "The Lord hath need of him"},
+
+    {"a": "Mark 11:5", "b": "Luke 19:33", "label": "loosing the colt ... Why"},
+    {"a": "Mark 11:6", "b": "Luke 19:34", "label": "as Jesus had commanded"},
+
+    {"a": "Matt 21:5", "b": "John 12:15", "label": "daughter of Sion ... thy King cometh ... sitting ... ass"},
+
+    {"a": "Matt 21:7", "b": "Mark 11:7", "label": "brought the colt ... cast their garments ... set him thereon"},
+    {"a": "Matt 21:7", "b": "Luke 19:35", "label": "brought him to Jesus ... cast their garments ... set Jesus thereon"},
+    {"a": "Mark 11:7", "b": "Luke 19:35", "label": "brought ... cast their garments ... he sat upon him"},
+    {"a": "Matt 21:7", "b": "John 12:14", "label": "a ... ass ... sat thereon"},
+
+    {"a": "Matt 21:8", "b": "Mark 11:8", "label": "spread their garments in the way ... cut down branches ... strawed them in the way"},
+    {"a": "Matt 21:8", "b": "Luke 19:36", "label": "spread their ... clothes in the way"},
+    {"a": "Mark 11:8", "b": "Luke 19:36", "label": "spread their garments in the way"},
+    {"a": "Matt 21:8", "b": "John 12:13", "label": "branches ... cut down ... of palm trees"},
+    {"a": "Mark 11:8", "b": "John 12:13", "label": "branches off the trees"},
+
+    {"a": "Matt 21:9", "b": "Mark 11:9", "label": "Hosanna ... Blessed is he that cometh in the name of the Lord"},
+    {"a": "Matt 21:9", "b": "Luke 19:38", "label": "Blessed ... that cometh in the name of the Lord"},
+    {"a": "Matt 21:9", "b": "John 12:13", "label": "Hosanna ... Blessed ... that cometh in the name of the Lord"},
+    {"a": "Mark 11:9", "b": "Luke 19:38", "label": "Blessed ... that cometh in the name of the Lord"},
+    {"a": "Mark 11:9", "b": "John 12:13", "label": "Hosanna ... Blessed ... that cometh in the name of the Lord"},
+    {"a": "Luke 19:38", "b": "John 12:13", "label": "Blessed ... the King ... that cometh in the name of the Lord"},
+    {"a": "Matt 21:9", "b": "Mark 11:10", "label": "Hosanna in the highest"},
+
+    {"a": "Matt 21:10", "b": "Mark 11:11", "label": "come into Jerusalem"}
+  ]
+}

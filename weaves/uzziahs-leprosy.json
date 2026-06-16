@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Uzziah's leprosy",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The reign of Judah's king known as Azariah in Kings and Uzziah in Chronicles, told twice. Kings gives the brief regnal summary: his accession at sixteen as Amaziah's son, his doing right before the LORD, the LORD smiting him with leprosy so he dwelt apart while Jotham governed, and his burial. Chronicles keeps that same frame but supplies a much fuller vantage, recounting his many deeds and uniquely telling the occasion of the leprosy: his presumption in burning incense in the temple and his confrontation with Azariah the priest. The shared core is the same king and the same outcome; Kings simply states the leprosy where Chronicles tells the occasion of it. Chronicles' extra deeds and the temple scene are left unlinked, reading in place as the fuller account.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "2Kgs 15:1", "b": "2Chr 26:1", "label": "son of Amaziah ... king of Judah"},
+    {"a": "2Kgs 15:2", "b": "2Chr 26:1", "label": "Sixteen years old"},
+    {"a": "2Kgs 15:1", "b": "2Chr 26:3", "label": "began ... to reign"},
+    {"a": "2Kgs 15:2", "b": "2Chr 26:3", "label": "Sixteen years old was he ... two and fifty years in Jerusalem"},
+    {"a": "2Kgs 15:3", "b": "2Chr 26:4", "label": "he did that which was right in the sight of the LORD according to all that his father Amaziah had done"},
+    {"a": "2Kgs 15:5", "b": "2Chr 26:21", "label": "a leper unto the day of his death and dwelt in a several house ... Jotham ... was over the ... house judging the people of the land"},
+    {"a": "2Kgs 15:6", "b": "2Chr 26:22", "label": "the rest of the acts"},
+    {"a": "2Kgs 15:7", "b": "2Chr 26:23", "label": "slept with his fathers and they buried him with his fathers ... and Jotham his son reigned in his stead"}
+  ]
+}

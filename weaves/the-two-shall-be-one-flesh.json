@@ -1,0 +1,24 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The two shall be one flesh",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The creation ordinance of marriage in Genesis 2:24 is taken up as authoritative Scripture throughout the New Testament. When the Pharisees question Him about divorce, Jesus grounds His answer in the beginning, joining Genesis 1:27 (\"male and female\") to Genesis 2:24 (\"they shall be one flesh\") and drawing the conclusion that what God hath joined together man may not put asunder; Matthew and Mark preserve this teaching in close parallel, Matthew compressing into 19:5 what Mark spreads across 10:7-8. Paul quotes the same verse in Ephesians 5:31, applying the one-flesh union to Christ and the church, and again in 1 Corinthians 6:16, where \"two ... shall be one flesh\" warns against joining oneself to a harlot. The shared core is the citation of Genesis 2:24 and the affirmation that the marriage union is one flesh by God's own design. Each writer keeps his own vantage, Jesus answering the divorce question and Paul drawing church and moral application, while quoting the same God-breathed words.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Gen 1:27", "b": "Matt 19:4", "label": "made them male and female"},
+    {"a": "Gen 1:27", "b": "Mark 10:6", "label": "God ... made them male and female"},
+    {"a": "Matt 19:4", "b": "Mark 10:6", "label": "made them male and female"},
+    {"a": "Gen 2:24", "b": "Matt 19:5", "label": "shall a man leave ... father and mother and shall cleave ... wife and they ... one flesh"},
+    {"a": "Gen 2:24", "b": "Mark 10:7", "label": "shall a man leave his father and mother and cleave to his wife"},
+    {"a": "Gen 2:24", "b": "Mark 10:8", "label": "they ... shall be one flesh"},
+    {"a": "Gen 2:24", "b": "Eph 5:31", "label": "shall a man leave his father and mother ... they two shall be one flesh"},
+    {"a": "Gen 2:24", "b": "1Cor 6:16", "label": "two ... shall be one flesh"},
+    {"a": "Matt 19:5", "b": "Mark 10:7", "label": "For this cause shall a man leave ... father and mother"},
+    {"a": "Matt 19:5", "b": "Mark 10:8", "label": "they twain shall be one flesh"},
+    {"a": "Matt 19:5", "b": "Eph 5:31", "label": "For this cause shall a man leave ... father and mother"},
+    {"a": "Mark 10:7", "b": "Eph 5:31", "label": "For this cause shall a man leave his father and mother"},
+    {"a": "Matt 19:6", "b": "Mark 10:9", "label": "What therefore God hath joined together let not man put asunder"}
+  ]
+}

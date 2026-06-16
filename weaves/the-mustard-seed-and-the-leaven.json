@@ -1,0 +1,26 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The mustard seed and the leaven",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Two short kingdom parables that the Lord set side by side, woven here across the synoptics. The mustard seed is told three times (Matthew, Mark, and Luke), all agreeing that the kingdom is like the least of seeds that grows great until the fowls of the air lodge in its branches; the leaven is told twice (Matthew and Luke) in nearly the same words, a woman hiding leaven in three measures of meal till the whole is leavened. The accounts keep complementary vantages: Matthew and Luke have a man take and plant the seed, while Mark frames the same growth as a question (whereunto shall we liken the kingdom) and pictures the fowls lodging under its shadow rather than in the branches. Matthew alone pairs both parables together in the same discourse; Luke gives them in a later setting, which is left as a matter for further study. Where Matthew and Mark call the seed the least of all seeds and Luke does not, and where Matthew spreads the sowing and growth across two verses that Luke keeps in one, each line still reads in full in its own place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 13:31", "b": "Mark 4:31", "label": "like ... a grain of mustard seed"},
+    {"a": "Matt 13:31", "b": "Luke 13:19", "label": "a grain of mustard seed which a man took"},
+    {"a": "Mark 4:31", "b": "Luke 13:19", "label": "like a grain of mustard seed"},
+
+    {"a": "Matt 13:32", "b": "Mark 4:31", "label": "the least of all seeds ... less than all the seeds"},
+
+    {"a": "Matt 13:32", "b": "Mark 4:32", "label": "when it is grown it is the greatest among herbs ... becometh greater than all herbs"},
+    {"a": "Matt 13:32", "b": "Luke 13:19", "label": "becometh a tree ... waxed a great tree"},
+    {"a": "Mark 4:32", "b": "Luke 13:19", "label": "groweth up ... grew and waxed a great tree"},
+
+    {"a": "Matt 13:32", "b": "Mark 4:32", "label": "the birds of the air come and lodge in the branches thereof ... the fowls of the air may lodge under the shadow of it"},
+    {"a": "Matt 13:32", "b": "Luke 13:19", "label": "the birds of the air come and lodge in the branches thereof ... the fowls of the air lodged in the branches of it"},
+    {"a": "Mark 4:32", "b": "Luke 13:19", "label": "the fowls of the air may lodge ... the fowls of the air lodged in the branches"},
+
+    {"a": "Matt 13:33", "b": "Luke 13:21", "label": "like ... leaven which a woman took and hid in three measures of meal till the whole was leavened"}
+  ]
+}

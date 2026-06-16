@@ -1,0 +1,48 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The healing of the lunatick child",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All three synoptics tell of the boy with the unclean spirit, healed when Jesus comes down after the transfiguration to find the disciples unable to cast it out. The shared core is the father's plea for his son, the spirit's tearing and foaming, the disciples' failure, Christ's rebuke of a faithless generation, the rebuking of the spirit and the child's deliverance, and the private question why the disciples could not. Each evangelist keeps a complementary vantage: Matthew names the affliction 'lunatick' and gives the saying on faith as a grain of mustard seed; Mark fills in the scribes' questioning, the dumb spirit, the father's 'Lord, I believe; help thou mine unbelief,' and the boy left as one dead and raised by the hand; Luke marks the next day, the only child, and the child delivered again to his father. The endings on prayer and fasting and on unbelief stand side by side and the fuller detail in Mark and Luke is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 17:14", "b": "Mark 9:17", "label": "there came to him a certain man ... one of the multitude answered"},
+    {"a": "Matt 17:14", "b": "Luke 9:38", "label": "a certain man ... a man of the company cried out"},
+    {"a": "Mark 9:17", "b": "Luke 9:38", "label": "Master ... my son"},
+
+    {"a": "Matt 17:15", "b": "Mark 9:17", "label": "my son"},
+    {"a": "Matt 17:15", "b": "Luke 9:38", "label": "my son"},
+
+    {"a": "Matt 17:15", "b": "Mark 9:22", "label": "ofttimes ... into the fire and ... into the water"},
+    {"a": "Matt 17:15", "b": "Mark 9:18", "label": "sore vexed ... he teareth him"},
+    {"a": "Matt 17:15", "b": "Luke 9:39", "label": "sore vexed ... a spirit taketh him"},
+
+    {"a": "Mark 9:18", "b": "Luke 9:39", "label": "he teareth him and he foameth ... it teareth him that he foameth"},
+    {"a": "Mark 9:20", "b": "Luke 9:39", "label": "foaming ... he foameth again"},
+
+    {"a": "Matt 17:16", "b": "Mark 9:18", "label": "I brought him to thy disciples and they could not"},
+    {"a": "Matt 17:16", "b": "Luke 9:40", "label": "I brought him to thy disciples and they could not ... I besought thy disciples ... they could not"},
+    {"a": "Mark 9:18", "b": "Luke 9:40", "label": "thy disciples ... cast him out and they could not"},
+
+    {"a": "Matt 17:17", "b": "Mark 9:19", "label": "O faithless ... generation how long shall I be with you how long shall I suffer you"},
+    {"a": "Matt 17:17", "b": "Luke 9:41", "label": "O faithless and perverse generation how long shall I be with you"},
+    {"a": "Mark 9:19", "b": "Luke 9:41", "label": "how long shall I be with you ... suffer you"},
+
+    {"a": "Matt 17:17", "b": "Mark 9:19", "label": "bring him hither to me ... bring him unto me"},
+    {"a": "Matt 17:17", "b": "Luke 9:41", "label": "bring him hither ... Bring thy son hither"},
+    {"a": "Mark 9:19", "b": "Luke 9:41", "label": "bring him unto me ... Bring thy son hither"},
+
+    {"a": "Matt 17:18", "b": "Mark 9:25", "label": "Jesus rebuked the devil ... he rebuked the foul spirit"},
+    {"a": "Matt 17:18", "b": "Luke 9:42", "label": "rebuked the devil and he departed out of him ... Jesus rebuked the unclean spirit"},
+    {"a": "Mark 9:25", "b": "Luke 9:42", "label": "rebuked the foul spirit ... rebuked the unclean spirit"},
+
+    {"a": "Matt 17:18", "b": "Mark 9:27", "label": "the child was cured ... Jesus took him by the hand and lifted him up"},
+    {"a": "Matt 17:18", "b": "Luke 9:42", "label": "the child was cured ... healed the child"},
+    {"a": "Mark 9:27", "b": "Luke 9:42", "label": "lifted him up and he arose ... healed the child and delivered him"},
+
+    {"a": "Matt 17:19", "b": "Mark 9:28", "label": "Why could not we cast him out"},
+
+    {"a": "Matt 17:21", "b": "Mark 9:29", "label": "this kind goeth not out but by prayer and fasting ... This kind can come forth by nothing but by prayer and fasting"}
+  ]
+}

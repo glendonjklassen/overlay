@@ -1,0 +1,19 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The sign of Jonah",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A twofold synoptic retelling of the demand for a sign answered by the Lord with the sign of Jonah and the witness of the Ninevites and the queen of the south. Both Matthew and Luke share the core: an evil generation seeking a sign, the refusal of any sign but the sign of Jonas, the parallel of Jonas to the Son of man, and the rising in judgment of Nineveh and the queen who met a greater than Jonas and a greater than Solomon. Each account keeps a complementary vantage on what the sign of Jonas is: Matthew unfolds it as the three days and three nights in the whale's belly answered by the three days and three nights in the heart of the earth, while Luke unfolds it as Jonas being a sign unto the Ninevites answered by the Son of man being a sign to this generation. Matthew sets the scene with certain scribes and Pharisees asking, and Luke with the people gathered thick together; the two accounts also keep the Nineveh and queen-of-the-south sayings in differing order, left as a matter for further study. The shared phrases are linked pair-by-pair below.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 12:38", "b": "Luke 11:29", "label": "a sign"},
+    {"a": "Matt 12:39", "b": "Luke 11:29", "label": "an evil ... generation ... seeketh after a sign and there shall no sign be given"},
+    {"a": "Matt 12:39", "b": "Luke 11:29", "label": "but the sign of ... Jonas the prophet"},
+    {"a": "Matt 12:40", "b": "Luke 11:30", "label": "For as Jonas was ... so shall ... the Son of man be"},
+    {"a": "Matt 12:41", "b": "Luke 11:32", "label": "The men of Nineveh shall rise ... in the judgment with this generation and shall condemn it"},
+    {"a": "Matt 12:41", "b": "Luke 11:32", "label": "they repented at the preaching of Jonas and behold a greater than Jonas is here"},
+    {"a": "Matt 12:42", "b": "Luke 11:31", "label": "The queen of the south shall rise up in the judgment with ... this generation and ... condemn"},
+    {"a": "Matt 12:42", "b": "Luke 11:31", "label": "she came from the ... parts of the earth to hear the wisdom of Solomon and behold a greater than Solomon is here"}
+  ]
+}

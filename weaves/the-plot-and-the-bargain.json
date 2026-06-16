@@ -1,0 +1,41 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The plot and the bargain",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "All three synoptists set the stage for the passion before the last supper, in two movements: the chief priests' plot and Judas's bargain to betray. The shared core of the plot is the nearing feast of the passover and unleavened bread, the chief priests and scribes seeking how to take Jesus and kill him, and their dread of the people. Matthew alone fixes the timing ('after two days') and names the palace of Caiaphas, splitting the assembly (26:3) from the consultation (26:4), while Luke compresses the council's caution into 'they feared the people' as a complementary vantage on Matthew and Mark's 'Not on the feast day, lest there be an uproar.' In the bargain, all three record Judas, one of the twelve, going to the chief priests, their gladness and covenant of money, and his seeking opportunity to betray him; Matthew alone names the thirty pieces of silver, Luke alone tells that Satan entered into Judas and that he sought the absence of the multitude, and Mark notes Judas would do it 'conveniently' — each evangelist preserving his own detail.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:2", "b": "Mark 14:1", "label": "the feast of the passover"},
+    {"a": "Matt 26:2", "b": "Luke 22:1", "label": "the feast of the passover ... the Passover"},
+    {"a": "Mark 14:1", "b": "Luke 22:1", "label": "the feast of the passover and of unleavened bread"},
+
+    {"a": "Matt 26:3", "b": "Mark 14:1", "label": "the chief priests and the scribes"},
+    {"a": "Matt 26:3", "b": "Luke 22:2", "label": "the chief priests and the scribes"},
+    {"a": "Mark 14:1", "b": "Luke 22:2", "label": "the chief priests and scribes"},
+
+    {"a": "Matt 26:4", "b": "Mark 14:1", "label": "take him by subtilty ... by craft"},
+    {"a": "Matt 26:4", "b": "Luke 22:2", "label": "kill him"},
+    {"a": "Mark 14:1", "b": "Luke 22:2", "label": "put him to death ... kill him"},
+
+    {"a": "Matt 26:5", "b": "Mark 14:2", "label": "Not on the feast day lest there be an uproar"},
+    {"a": "Matt 26:5", "b": "Luke 22:2", "label": "an uproar among the people ... they feared the people"},
+    {"a": "Mark 14:2", "b": "Luke 22:2", "label": "an uproar of the people ... they feared the people"},
+
+    {"a": "Matt 26:14", "b": "Mark 14:10", "label": "one of the twelve called Judas Iscariot went unto the chief priests"},
+    {"a": "Matt 26:14", "b": "Luke 22:3", "label": "Judas Iscariot ... being of the number of the twelve"},
+    {"a": "Matt 26:14", "b": "Luke 22:4", "label": "went unto the chief priests ... communed with the chief priests"},
+    {"a": "Mark 14:10", "b": "Luke 22:3", "label": "Judas Iscariot one of the twelve ... being of the number of the twelve"},
+    {"a": "Mark 14:10", "b": "Luke 22:4", "label": "went unto the chief priests ... communed with the chief priests"},
+
+    {"a": "Mark 14:11", "b": "Luke 22:5", "label": "they were glad"},
+    {"a": "Matt 26:15", "b": "Mark 14:11", "label": "they covenanted with him ... promised to give him money"},
+    {"a": "Matt 26:15", "b": "Luke 22:5", "label": "they covenanted with him for thirty pieces of silver ... covenanted to give him money"},
+    {"a": "Mark 14:11", "b": "Luke 22:5", "label": "promised to give him money ... covenanted to give him money"},
+
+    {"a": "Matt 26:16", "b": "Mark 14:11", "label": "he sought opportunity to betray him ... he sought how he might conveniently betray him"},
+    {"a": "Matt 26:16", "b": "Luke 22:6", "label": "he sought opportunity to betray him"},
+    {"a": "Mark 14:11", "b": "Luke 22:6", "label": "betray him ... sought opportunity to betray him"}
+  ]
+}

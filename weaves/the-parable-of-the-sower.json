@@ -1,0 +1,87 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The parable of the sower",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The parable of the sower with its explanation, given in all three synoptics. The shared core runs closely parallel: the same setting by the sea (Luke's is briefer), the four soils, the call to hear, the purpose-of-parables saying drawn from Isaiah, and the fourfold interpretation matched part-for-part. Each account keeps its own vantage: Matthew alone quotes Esaias at length and adds the beatitude on seeing eyes; Mark stresses 'know ye not this parable' and the lusts of other things; Luke compresses the soils yet uniquely interprets the good ground as 'an honest and good heart' that keeps the word and brings forth fruit 'with patience,' and frames falling away as a 'time of temptation.' Only beats with genuinely shared wording or content are linked; each Evangelist's distinctive emphases read in place and are left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 13:1", "b": "Mark 4:1", "label": "by the sea side"},
+
+    {"a": "Matt 13:2", "b": "Mark 4:1", "label": "he went into a ship ... the whole multitude"},
+
+    {"a": "Matt 13:3", "b": "Mark 4:3", "label": "a sower went forth to sow"},
+    {"a": "Matt 13:3", "b": "Luke 8:5", "label": "A sower went out to sow"},
+    {"a": "Mark 4:3", "b": "Luke 8:5", "label": "there went out a sower to sow"},
+
+    {"a": "Matt 13:4", "b": "Mark 4:4", "label": "fell by the way side and the fowls ... devoured"},
+    {"a": "Matt 13:4", "b": "Luke 8:5", "label": "fell by the way side ... the fowls ... devoured"},
+    {"a": "Mark 4:4", "b": "Luke 8:5", "label": "by the way side and the fowls of the air ... devoured"},
+
+    {"a": "Matt 13:5", "b": "Mark 4:5", "label": "Some fell ... stony ... had not much earth ... sprung up"},
+    {"a": "Matt 13:5", "b": "Luke 8:6", "label": "Some fell upon ... as soon as it was sprung up"},
+    {"a": "Mark 4:5", "b": "Luke 8:6", "label": "fell on stony ground ... it sprang up"},
+
+    {"a": "Matt 13:6", "b": "Mark 4:6", "label": "when the sun was up ... scorched ... no root it withered away"},
+    {"a": "Matt 13:6", "b": "Luke 8:6", "label": "they were scorched ... withered away"},
+    {"a": "Mark 4:6", "b": "Luke 8:6", "label": "it was scorched ... it withered away"},
+
+    {"a": "Matt 13:7", "b": "Mark 4:7", "label": "some fell among thorns and the thorns ... choked"},
+    {"a": "Matt 13:7", "b": "Luke 8:7", "label": "some fell among thorns and the thorns sprung up ... choked"},
+    {"a": "Mark 4:7", "b": "Luke 8:7", "label": "fell among thorns and the thorns grew up and choked"},
+
+    {"a": "Matt 13:8", "b": "Mark 4:8", "label": "other fell ... good ground ... brought forth ... an hundred"},
+    {"a": "Matt 13:8", "b": "Luke 8:8", "label": "other fell into good ground and brought forth fruit ... an hundredfold"},
+    {"a": "Mark 4:8", "b": "Luke 8:8", "label": "other fell on good ground ... brought forth ... an hundred"},
+
+    {"a": "Matt 13:9", "b": "Mark 4:9", "label": "ears to hear let him hear"},
+    {"a": "Matt 13:9", "b": "Luke 8:8", "label": "He that hath ears to hear let him hear"},
+    {"a": "Mark 4:9", "b": "Luke 8:8", "label": "He that hath ears to hear let him hear"},
+
+    {"a": "Matt 13:10", "b": "Mark 4:10", "label": "asked of him the parable"},
+    {"a": "Matt 13:10", "b": "Luke 8:9", "label": "disciples asked him ... this parable"},
+    {"a": "Mark 4:10", "b": "Luke 8:9", "label": "they ... asked of him the parable"},
+
+    {"a": "Matt 13:11", "b": "Mark 4:11", "label": "given ... to know the mysteries of the kingdom"},
+    {"a": "Matt 13:11", "b": "Luke 8:10", "label": "given unto you to know the mysteries of the kingdom"},
+    {"a": "Mark 4:11", "b": "Luke 8:10", "label": "Unto you it is given to know the mystery of the kingdom"},
+
+    {"a": "Matt 13:13", "b": "Mark 4:12", "label": "seeing ... see not ... hearing ... understand"},
+    {"a": "Matt 13:13", "b": "Luke 8:10", "label": "seeing see not ... hearing ... understand"},
+    {"a": "Mark 4:12", "b": "Luke 8:10", "label": "seeing they may see and not perceive and hearing ... understand"},
+
+    {"a": "Matt 13:14", "b": "Mark 4:12", "label": "By hearing ye shall hear and shall not understand"},
+    {"a": "Matt 13:14", "b": "Luke 8:10", "label": "seeing ye shall see and shall not perceive"},
+
+    {"a": "Matt 13:15", "b": "Mark 4:12", "label": "lest ... they should be converted"},
+
+    {"a": "Matt 13:18", "b": "Mark 4:13", "label": "the parable of the sower"},
+
+    {"a": "Mark 4:14", "b": "Luke 8:11", "label": "The ... word"},
+
+    {"a": "Matt 13:19", "b": "Mark 4:15", "label": "by the way side ... taketh away the word ... in their hearts"},
+    {"a": "Matt 13:19", "b": "Luke 8:12", "label": "way side ... taketh away the word out of their hearts"},
+    {"a": "Mark 4:15", "b": "Luke 8:12", "label": "Satan cometh ... taketh away the word ... out of their hearts"},
+
+    {"a": "Matt 13:20", "b": "Mark 4:16", "label": "stony ... heareth the word ... with joy receiveth it"},
+    {"a": "Matt 13:20", "b": "Luke 8:13", "label": "receive the word with joy"},
+    {"a": "Mark 4:16", "b": "Luke 8:13", "label": "when they have heard the word ... receive it with gladness"},
+
+    {"a": "Matt 13:21", "b": "Mark 4:17", "label": "no root ... for a while ... persecution ... offended"},
+    {"a": "Matt 13:21", "b": "Luke 8:13", "label": "no root ... for a while ... fall away"},
+    {"a": "Mark 4:17", "b": "Luke 8:13", "label": "no root in themselves ... but for a time ... fall away"},
+
+    {"a": "Matt 13:22", "b": "Mark 4:18", "label": "among the thorns ... heareth the word"},
+    {"a": "Matt 13:22", "b": "Luke 8:14", "label": "among the thorns ... choked with ... the care of this world"},
+    {"a": "Mark 4:18", "b": "Luke 8:14", "label": "sown among thorns such as hear the word"},
+
+    {"a": "Matt 13:22", "b": "Mark 4:19", "label": "the care of this world and the deceitfulness of riches choke the word ... unfruitful"},
+    {"a": "Matt 13:22", "b": "Luke 8:14", "label": "the care of this world ... riches choke ... unfruitful"},
+    {"a": "Mark 4:19", "b": "Luke 8:14", "label": "the cares of this world ... riches ... choke the word"},
+
+    {"a": "Matt 13:23", "b": "Mark 4:20", "label": "good ground ... heareth the word ... bringeth forth ... an hundred"},
+    {"a": "Matt 13:23", "b": "Luke 8:15", "label": "good ground ... having heard the word ... bring forth fruit"},
+    {"a": "Mark 4:20", "b": "Luke 8:15", "label": "good ground such as hear the word ... bring forth fruit"}
+  ]
+}

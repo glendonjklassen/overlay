@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Rejoice, thou barren",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "In Galatians 4, Paul cites two Old Testament scriptures by name. He writes \"it is written\" and quotes Isaiah 54:1, calling the barren and desolate woman to break forth and cry because her children outnumber those of the married wife. He then asks \"what saith the scripture\" and quotes Genesis 21:10, the word casting out the bondwoman and her son, who shall not be heir with the freewoman's son. The shared wording carries across each pair: Isaiah's \"break forth\" and \"cry\" reappear in Galatians 4:27, and the \"bondwoman and her son\" who \"shall not be heir\" reappears in Galatians 4:30. This weave marks only the fact that Paul quotes these two passages; the allegory he builds upon them is left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 54:1", "b": "Gal 4:27", "label": "break forth ... and cry"},
+    {"a": "Gen 21:10", "b": "Gal 4:30", "label": "Cast out ... bondwoman and her son ... shall not be heir"}
+  ]
+}

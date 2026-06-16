@@ -1,0 +1,13 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "A light to the Gentiles",
+  "kind": "prophecy",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Isaiah's Servant Song declares that the LORD's servant will be more than the restorer of Israel: he is given for a light to the Gentiles, that God's salvation might reach unto the end of the earth. Simeon, holding the infant Christ, takes up this very word, naming him A light to lighten the Gentiles and the glory of thy people Israel. Paul and Barnabas then apply the same Isaiah charge to their own apostolic mission, citing the Lord's command that they be a light of the Gentiles for salvation unto the ends of the earth. The shared core is the servant as light to the nations and the worldwide reach of salvation. Each vantage keeps its own scope: Simeon sees the light embodied in the person of Christ, while Acts shows that same light carried outward through the gospel sent to the Gentiles.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Isa 49:6", "b": "Luke 2:32", "label": "a light to ... the Gentiles"},
+    {"a": "Isa 49:6", "b": "Acts 13:47", "label": "a light ... the Gentiles ... salvation unto the end"}
+  ]
+}

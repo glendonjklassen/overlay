@@ -1,0 +1,44 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The blind men at Jericho",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A threefold synoptic parallel of the healing of the blind at Jericho, recorded by Matthew, Mark, and Luke. The shared core is one and the same: the blind sitting by the way side begging, the cry \"Jesus, thou Son of David, have mercy,\" the crowd's rebuke met with crying the more, Jesus standing still to call them, the question \"What wilt thou that I should do?\", the plea to receive sight, and the immediate healing followed by following him and glorifying God. Matthew records two blind men where Mark and Luke single out one, Mark naming him Bartimaeus the son of Timaeus; this is a complementary vantage, the others lifting up the named man while Matthew counts both. Matthew and Mark place the healing as he departed from Jericho while Luke sets it as he came nigh unto Jericho, which complementary vantage may rest in the old and new sites of the city along one journey through it. Both points are left as a matter for further study; the accounts together magnify the one work of mercy of the Son of David.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 20:29", "b": "Mark 10:46", "label": "Jericho ... a great multitude"},
+    {"a": "Matt 20:29", "b": "Luke 18:35", "label": "nigh unto Jericho"},
+    {"a": "Mark 10:46", "b": "Luke 18:35", "label": "Jericho ... a great number of people"},
+
+    {"a": "Matt 20:30", "b": "Mark 10:46", "label": "blind ... sat by the ... side begging"},
+    {"a": "Matt 20:30", "b": "Luke 18:35", "label": "blind ... sat by the way side begging"},
+    {"a": "Mark 10:46", "b": "Luke 18:35", "label": "blind ... sat by the ... side begging"},
+
+    {"a": "Matt 20:30", "b": "Mark 10:47", "label": "cried ... thou Son of David"},
+    {"a": "Matt 20:30", "b": "Luke 18:38", "label": "cried ... thou Son of David"},
+    {"a": "Mark 10:47", "b": "Luke 18:38", "label": "Jesus thou Son of David have mercy on me"},
+
+    {"a": "Matt 20:31", "b": "Mark 10:48", "label": "should hold his peace but ... cried the more"},
+    {"a": "Matt 20:31", "b": "Luke 18:39", "label": "should hold his peace but ... cried ... the more"},
+    {"a": "Mark 10:48", "b": "Luke 18:39", "label": "should hold his peace but he cried ... more ... Thou Son of David have mercy on me"},
+
+    {"a": "Matt 20:32", "b": "Mark 10:49", "label": "Jesus stood still ... called"},
+    {"a": "Matt 20:32", "b": "Luke 18:40", "label": "Jesus stood ... commanded him to be"},
+    {"a": "Mark 10:49", "b": "Luke 18:40", "label": "Jesus stood ... commanded him to be"},
+
+    {"a": "Matt 20:32", "b": "Mark 10:51", "label": "What wilt thou that I should do unto thee"},
+    {"a": "Matt 20:32", "b": "Luke 18:41", "label": "What wilt thou that I shall do unto thee"},
+    {"a": "Mark 10:51", "b": "Luke 18:41", "label": "What wilt thou that I should do unto thee"},
+
+    {"a": "Matt 20:33", "b": "Mark 10:51", "label": "Lord that ... eyes ... receive my sight"},
+    {"a": "Matt 20:33", "b": "Luke 18:41", "label": "Lord that ... eyes ... receive my sight"},
+    {"a": "Mark 10:51", "b": "Luke 18:41", "label": "Lord that I might receive my sight"},
+
+    {"a": "Mark 10:52", "b": "Luke 18:42", "label": "thy faith hath ... thee"},
+
+    {"a": "Matt 20:34", "b": "Mark 10:52", "label": "immediately ... received sight and ... followed"},
+    {"a": "Matt 20:34", "b": "Luke 18:43", "label": "immediately ... received ... sight and ... followed him"},
+    {"a": "Mark 10:52", "b": "Luke 18:43", "label": "immediately he received his sight and followed"}
+  ]
+}

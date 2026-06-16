@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Thou art my Son (Psalm 2)",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 2, the second psalm of the LORD's Anointed King, is quoted repeatedly in the New Testament and applied to Christ. The apostles in Acts 4 take up the psalm's opening picture of the heathen raging and the kings of the earth gathering against the LORD and against his anointed, reading it as fulfilled when the rulers stood against Jesus. The psalm's pivotal word, 'Thou art my Son, this day have I begotten thee,' is cited three times: Acts 13:33 grounds it in the resurrection, while Hebrews 1:5 and 5:5 use it to declare the Son's supremacy over angels and his appointment as high priest. Each citation keeps the same psalm phrase while drawing out a distinct facet of the Son's glory, and the slight variations in wording (the heathen 'rage' / 'imagine a vain thing' vs 'vain things,' 'his anointed' vs 'his Christ,' 'this day' vs 'to day') are the expected differences between the psalm and the New Testament writers' renderings of it.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 2:1", "b": "Acts 4:25", "label": "the heathen rage ... imagine"},
+    {"a": "Ps 2:2", "b": "Acts 4:26", "label": "The kings of the earth ... against the LORD, and against his anointed"},
+    {"a": "Ps 2:7", "b": "Acts 13:33", "label": "Thou art my Son, this day have I begotten thee"},
+    {"a": "Ps 2:7", "b": "Heb 1:5", "label": "Thou art my Son, this day have I begotten thee"},
+    {"a": "Ps 2:7", "b": "Heb 5:5", "label": "Thou art my Son ... have I begotten thee"}
+  ]
+}

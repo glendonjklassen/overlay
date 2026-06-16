@@ -1,0 +1,96 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The crucifixion",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "A fourfold Gospel harmony of the crucifixion of the Lord Jesus Christ, told by Matthew, Mark, Luke, and John. The shared core runs pair-by-pair across all four: the place of a skull (Golgotha, called Calvary in Luke), the crucifying between two malefactors on either side, the parting of the garments and casting of lots, the title set up over Him proclaiming THE KING OF THE JEWS, and the loud cry as He gave up the ghost. The synoptics together record the mocking and railing of those that passed by, the darkness from the sixth to the ninth hour, the rending of the veil of the temple, the centurion's confession, and the women beholding afar off. Each evangelist keeps complementary detail from his own vantage: Matthew the earthquake and the saints raised, Mark the third hour, Luke the penitent thief and the word of forgiveness, and John his nearer vantage at the cross with the soldiers, the seamless coat, and the women standing by. John's unique matter (the mother and the beloved disciple, \"It is finished,\" the unbroken bones, and the pierced side) is left unlinked here, belonging to a separate prophecy weave.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 27:33", "b": "Mark 15:22", "label": "a place called Golgotha ... a place of a skull"},
+    {"a": "Matt 27:33", "b": "Luke 23:33", "label": "the place ... a skull ... called Calvary"},
+    {"a": "Matt 27:33", "b": "John 19:17", "label": "a place of a skull ... Golgotha"},
+    {"a": "Mark 15:22", "b": "Luke 23:33", "label": "the place Golgotha ... the place which is called Calvary"},
+    {"a": "Mark 15:22", "b": "John 19:17", "label": "Golgotha ... The place of a skull"},
+    {"a": "Luke 23:33", "b": "John 19:17", "label": "the place ... a place of a skull"},
+
+    {"a": "Matt 27:35", "b": "Mark 15:24", "label": "they crucified him"},
+    {"a": "Matt 27:35", "b": "Luke 23:33", "label": "they crucified him"},
+    {"a": "Matt 27:35", "b": "John 19:18", "label": "they crucified him"},
+    {"a": "Mark 15:24", "b": "Luke 23:33", "label": "crucified him"},
+    {"a": "Mark 15:25", "b": "Luke 23:33", "label": "they crucified him"},
+    {"a": "Mark 15:24", "b": "John 19:18", "label": "they had crucified him ... they crucified him"},
+    {"a": "Luke 23:33", "b": "John 19:18", "label": "there they crucified him ... Where they crucified him"},
+
+    {"a": "Matt 27:38", "b": "Mark 15:27", "label": "two thieves ... one on the right hand and another on the left"},
+    {"a": "Matt 27:38", "b": "Luke 23:33", "label": "two thieves ... the malefactors one on the right hand and the other on the left"},
+    {"a": "Matt 27:38", "b": "John 19:18", "label": "two thieves crucified with him ... two other with him on either side"},
+    {"a": "Mark 15:27", "b": "Luke 23:33", "label": "two thieves the one on his right hand ... the malefactors one on the right hand"},
+    {"a": "Mark 15:27", "b": "John 19:18", "label": "they crucify two thieves ... two other with him on either side"},
+    {"a": "Luke 23:33", "b": "John 19:18", "label": "the malefactors one on the right hand and the other on the left ... two other with him on either side one and Jesus in the midst"},
+
+    {"a": "Matt 27:35", "b": "Mark 15:24", "label": "parted his garments casting lots"},
+    {"a": "Matt 27:35", "b": "Luke 23:34", "label": "parted his garments casting lots ... parted his raiment and cast lots"},
+    {"a": "Matt 27:35", "b": "John 19:24", "label": "They parted my garments among them and upon my vesture did they cast lots"},
+    {"a": "Mark 15:24", "b": "Luke 23:34", "label": "parted his garments casting lots ... parted his raiment and cast lots"},
+    {"a": "Mark 15:24", "b": "John 19:23", "label": "parted his garments ... took his garments and made four parts"},
+    {"a": "Luke 23:34", "b": "John 19:24", "label": "cast lots ... cast lots for it"},
+
+    {"a": "Matt 27:37", "b": "Mark 15:26", "label": "his accusation written ... THE KING OF THE JEWS"},
+    {"a": "Matt 27:37", "b": "Luke 23:38", "label": "set up over his head his accusation ... a superscription also was written over him ... THE KING OF THE JEWS"},
+    {"a": "Matt 27:37", "b": "John 19:19", "label": "his accusation written ... a title ... THE KING OF THE JEWS"},
+    {"a": "Mark 15:26", "b": "Luke 23:38", "label": "the superscription of his accusation ... THE KING OF THE JEWS"},
+    {"a": "Mark 15:26", "b": "John 19:19", "label": "the superscription ... written over THE KING OF THE JEWS ... a title ... THE KING OF THE JEWS"},
+    {"a": "Luke 23:38", "b": "John 19:19", "label": "a superscription ... written over him ... THE KING OF THE JEWS"},
+
+    {"a": "Luke 23:38", "b": "John 19:20", "label": "in letters of Greek and Latin and Hebrew ... in Hebrew and Greek and Latin"},
+
+    {"a": "Matt 27:39", "b": "Mark 15:29", "label": "they that passed by reviled him wagging their heads ... they that passed by railed on him wagging their heads"},
+    {"a": "Matt 27:40", "b": "Mark 15:29", "label": "Thou that destroyest the temple and buildest it in three days"},
+    {"a": "Matt 27:40", "b": "Mark 15:30", "label": "save thyself ... come down from the cross"},
+    {"a": "Matt 27:41", "b": "Mark 15:31", "label": "the chief priests mocking ... with the scribes"},
+    {"a": "Matt 27:42", "b": "Mark 15:31", "label": "He saved others himself he cannot save"},
+    {"a": "Matt 27:42", "b": "Luke 23:35", "label": "He saved others ... let him save himself"},
+    {"a": "Mark 15:31", "b": "Luke 23:35", "label": "He saved others himself he cannot save ... He saved others let him save himself"},
+    {"a": "Matt 27:42", "b": "Mark 15:32", "label": "the King of Israel ... come down from the cross"},
+    {"a": "Matt 27:42", "b": "Luke 23:37", "label": "If he be the King of Israel ... If thou be the king of the Jews save thyself"},
+    {"a": "Mark 15:32", "b": "Luke 23:35", "label": "Let Christ the King of Israel descend ... if he be Christ the chosen of God"},
+    {"a": "Matt 27:44", "b": "Mark 15:32", "label": "The thieves also which were crucified with him cast the same in his teeth ... they that were crucified with him reviled him"},
+    {"a": "Matt 27:44", "b": "Luke 23:39", "label": "The thieves ... cast the same in his teeth ... one of the malefactors ... railed on him"},
+    {"a": "Mark 15:32", "b": "Luke 23:39", "label": "they that were crucified with him reviled him ... one of the malefactors ... railed on him"},
+
+    {"a": "Matt 27:48", "b": "Mark 15:36", "label": "took a spunge and filled it with vinegar and put it on a reed and gave him to drink ... filled a spunge full of vinegar and put it on a reed and gave him to drink"},
+    {"a": "Matt 27:48", "b": "Luke 23:36", "label": "filled it with vinegar ... offering him vinegar"},
+    {"a": "Matt 27:48", "b": "John 19:29", "label": "took a spunge and filled it with vinegar ... they filled a spunge with vinegar"},
+    {"a": "Mark 15:36", "b": "Luke 23:36", "label": "a spunge full of vinegar ... offering him vinegar"},
+    {"a": "Mark 15:36", "b": "John 19:29", "label": "filled a spunge full of vinegar and put it on a reed ... filled a spunge with vinegar and put it upon hyssop"},
+    {"a": "Luke 23:36", "b": "John 19:29", "label": "offering him vinegar ... a spunge with vinegar"},
+
+    {"a": "Matt 27:45", "b": "Mark 15:33", "label": "from the sixth hour there was darkness over all the land unto the ninth hour ... when the sixth hour was come there was darkness over the whole land until the ninth hour"},
+    {"a": "Matt 27:45", "b": "Luke 23:44", "label": "from the sixth hour there was darkness ... unto the ninth hour ... about the sixth hour and there was a darkness ... until the ninth hour"},
+    {"a": "Mark 15:33", "b": "Luke 23:44", "label": "the sixth hour ... darkness ... until the ninth hour"},
+
+    {"a": "Matt 27:46", "b": "Mark 15:34", "label": "Jesus cried with a loud voice ... Eli Eli lama sabachthani ... My God my God why hast thou forsaken me ... Eloi Eloi lama sabachthani"},
+
+    {"a": "Matt 27:50", "b": "Mark 15:37", "label": "cried again with a loud voice yielded up the ghost ... cried with a loud voice and gave up the ghost"},
+    {"a": "Matt 27:50", "b": "Luke 23:46", "label": "cried ... with a loud voice yielded up the ghost ... cried with a loud voice ... gave up the ghost"},
+    {"a": "Matt 27:50", "b": "John 19:30", "label": "yielded up the ghost ... gave up the ghost"},
+    {"a": "Mark 15:37", "b": "Luke 23:46", "label": "cried with a loud voice and gave up the ghost"},
+    {"a": "Mark 15:37", "b": "John 19:30", "label": "gave up the ghost"},
+    {"a": "Luke 23:46", "b": "John 19:30", "label": "gave up the ghost"},
+
+    {"a": "Matt 27:51", "b": "Mark 15:38", "label": "the veil of the temple was rent in twain from the top to the bottom"},
+    {"a": "Matt 27:51", "b": "Luke 23:45", "label": "the veil of the temple was rent in twain ... the veil of the temple was rent in the midst"},
+    {"a": "Mark 15:38", "b": "Luke 23:45", "label": "the veil of the temple was rent in twain ... the veil of the temple was rent in the midst"},
+
+    {"a": "Matt 27:54", "b": "Mark 15:39", "label": "the centurion ... Truly this ... was the Son of God"},
+    {"a": "Matt 27:54", "b": "Luke 23:47", "label": "the centurion ... saw ... those things that were done ... the centurion saw what was done"},
+    {"a": "Mark 15:39", "b": "Luke 23:47", "label": "the centurion ... saw ... the centurion saw what was done"},
+
+    {"a": "Matt 27:55", "b": "Mark 15:40", "label": "many women were there beholding afar off ... women looking on afar off"},
+    {"a": "Matt 27:55", "b": "Luke 23:49", "label": "women ... beholding afar off which followed Jesus from Galilee ... the women that followed him from Galilee stood afar off beholding"},
+    {"a": "Mark 15:40", "b": "Luke 23:49", "label": "women looking on afar off ... the women that followed him from Galilee stood afar off beholding"},
+    {"a": "Matt 27:56", "b": "Mark 15:40", "label": "Mary Magdalene and Mary the mother of James"},
+    {"a": "Matt 27:55", "b": "Mark 15:41", "label": "followed Jesus from Galilee ministering unto him ... when he was in Galilee followed him and ministered unto him"}
+  ]
+}

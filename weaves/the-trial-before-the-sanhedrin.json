@@ -1,0 +1,60 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The trial before the Sanhedrin",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The fourfold account of the Jewish trial of Jesus before the high priest. The synoptics give the night hearing before Caiaphas with the assembled council: the seeking of false witness, the temple-saying, the high priest's adjuration, Jesus' confession of the Son of man at the right hand of power, the rending of the clothes and charge of blasphemy, the sentence of death, and the mocking and smiting with the palms of their hands. John supplies the complementary vantage of the prior examination before Annas (father in law to Caiaphas) concerning Jesus' doctrine, the officer who struck him, and Annas sending him bound to Caiaphas; these are linked only where the wording genuinely overlaps, as at the leading away, Peter following into the palace, and the smiting. Luke sets the council's question and the confession in the morning sitting and omits the temple witness here. Where the accounts keep distinct detail or order they stand as complementary vantages, left as a matter for further study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 26:57", "b": "Mark 14:53", "label": "led him away ... the high priest"},
+    {"a": "Matt 26:57", "b": "Luke 22:54", "label": "led him ... into the high priest's house"},
+    {"a": "Matt 26:57", "b": "John 18:13", "label": "led him away ... Caiaphas ... the high priest"},
+    {"a": "Mark 14:53", "b": "Luke 22:54", "label": "led ... the high priest"},
+    {"a": "Mark 14:53", "b": "John 18:13", "label": "led ... away ... the high priest"},
+    {"a": "Luke 22:54", "b": "John 18:13", "label": "led him ... the high priest"},
+    {"a": "Matt 26:57", "b": "John 18:24", "label": "unto Caiaphas the high priest"},
+
+    {"a": "Matt 26:57", "b": "Mark 14:53", "label": "the scribes and the elders were assembled"},
+
+    {"a": "Matt 26:58", "b": "Mark 14:54", "label": "Peter followed him afar off ... the palace of the high priest"},
+    {"a": "Matt 26:58", "b": "Luke 22:54", "label": "Peter followed afar off"},
+    {"a": "Matt 26:58", "b": "John 18:15", "label": "followed ... into ... the palace of the high priest"},
+    {"a": "Mark 14:54", "b": "Luke 22:54", "label": "Peter followed him afar off"},
+    {"a": "Mark 14:54", "b": "John 18:15", "label": "into the palace of the high priest"},
+    {"a": "Luke 22:54", "b": "John 18:15", "label": "Peter followed"},
+
+    {"a": "Matt 26:59", "b": "Mark 14:55", "label": "sought ... witness against Jesus to put him to death"},
+    {"a": "Matt 26:60", "b": "Mark 14:56", "label": "many false witnesses"},
+    {"a": "Matt 26:61", "b": "Mark 14:58", "label": "I am able to destroy the temple ... build it in three days"},
+
+    {"a": "Matt 26:62", "b": "Mark 14:60", "label": "Answerest thou nothing what is it which these witness against thee"},
+    {"a": "Matt 26:63", "b": "Mark 14:61", "label": "he held his peace"},
+
+    {"a": "Matt 26:63", "b": "Mark 14:61", "label": "Art thou the Christ the Son of the Blessed"},
+    {"a": "Matt 26:63", "b": "Luke 22:67", "label": "whether thou be the Christ"},
+    {"a": "Matt 26:63", "b": "Luke 22:70", "label": "the Son of God"},
+    {"a": "Mark 14:61", "b": "Luke 22:67", "label": "Art thou the Christ"},
+    {"a": "Mark 14:61", "b": "Luke 22:70", "label": "the Son of God"},
+
+    {"a": "Matt 26:64", "b": "Mark 14:62", "label": "ye shall see the Son of man sitting on the right hand of power and coming in the clouds of heaven"},
+    {"a": "Matt 26:64", "b": "Luke 22:69", "label": "the Son of man ... on the right hand of ... power"},
+    {"a": "Mark 14:62", "b": "Luke 22:69", "label": "the Son of man sit on the right hand of the power"},
+
+    {"a": "Matt 26:65", "b": "Mark 14:63", "label": "the high priest rent his clothes"},
+    {"a": "Matt 26:65", "b": "Mark 14:64", "label": "ye have heard his blasphemy"},
+    {"a": "Matt 26:65", "b": "Luke 22:71", "label": "What need we any further witness"},
+    {"a": "Mark 14:63", "b": "Luke 22:71", "label": "What need we any further witnesses"},
+
+    {"a": "Matt 26:66", "b": "Mark 14:64", "label": "guilty of death"},
+
+    {"a": "Matt 26:67", "b": "Mark 14:65", "label": "spit ... buffet him ... smote him with the palms of their hands"},
+    {"a": "Matt 26:67", "b": "Luke 22:63", "label": "smote him"},
+    {"a": "Matt 26:67", "b": "John 18:22", "label": "struck ... with the palm of his hand"},
+    {"a": "Mark 14:65", "b": "Luke 22:63", "label": "smote him"},
+    {"a": "Mark 14:65", "b": "John 18:22", "label": "strike ... with the palm"},
+    {"a": "Matt 26:68", "b": "Mark 14:65", "label": "Prophesy"},
+    {"a": "Matt 26:68", "b": "Luke 22:64", "label": "Prophesy ... who is ... that smote thee"},
+    {"a": "Mark 14:65", "b": "Luke 22:64", "label": "Prophesy"}
+  ]
+}

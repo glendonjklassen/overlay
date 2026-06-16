@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Psalm 70 and Psalm 40",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Psalm 70 is the same petition preserved twice: it reproduces, almost verse for verse, the closing cry of Psalm 40 (vv. 13-17), set apart to stand alone as its own short psalm of urgent appeal. The shared core is a fivefold movement: a plea for God to hasten to deliver, a prayer that those who seek the psalmist's soul be ashamed and turned back, the recoil upon those who say 'Aha, aha,' the joy desired for all who seek and love God's salvation, and the closing confession 'I am poor and needy ... thou art my help and my deliverer ... make no tarrying.' The small wording variations between the two -- 'Make haste O God' where Psalm 40 has 'Be pleased O LORD,' 'Let God be magnified' for 'The LORD be magnified,' and the differing placement of 'make haste' -- preserve the same prayer in two settings and are left as a matter for further study rather than as any disagreement. Where each retains its own phrasing the verses read fully in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 70:1", "b": "Ps 40:13", "label": "make haste to help me"},
+    {"a": "Ps 70:2", "b": "Ps 40:14", "label": "Let them be ashamed and confounded ... that seek after my soul"},
+    {"a": "Ps 70:3", "b": "Ps 40:15", "label": "for a reward of their shame that say ... Aha aha"},
+    {"a": "Ps 70:4", "b": "Ps 40:16", "label": "Let all those that seek thee rejoice and be glad in thee ... let such as love thy salvation say continually"},
+    {"a": "Ps 70:5", "b": "Ps 40:17", "label": "But I am poor and needy ... thou art my help and my deliverer ... make no tarrying"}
+  ]
+}

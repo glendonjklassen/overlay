@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Salt that has lost its savour",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The synoptic saying on savourless salt as it occurs outside the Sermon on the Mount, in Mark 9:50 and Luke 14:34-35. Both open with the same affirmation that salt is good and warn that salt which has lost its strength cannot be restored. Mark frames the strength as saltness and turns the saying inward as an exhortation to have salt in yourselves and peace one with another. Luke frames it as savour and turns the saying outward to the uselessness of spoiled salt, neither fit for the land nor the dunghill, but cast out, closing with the call for ears to hear. These are complementary vantages on one teaching, each preserving its own application; what is unique to each account reads in place.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Mark 9:50", "b": "Luke 14:34", "label": "Salt is good"},
+    {"a": "Mark 9:50", "b": "Luke 14:34", "label": "if the salt have lost his saltness ... savour"},
+    {"a": "Mark 9:50", "b": "Luke 14:34", "label": "wherewith will ye season it ... shall it be seasoned"}
+  ]
+}

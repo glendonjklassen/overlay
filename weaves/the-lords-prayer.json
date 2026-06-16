@@ -1,0 +1,16 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The Lord's prayer",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The pattern of prayer the Lord gave, in two settings: within the Sermon on the Mount in Matthew, and in Luke when a disciple asks \"teach us to pray.\" Matthew gives the fuller form and closes with the doxology \"For thine is the kingdom, and the power, and the glory\" (6:13), which Luke does not carry. Luke gathers the opening petitions into a single verse (11:2), so Matthew's \"Hallowed be thy name\" and \"Thy kingdom come\" both answer to it. The small wording differences — \"debts\" and \"debtors\" against \"sins\" and \"every one that is indebted,\" \"this day\" against \"day by day\" — are the two occasions remembered, and are left as matters for study.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 6:9", "b": "Luke 11:2", "label": "Our Father which art in heaven, Hallowed be thy name"},
+    {"a": "Matt 6:10", "b": "Luke 11:2", "label": "Thy kingdom come. Thy will be done ... in heaven ... earth"},
+    {"a": "Matt 6:11", "b": "Luke 11:3", "label": "Give us ... our daily bread"},
+    {"a": "Matt 6:12", "b": "Luke 11:4", "label": "forgive us our debts / sins, as we forgive"},
+    {"a": "Matt 6:13", "b": "Luke 11:4", "label": "lead us not into temptation, but deliver us from evil"}
+  ]
+}

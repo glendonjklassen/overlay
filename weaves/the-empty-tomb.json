@@ -1,0 +1,43 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "The empty tomb",
+  "kind": "retelling",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The first morning of the resurrection, told in all four Gospels. The shared core lines up closely: the first day of the week, very early; the stone already rolled away; the announcement \"he is not here: for he is risen\"; the women sent to tell the disciples. Around that core each writer keeps his own details — the women named differ (Matthew: Mary Magdalene and the other Mary; Mark adds Salome; Luke adds Joanna and others; John follows Mary Magdalene, whose \"we know not\" implies companions), and the messengers are described as one (an angel, a young man in white) or two (two men in shining garments, two angels in white). These are complementary vantages on one morning, and where they differ the difference is left as a matter for further study. Luke and John alone follow Peter running to the tomb to see the linen clothes; John alone records Mary meeting the risen Lord (20:11-18), left unlinked.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Matt 28:1", "b": "Mark 16:2", "label": "the first day of the week ... the sepulchre"},
+    {"a": "Matt 28:1", "b": "Luke 24:1", "label": "the first day of the week ... came unto the sepulchre"},
+    {"a": "Matt 28:1", "b": "John 20:1", "label": "the first day of the week ... Mary Magdalene ... the sepulchre"},
+    {"a": "Mark 16:2", "b": "Luke 24:1", "label": "very early ... the first day of the week ... the sepulchre"},
+    {"a": "Mark 16:2", "b": "John 20:1", "label": "the first day of the week ... the sepulchre"},
+    {"a": "Luke 24:1", "b": "John 20:1", "label": "the first day of the week, very early ... the sepulchre"},
+    {"a": "Mark 16:1", "b": "Luke 24:1", "label": "spices ... Mary Magdalene"},
+
+    {"a": "Matt 28:2", "b": "Mark 16:4", "label": "the stone ... rolled ... from the door"},
+    {"a": "Matt 28:2", "b": "Luke 24:2", "label": "rolled ... the stone"},
+    {"a": "Matt 28:2", "b": "John 20:1", "label": "the stone ... away from the sepulchre"},
+    {"a": "Mark 16:4", "b": "Luke 24:2", "label": "the stone ... rolled away"},
+    {"a": "Mark 16:4", "b": "John 20:1", "label": "the stone ... rolled / taken away"},
+    {"a": "Luke 24:2", "b": "John 20:1", "label": "the stone ... away from the sepulchre"},
+
+    {"a": "Matt 28:3", "b": "Mark 16:5", "label": "raiment white as snow / a long white garment"},
+    {"a": "Mark 16:5", "b": "Luke 24:4", "label": "a young man / two men ... white / shining garments"},
+    {"a": "Luke 24:4", "b": "John 20:12", "label": "two men / two angels in white"},
+
+    {"a": "Matt 28:5", "b": "Mark 16:6", "label": "Fear not / Be not affrighted: Ye seek Jesus ... crucified"},
+    {"a": "Matt 28:6", "b": "Mark 16:6", "label": "he is risen ... he is not here ... the place where ... lay"},
+    {"a": "Matt 28:6", "b": "Luke 24:6", "label": "He is not here ... is risen"},
+    {"a": "Mark 16:6", "b": "Luke 24:6", "label": "he is not here ... is risen"},
+
+    {"a": "Matt 28:7", "b": "Mark 16:7", "label": "tell his disciples ... he goeth before you into Galilee; there shall ye see him"},
+
+    {"a": "Matt 28:8", "b": "Mark 16:8", "label": "departed quickly from the sepulchre ... fear"},
+    {"a": "Matt 28:8", "b": "Luke 24:9", "label": "did run to bring / told ... the disciples word"},
+
+    {"a": "Luke 24:12", "b": "John 20:3", "label": "Peter ... ran unto the sepulchre"},
+    {"a": "Luke 24:12", "b": "John 20:5", "label": "stooping down ... the linen clothes"},
+    {"a": "Luke 24:12", "b": "John 20:6", "label": "the linen clothes laid / lie"}
+  ]
+}

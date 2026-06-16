@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "My people which were not a people",
+  "kind": "quotation",
+  "tokenization": "kjv1769-tok2",
+  "notes": "Hosea named his children Lo-ammi (\"not my people\") and Lo-ruhamah (\"not having obtained mercy\") as signs against unfaithful Israel, yet in the same breath promised a reversal: those not God's people would be called His people and the sons of the living God. Paul in Romans 9 and Peter in 1 Peter 2 take up this Hosea reversal and apply it to the calling of the Gentiles into the people of God. Romans 9:25 draws on Hosea 2:23 (\"my people which were not my people\"), and Romans 9:26 quotes Hosea 1:10 nearly word for word (\"in the place where it was said... Ye are not my people... the living God\"). First Peter 2:10 gathers up both of Hosea's signs together, naming those who \"were not a people\" but are now \"the people of God,\" and who \"had not obtained mercy\" but now have. The apostles read Hosea's promise of restored Israel as the same mercy that now reaches the Gentiles, the shared core being the turning of \"not my people\" into God's own people.",
+  "created": "2026-06-15T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Hos 2:23", "b": "Rom 9:25", "label": "my people which were not my people"},
+    {"a": "Hos 2:23", "b": "1Pet 2:10", "label": "had not obtained mercy"},
+    {"a": "Hos 1:10", "b": "Rom 9:26", "label": "in the place where it was said unto them Ye are not my people there ... the living God"}
+  ]
+}
