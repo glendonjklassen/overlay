@@ -6,7 +6,6 @@ import Control.Lens hiding ((.=))
 import Data.List (find, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
-import qualified Data.Set as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import Monomer
@@ -233,46 +232,25 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
                 <> map bookRow (topBooks 6 cs)
                 <> [hrule]
 
-    -- cross-testament bridge: lemmas tied to this one across the OT/NT divide
-    -- (etymology + your approvals), plus 1769-rendering candidates to bless.
+    -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,
+    -- not the reader's own judgement. Today that's Strong's 1890 etymology; the
+    -- LXX / semantic-corroboration sources land with the multi-source bridge.
     effective = applyStore store (envBridge env)
     partners = bridgedPartners effective ref
-    candsHere = M.findWithDefault [] ref (envBridgeCands env)
-    pendingCands = take 5
-        [ c | c <- candsHere
-        , let p = (rcHeb c, rcGrk c)
-        , p `S.notMember` bsApproved store
-        , p `S.notMember` bsRejected store ]
     glossOf s = case M.lookup s (envStrongs env) of
         Nothing -> ""
         Just e  -> fromMaybe (fromMaybe "" (seXlit e)) (seKjv e)
-    otherOf c = if rcHeb c == ref then rcGrk c else rcHeb c
 
     partnerRow s = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
         [ label s `styleBasic` [textSize (12 * sc), textColor (rgbHex "#8FB88A")]
         , label (glossOf s) `styleBasic` [textSize (10 * sc), textColor muted] ]
-    candRow c = hstack_ [childSpacing_ 6]
-        [ box_ [alignLeft] $ vstack_ [childSpacing_ 1]
-            [ label (otherOf c <> "  “" <> rcWord c <> "”")
-                `styleBasic` [textSize (12 * sc), textColor lightGray]
-            , label (glossOf (otherOf c))
-                `styleBasic` [textSize (10 * sc), textColor muted] ]
-        , filler
-        , button "✓" (EvBridgeApprove (rcHeb c) (rcGrk c))
-            `styleBasic` [textSize (11 * sc), padding 3]
-        , button "✕" (EvBridgeReject (rcHeb c) (rcGrk c))
-            `styleBasic` [textSize (11 * sc), padding 3]
-        ]
 
     bridgeSection
-        | null partners && null pendingCands = []
+        | null partners = []
         | otherwise =
-            [ panelSection sc "cross-testament" ]
-            <> [ sectionLabel sc "linked" | not (null partners) ]
+            [ panelSection sc "cross-testament"
+            , sectionLabel sc "linked across the testaments · via Strong's etymology" ]
             <> map partnerRow partners
-            <> [ sectionLabel sc "candidates — 1769 renderings"
-               | not (null pendingCands) ]
-            <> map candRow pendingCands
             <> [hrule]
 
     -- a cross-referenced verse: jump on click, shared wording underneath
