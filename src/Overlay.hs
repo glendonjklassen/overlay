@@ -768,7 +768,7 @@ buildUI env wenv model = widgetTree
             , filler
             , button "✕" EvCloseCompare `styleBasic` [textSize 11, padding 2]
             ]
-        , vscroll_ [] (vstack_ [childSpacing_ 6] $
+        , vscroll_ [wheelRate 50] (vstack_ [childSpacing_ 6] $
             [ wrapLabel (verseTextOf ref)
                 `styleBasic` [textSize (model ^. amBodySize), width 336]
             , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
