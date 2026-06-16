@@ -760,28 +760,34 @@ buildUI env wenv model = widgetTree
         <> [ wrapLabel ("· " <> lbl) `styleBasic`
                  [textSize 10, textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
 
-    compareCard ref = vstack_ [childSpacing_ 6] $
+    -- header pinned; the verse + parallels scroll, so a verse with many
+    -- witnesses never runs off the bottom of the screen
+    compareCard ref = vstack_ [childSpacing_ 6]
         [ hstack
             [ label (refText ref) `styleBasic` [textSize 13, textColor lightGray]
             , filler
             , button "✕" EvCloseCompare `styleBasic` [textSize 11, padding 2]
             ]
-        , wrapLabel (verseTextOf ref)
-            `styleBasic` [textSize (model ^. amBodySize), width 336]
-        , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-        , label "parallels" `styleBasic` [textSize 10, textColor muted]
+        , vscroll_ [] (vstack_ [childSpacing_ 6] $
+            [ wrapLabel (verseTextOf ref)
+                `styleBasic` [textSize (model ^. amBodySize), width 336]
+            , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
+            , label "parallels" `styleBasic` [textSize 10, textColor muted]
+            ]
+            <> map compareRow (comparePassagesFor ref))
         ]
-        <> map compareRow (comparePassagesFor ref)
 
     -- floating overlay near the hovered verse; empty area is click-through
     compareOverlay = case model ^. amCompare of
         Just (ref, x, y) | not (null (comparePassagesFor ref)) ->
             let Size winW winH = wenv ^. L.windowSize
-                px = max 10 (min x (winW - 372))
-                py = max 10 (min y (winH - 360))
+                cardW = 360
+                maxH = min 700 (max 200 (winH - 80))
+                px = max 10 (min x (winW - cardW - 12))
+                py = max 10 (min y (winH - maxH - 20))
             in [ box_ [alignLeft, alignTop, ignoreEmptyArea]
                     (compareCard ref `styleBasic`
-                        [width 360, padding 10, radius 6
+                        [width cardW, maxHeight maxH, padding 10, radius 6
                         , bgColor (rgbHex "#23262B"), border 1 (rgbHex "#3A3F45")])
                     `styleBasic` [paddingL px, paddingT py] ]
         _ -> []
@@ -1362,9 +1368,9 @@ handleEvent env _wenv _node model evt = case evt of
     EvSaveSession -> [Task (EvNoop <$ saveSession (model ^. amPanes))]
     EvVerseInspect ref x y ->
         -- open the compare card only for verses that actually have witnesses
-        let touched = any (\lw -> any (\l -> lA l == ref || lB l == ref)
-                            (wLinks (lwWeave lw))) (model ^. amWeaves)
-        in [Model (model & amCompare .~ Just (ref, x, y)) | touched]
+        let touched = any (any (\l -> lA l == ref || lB l == ref)
+                            . wLinks . lwWeave) (model ^. amWeaves)
+        in [Model (model & amCompare ?~ (ref, x, y)) | touched]
     EvCloseCompare -> [Model (model & amCompare .~ Nothing)]
     EvApproveLinkIn file l val ->
         case find ((== file) . lwFile) (model ^. amWeaves) of
