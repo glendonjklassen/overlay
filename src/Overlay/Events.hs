@@ -152,6 +152,14 @@ handleEvent env _wenv _node model evt = case evt of
         in [ Model (setPane activeIdx (\p -> p & psBook .~ bk & psChapter .~ ch
                 & psAnchor .~ Nothing & psSel .~ []))
            , SetFocusOnKey "reader", saveLater ]
+    EvLineSpacing delta ->
+        let raw | delta == 0 = sLineSpacing defaultSettings
+                | otherwise  = model ^. amLineSpacing + delta
+            -- round to 2 decimals so repeated nudges don't drift into 1.4500001
+            new = fromIntegral (round (max 1.0 (min 2.5 raw) * 100) :: Int) / 100
+            s' = (envSettings env) { sLineSpacing = new }
+        in [ Model (model & amLineSpacing .~ new)
+           , Task (EvNoop <$ saveSettings s') ]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

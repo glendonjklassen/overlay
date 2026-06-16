@@ -122,10 +122,9 @@ listCard sc click title metas = box_ [onClick click, alignLeft]
     `styleHover` [bgColor (rgbHex "#3A3F45")]
 
 -- | The central options panel: every global display/reading control in one
--- place, opened from the header gear. Font and line-spacing still live in
--- config.json (not yet live-editable here).
+-- place, opened from the header gear. (Body font still lives in config.json.)
 optionsPanel :: AppModel -> Double -> WidgetNode AppModel AppEvent
-optionsPanel model pw = panelBox pw
+optionsPanel model pw = panelBox pw $
     [ panelHeader sc "Options" EvClosePanel
     , sectionLabel sc "Display"
     , labeledCheckbox "1769 margin notes" amNotesOn `styleBasic` [textSize (12 * sc)]
@@ -137,19 +136,37 @@ optionsPanel model pw = panelBox pw
         `styleBasic` [width (90 * sc), textSize (12 * sc)]
     , hrule
     , sectionLabel sc "Text size"
-    , hstack_ [childSpacing_ 6]
-        [ button "−" (EvZoom (-1)) `styleBasic` [textSize (13 * sc), padding 4]
-        , label (showt (round (model ^. amBodySize) :: Int) <> " px")
-            `styleBasic` [textSize (12 * sc)]
-        , button "+" (EvZoom 1) `styleBasic` [textSize (13 * sc), padding 4]
-        , filler
-        , ghostBtn sc "reset" (EvZoom 0)
-        ]
-    , panelHint sc (pw - 24) "Text size also follows Ctrl + scroll and Ctrl + / − / 0."
+    , stepper (EvZoom (-1)) (showt (round (model ^. amBodySize) :: Int) <> " px")
+        (EvZoom 1) (EvZoom 0)
+    , panelHint sc piw "Text size also follows Ctrl + scroll and Ctrl + / − / 0."
+    , hrule
+    , sectionLabel sc "Line spacing"
+    , stepper (EvLineSpacing (-0.05)) (showt (model ^. amLineSpacing) <> "×")
+        (EvLineSpacing 0.05) (EvLineSpacing 0)
+    , hrule
+    , sectionLabel sc "Keyboard & mouse"
     ]
+    <> map (panelHint sc piw) shortcuts
   where
     sc = uiScaleOf model
+    piw = pw - 24
     colRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
+    -- a − / value / + / reset row, shared by the text-size and line-spacing knobs
+    stepper decEv val incEv resetEv = hstack_ [childSpacing_ 6]
+        [ button "−" decEv `styleBasic` [textSize (13 * sc), padding 4]
+        , label val `styleBasic` [textSize (12 * sc)]
+        , button "+" incEv `styleBasic` [textSize (13 * sc), padding 4]
+        , filler
+        , ghostBtn sc "reset" resetEv
+        ]
+    shortcuts =
+        [ "Ctrl + scroll · text size"
+        , "Shift + scroll · scroll all panes together"
+        , "← → · previous / next chapter"
+        , "Ctrl-click a word · Strong's; Ctrl-click a verse number · cross-references"
+        , "right-click a word or drag a span · edit a patch"
+        , "click the canon strip below · jump there"
+        ]
 
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.

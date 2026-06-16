@@ -92,6 +92,7 @@ data AppModel = AppModel
     , _amMaxCols     :: Int      -- ^ live cap on reading columns, 1…maxColsCap
     , _amActivePane  :: Int      -- ^ last pane the user acted in; cross-reference
                                  -- jumps and the canon map target it
+    , _amLineSpacing :: Double   -- ^ live line spacing, persisted to config.json
     } deriving (Eq, Show)
 
 data AppEvent
@@ -128,6 +129,7 @@ data AppEvent
     | EvPaneTrack Int (Text, Int)  -- ^ point pane i at one of a weave's passages
     | EvSetMaxCols Int             -- ^ change the live reading-column limit
     | EvCanonGoto Double           -- ^ jump the active pane to a canon fraction 0…1
+    | EvLineSpacing Double         -- ^ nudge line spacing by a delta (0 = reset)
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves
