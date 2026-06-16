@@ -15,6 +15,7 @@ import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as BL
+import Data.Either (fromRight)
 import Data.List (delete, elemIndex, find, findIndex, nub, sort, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe, mapMaybe)
@@ -111,17 +112,37 @@ saveSettings s = do
 -- showed. Saved on close and restored on the next launch, so the app reopens
 -- where you left it instead of resetting to Genesis 1. Selections and scroll
 -- offsets are transient and not persisted.
-newtype Session = Session { sessPanes :: [(Text, Int)] }
+data Session = Session
+    { sessPanes   :: [(Text, Int)]
+    , sessMaxCols :: Int
+    }
 
 instance ToJSON Session where
-    toJSON (Session ps) = object
-        [ "panes" .= [ object ["book" .= b, "chapter" .= c] | (b, c) <- ps ] ]
+    toJSON (Session ps mc) = object
+        [ "panes" .= [ object ["book" .= b, "chapter" .= c] | (b, c) <- ps ]
+        , "maxColumns" .= mc ]
 
 instance FromJSON Session where
     parseJSON = withObject "Session" $ \o -> do
         arr <- o .:? "panes" .!= []
-        Session <$> mapM (withObject "pane" $ \p ->
+        ps  <- mapM (withObject "pane" $ \p ->
             (,) <$> p .: "book" <*> p .: "chapter") arr
+        mc  <- o .:? "maxColumns" .!= defaultMaxCols
+        pure (Session ps mc)
+
+-- | The absolute ceiling on reading columns: panes cycle colours and layout
+-- caps at four. The user's live limit (amMaxCols) is clamped into 1…this.
+maxColsCap :: Int
+maxColsCap = 4
+
+-- | The column limit a fresh install opens with: two side-by-side panes read
+-- comfortably on a typical screen, where four crush the text.
+defaultMaxCols :: Int
+defaultMaxCols = 2
+
+-- | Hold a column limit inside the supported 1…cap range.
+clampMaxCols :: Int -> Int
+clampMaxCols = max 1 . min maxColsCap
 
 sessionPath :: IO FilePath
 sessionPath = do
@@ -130,30 +151,32 @@ sessionPath = do
 
 -- | Persist the panes' passages. Best-effort: a write failure must never crash
 -- the app on close, so errors are swallowed.
-saveSession :: [PaneState] -> IO ()
-saveSession panes = do
+saveSession :: Int -> [PaneState] -> IO ()
+saveSession maxCols panes = do
     dir <- getXdgDirectory XdgConfig "overlay"
     path <- sessionPath
-    let sess = Session [ (_psBook p, _psChapter p) | p <- panes ]
+    let sess = Session [ (_psBook p, _psChapter p) | p <- panes ] maxCols
     _ <- try (createDirectoryIfMissing True dir
         >> BL.writeFile path (encode sess <> "\n")) :: IO (Either SomeException ())
     pure ()
 
--- | Read the saved passages (raw, unvalidated). Missing or unreadable → none.
-loadSession :: IO [(Text, Int)]
+-- | Read the saved session (raw, unvalidated). Missing or unreadable falls back
+-- to no panes and the default column limit.
+loadSession :: IO Session
 loadSession = do
     path <- sessionPath
     exists <- doesFileExist path
-    if not exists then pure [] else do
+    if not exists then pure (Session [] defaultMaxCols) else do
         raw <- BC.readFile path
-        pure $ either (const []) sessPanes (eitherDecodeStrict raw)
+        pure $ fromRight (Session [] defaultMaxCols) (eitherDecodeStrict raw)
 
 -- | Build the initial panes from a saved session, validated against the corpus:
--- unknown books are dropped, chapters clamped to range, at most four panes. An
--- empty or invalid session falls back to a single Genesis 1 pane.
-restorePanes :: Corpus -> [(Text, Int)] -> [PaneState]
-restorePanes corpus saved =
-    case mapMaybe valid (take 4 saved) of
+-- unknown books are dropped, chapters clamped to range, capped at the saved
+-- column limit. An empty or invalid session falls back to a single Genesis 1
+-- pane.
+restorePanes :: Corpus -> Int -> [(Text, Int)] -> [PaneState]
+restorePanes corpus maxCols saved =
+    case mapMaybe valid (take (clampMaxCols maxCols) saved) of
         []  -> [PaneState "Gen" 1 Nothing []]
         ps  -> ps
   where
@@ -293,6 +316,7 @@ data AppModel = AppModel
     , _amCompare     :: Maybe ((Text, Int, Int), Double, Double)
       -- ^ hovered linked verse + window x,y, for the floating compare card
     , _amBodySize    :: Double   -- ^ live scripture text size (Ctrl +/-/0 zoom)
+    , _amMaxCols     :: Int      -- ^ live cap on reading columns, 1…maxColsCap
     } deriving (Eq, Show)
 
 data AppEvent
@@ -325,6 +349,8 @@ data AppEvent
     | EvPaneChapter Int Int
     | EvPanePrev Int
     | EvPaneNext Int
+    | EvPaneTrack Int (Text, Int)  -- ^ point pane i at one of a weave's passages
+    | EvSetMaxCols Int             -- ^ change the live reading-column limit
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves
@@ -352,6 +378,13 @@ data AppEvent
 makeLenses ''PaneState
 makeLenses ''AppModel
 
+-- | A pane's passage as a single (book, chapter) value, so a dropdown can bind
+-- to it directly. Writing one clears any in-progress verse selection, like the
+-- other navigation paths.
+psTrack :: Lens' PaneState (Text, Int)
+psTrack = lens (\p -> (_psBook p, _psChapter p))
+    (\p (b, c) -> p { _psBook = b, _psChapter = c, _psAnchor = Nothing, _psSel = [] })
+
 displayName :: Text -> Text
 displayName bid = maybe bid bookName (M.lookup bid bookById)
 
@@ -372,6 +405,23 @@ weaveSpans w =
     refs = concatMap (\(Link a b _ _) -> [a, b]) (wLinks w)
     books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
         (nub (map fst3 refs))
+
+-- | The passages a weave wants side by side, one (book, chapter) per column, in
+-- canon order. A weave spanning several books gives one track per book (at its
+-- earliest chapter); a same-book weave (two creation accounts, Ps 14 / Ps 53)
+-- would otherwise collapse to one column, so it splits by chapter instead.
+weaveTracks :: Weave -> [(Text, Int)]
+weaveTracks w =
+    let refs = concatMap (\(Link a b _ _) -> [a, b]) (wLinks w)
+        books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
+            (nub (map fst3 refs))
+    in case books of
+        [b] -> [ (b, c) | c <- nub (sort [c | (_, c, _) <- refs]) ]
+        _   -> [ (b, minimum [c | (bb, c, _) <- refs, bb == b]) | b <- books ]
+
+-- | A short label for a weave passage track, for the per-column picker.
+trackText :: (Text, Int) -> Text
+trackText (b, c) = displayName b <> " " <> showt c
 
 -- | Compact text for one book's span: a lone verse, a verse-range within one
 -- chapter, or a cross-chapter range.
@@ -543,9 +593,17 @@ statusText st = case st of
 
 -- ── UI ──────────────────────────────────────────────────────────────────────
 
-panelW, panelInnerW :: Double
+-- | The side panel's base (unzoomed) width.
+panelW :: Double
 panelW = 330
-panelInnerW = panelW - 24
+
+-- | The side panel's width for the current zoom and window. It tracks the UI
+-- zoom so its scaled text never outgrows it, but is capped to half the window
+-- so it can't be pushed off a narrow or high-DPI screen (e.g. a tablet where
+-- the body text has been zoomed up). The inner content width is this minus the
+-- panel's 12px padding on each side.
+panelWidthFor :: Double -> Double -> Double
+panelWidthFor winW sc = max 248 (min (winW * 0.5) (panelW * sc))
 
 -- | Secondary label text. Monomer's built-in 'gray' (#808080) only reaches
 -- ~3.7:1 on the dark panels — below WCAG AA at the small sizes used here — so
@@ -560,6 +618,9 @@ buildUI env wenv model = widgetTree
     -- UI scale: chrome text rides the same zoom as the scripture body, so it
     -- grows together (Ctrl +/-/scroll). 1.0 at the default body size.
     sc = model ^. amBodySize / sBodySize defaultSettings
+    -- the side panel widens with the zoom so its text fits, but never past half
+    -- the window, so it can't be pushed off-screen on a narrow/high-DPI display
+    panelPW = let Size winW _ = wenv ^. L.windowSize in panelWidthFor winW sc
     corpus = envCorpus env
     own = kPubHex (envKeys env)
     patches = model ^. amPatches
@@ -576,6 +637,10 @@ buildUI env wenv model = widgetTree
         , labeledCheckbox "heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
         , spacer
         , labeledCheckbox "links" amLinesOn `styleBasic` [textSize (12 * sc)]
+        , spacer
+        , label "cols" `styleBasic` [textSize (12 * sc), textColor muted]
+        , dropdown_ amMaxCols [1 .. maxColsCap] colRow colRow [onChange EvSetMaxCols]
+            `styleBasic` [width 50, textSize (12 * sc)]
         , spacer
         , button ("patches (" <> showt (length patches + length rules) <> ")")
             EvTogglePatches `styleBasic` [textSize (12 * sc)]
@@ -599,6 +664,7 @@ buildUI env wenv model = widgetTree
 
     bookRow b = label (displayName b) `styleBasic` [textSize (12 * sc)]
     chRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
+    colRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
 
     notesFor v = if model ^. amNotesOn
         then M.findWithDefault [] (vBook v, vChapter v, vVerse v) (envNotes env)
@@ -668,8 +734,28 @@ buildUI env wenv model = widgetTree
         | lw <- model ^. amWeaves, Link a b lbl _ <- wLinks (lwWeave lw)
         , a `Set.member` visibleRefs, b `Set.member` visibleRefs ]
 
+    -- the passages of the open weave, if any — drives the per-column picker
+    openWeaveTracks = case model ^. amPanel of
+        PWeaveView file -> case find ((== file) . lwFile) (model ^. amWeaves) of
+            Just lw -> weaveTracks (lwWeave lw)
+            Nothing -> []
+        _ -> []
+    trackRow t = label (trackText t) `styleBasic` [textSize (12 * sc)]
+
+    -- when a weave is open, a picker swaps this column among its passages; the
+    -- weave may carry more passages than there are columns
+    trackPicker i =
+        if null openWeaveTracks then [] else
+            [ dropdown_ (amPanes . singular (ix i) . psTrack)
+                openWeaveTracks trackRow trackRow [onChange (EvPaneTrack i)]
+                `styleBasic` [width 150, textSize (12 * sc)]
+                `nodeKey` ("paneTrack_" <> showt i)
+            , spacer ]
+
     navStrip i p = hstack
-        ( [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
+        ( trackPicker i
+          <>
+          [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
                 bookRow bookRow [onChange (EvPaneBook i)]
                 `styleBasic` [width 150, textSize (12 * sc)]
           , spacer
@@ -681,9 +767,10 @@ buildUI env wenv model = widgetTree
           , button "<" (EvPanePrev i) `styleBasic` [textSize (12 * sc), padding 2]
           , button ">" (EvPaneNext i) `styleBasic` [textSize (12 * sc), padding 2]
           , filler
-          , button "+ pane" (EvAddPane i)
-                `styleBasic` [textSize (11 * sc), padding 3]
           ]
+          <> [ button "+ pane" (EvAddPane i)
+                `styleBasic` [textSize (11 * sc), padding 3]
+             | npanes < clampMaxCols (model ^. amMaxCols) ]
           <> [ button "x" (EvClosePane i)
                 `styleBasic` [textSize (11 * sc), padding 3, textColor (rgbHex "#B07A7A")]
              | npanes > 1 ]
@@ -708,15 +795,15 @@ buildUI env wenv model = widgetTree
 
     sidePanel = case model ^. amPanel of
         PNone -> []
-        PEdit et -> [editorPanel model et]
+        PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env sc (sortOnCanon (M.findWithDefault [] vref witAdj))
+            [strongsPanel env sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj))
                 vref (word, ref)]
-        PPatches -> [patchesPanel model]
-        PThreads -> [threadsPanel model]
-        PThreadView f -> [threadViewPanel model f]
-        PWeaves -> [weavesPanel model]
-        PWeaveView f -> [weaveViewPanel model f]
+        PPatches -> [patchesPanel model panelPW]
+        PThreads -> [threadsPanel model panelPW]
+        PThreadView f -> [threadViewPanel model panelPW f]
+        PWeaves -> [weavesPanel model panelPW]
+        PWeaveView f -> [weaveViewPanel model panelPW f]
 
     -- the shared canon overview strip: one map, a pin per pane
     canonMap = canonMapView CanonMapCfg
@@ -807,15 +894,15 @@ buildUI env wenv model = widgetTree
 wrapLabel :: Text -> WidgetNode AppModel AppEvent
 wrapLabel t = label_ t [multiline, resizeFactorH 0]
 
-captionField :: Double -> Text -> Maybe Text -> WidgetNode AppModel AppEvent
-captionField sc name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
+captionField :: Double -> Double -> Text -> Maybe Text -> WidgetNode AppModel AppEvent
+captionField sc piw name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
     [ label name `styleBasic` [textSize (10 * sc), textColor muted]
-    , wrapLabel v `styleBasic` [textSize (13 * sc), width panelInnerW]
+    , wrapLabel v `styleBasic` [textSize (13 * sc), width piw]
     ]
 
-panelBox :: [WidgetNode AppModel AppEvent] -> WidgetNode AppModel AppEvent
-panelBox items = vstack_ [childSpacing_ 8] items
-    `styleBasic` [width panelW, padding 12, bgColor (rgbHex "#26282B")]
+panelBox :: Double -> [WidgetNode AppModel AppEvent] -> WidgetNode AppModel AppEvent
+panelBox pw items = vstack_ [childSpacing_ 8] items
+    `styleBasic` [width pw, padding 12, bgColor (rgbHex "#26282B")]
 
 panelHeader :: Double -> Text -> AppEvent -> WidgetNode AppModel AppEvent
 panelHeader sc title closeEvt = hstack
@@ -827,10 +914,11 @@ panelHeader sc title closeEvt = hstack
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> Double -> [((Text, Int, Int), Text)] -> (Text, Int, Int)
+    :: Env -> Double -> Double -> [((Text, Int, Int), Text)] -> (Text, Int, Int)
     -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env sc witnesses vref (word, ref) = panel
+strongsPanel env sc pw witnesses vref (word, ref) = panel
   where
+    piw = pw - 24
     entry = M.lookup ref (envStrongs env)
     occs = M.findWithDefault [] ref (envOccIx env)
     occShown = take 200 occs
@@ -845,7 +933,7 @@ strongsPanel env sc witnesses vref (word, ref) = panel
         (vstack_ [childSpacing_ 1] $
             (label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
             : [ wrapLabel lbl `styleBasic`
-                  [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width panelInnerW]
+                  [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width piw]
               | not (T.null lbl) ])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -859,7 +947,7 @@ strongsPanel env sc witnesses vref (word, ref) = panel
         ]
         <> map witRow witnesses
         <> [ wrapLabel "no linked passages yet — add weave links to build them"
-                `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
+                `styleBasic` [textSize (10 * sc), textColor muted, width piw]
            | null witnesses ]
         <> [separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]]
 
@@ -873,9 +961,9 @@ strongsPanel env sc witnesses vref (word, ref) = panel
             , widgetMaybe (entry >>= sePron) $ \p ->
                 label p `styleBasic` [textSize (12 * sc), textColor muted]
             ]
-        , captionField sc "derivation" (entry >>= seDeriv)
-        , captionField sc "definition" (entry >>= seDef)
-        , captionField sc "KJV renderings" (entry >>= seKjv)
+        , captionField sc piw "derivation" (entry >>= seDeriv)
+        , captionField sc piw "definition" (entry >>= seDef)
+        , captionField sc piw "KJV renderings" (entry >>= seKjv)
         , label (showt (length occs) <> " occurrences")
             `styleBasic` [textSize (11 * sc), textColor muted]
         ]
@@ -884,22 +972,22 @@ strongsPanel env sc witnesses vref (word, ref) = panel
                 `styleBasic` [textSize (11 * sc), textColor muted]
            | occMore > 0]
 
-    panel = panelBox
+    panel = panelBox pw
         [ panelHeader sc (refText vref <> " — " <> word) EvClosePanel
         , vscroll $ vstack_ [childSpacing_ 8] (verseSection <> wordSection)
         ]
 
-editorPanel :: AppModel -> EditTarget -> WidgetNode AppModel AppEvent
-editorPanel model et = panelBox $
+editorPanel :: AppModel -> Double -> EditTarget -> WidgetNode AppModel AppEvent
+editorPanel model pw et = panelBox pw $
     [ panelHeader sc (if everywhere then "new rule" else "new patch") EvClosePanel
     , wrapLabel ("For modernizing archaisms only — e.g. fourscore → eighty. "
         <> "Never to add to, take from, or change the meaning of the text.")
-        `styleBasic` [textSize (10 * sc), textColor (rgbHex "#C99A4B"), width panelInnerW]
+        `styleBasic` [textSize (10 * sc), textColor (rgbHex "#C99A4B"), width piw]
     , label (refText (etRef et) <> ", words "
         <> showt (fst (etSpan et)) <> "–" <> showt (snd (etSpan et)))
         `styleBasic` [textSize (11 * sc), textColor muted]
     , wrapLabel ("replacing: " <> T.unwords (etWords et))
-        `styleBasic` [textSize (13 * sc), width panelInnerW]
+        `styleBasic` [textSize (13 * sc), width piw]
     , widgetMaybe (etRuleHit et) ruleHitBox
     , label "replacement" `styleBasic` [textSize (10 * sc), textColor muted]
     , textField amReplace `nodeKey` "replace"
@@ -921,7 +1009,7 @@ editorPanel model et = panelBox $
         ]
     , wrapLabel ("signed with your key, applied instantly; manage from the "
         <> "patches panel")
-        `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
+        `styleBasic` [textSize (10 * sc), textColor muted, width piw]
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
     , label "add to thread (the note above travels with it)"
         `styleBasic` [textSize (10 * sc), textColor muted]
@@ -936,11 +1024,12 @@ editorPanel model et = panelBox $
        ]
   where
     sc = uiScaleOf model
+    piw = pw - 24
     everywhere = model ^. amEverywhere
     threadNames = [thName (ltThread lt) | lt <- model ^. amThreads]
     ruleHitBox (file, desc, own) = vstack_ [childSpacing_ 4] $
         [ wrapLabel ("this span is rewritten by rule: " <> desc)
-            `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
+            `styleBasic` [textSize (10 * sc), textColor muted, width piw]
         ]
         <> [ box_ [alignLeft]
                 (button "exclude this verse from the rule"
@@ -948,8 +1037,8 @@ editorPanel model et = panelBox $
                     `styleBasic` [textSize (11 * sc), padding 4])
            | own ]
 
-patchesPanel :: AppModel -> WidgetNode AppModel AppEvent
-patchesPanel model = panelBox
+patchesPanel :: AppModel -> Double -> WidgetNode AppModel AppEvent
+patchesPanel model pw = panelBox pw
     [ panelHeader sc "patches & rules" EvClosePanel
     , if null lps && null lrs
         then label "none yet — right-click a word, or drag across several"
@@ -958,6 +1047,7 @@ patchesPanel model = panelBox
     ]
   where
     sc = uiScaleOf model
+    piw = pw - 24
     lps = model ^. amPatches
     lrs = model ^. amRules
     rows =
@@ -975,7 +1065,7 @@ patchesPanel model = panelBox
             [ hstack
                 [ wrapLabel (T.unwords (rMatch r) <> " → "
                     <> T.unwords (rReplacement r))
-                    `styleBasic` [textSize (12 * sc), width (panelInnerW - 64)]
+                    `styleBasic` [textSize (12 * sc), width (piw - 64)]
                 , filler
                 , button "delete" (EvDeleteRule (lrFile lr))
                     `styleBasic` [textSize (10 * sc), padding 3]
@@ -1000,24 +1090,25 @@ patchesPanel model = panelBox
                 ]
             , wrapLabel (T.unwords (pOriginal p) <> " → "
                 <> T.unwords (pReplacement p))
-                `styleBasic` [textSize (12 * sc), width (panelInnerW - 8)]
+                `styleBasic` [textSize (12 * sc), width (piw - 8)]
             , label (statusText (lpStatus lp) <> " · "
                 <> T.take 10 (pCreated p))
                 `styleBasic` [textSize (10 * sc), textColor muted]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
-threadsPanel :: AppModel -> WidgetNode AppModel AppEvent
-threadsPanel model = panelBox
+threadsPanel :: AppModel -> Double -> WidgetNode AppModel AppEvent
+threadsPanel model pw = panelBox pw
     [ panelHeader sc "threads" EvClosePanel
     , if null lts
         then wrapLabel ("none yet — right-click a word or drag a span, "
                 <> "then \"add span to thread\"")
-            `styleBasic` [textSize (12 * sc), textColor muted, width panelInnerW]
+            `styleBasic` [textSize (12 * sc), textColor muted, width piw]
         else vscroll (vstack_ [childSpacing_ 6] (map row lts))
     ]
   where
     sc = uiScaleOf model
+    piw = pw - 24
     lts = model ^. amThreads
     row lt =
         let t = ltThread lt
@@ -1031,17 +1122,18 @@ threadsPanel model = panelBox
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
-threadViewPanel :: AppModel -> FilePath -> WidgetNode AppModel AppEvent
-threadViewPanel model file =
+threadViewPanel :: AppModel -> Double -> FilePath -> WidgetNode AppModel AppEvent
+threadViewPanel model pw file =
     case find ((== file) . ltFile) (model ^. amThreads) of
-        Nothing -> panelBox
+        Nothing -> panelBox pw
             [ panelHeader sc "thread" EvClosePanel
             , label "thread not found" `styleBasic` [textSize (12 * sc), textColor muted]
             ]
         Just lt -> render (ltThread lt)
   where
     sc = uiScaleOf model
-    render t = panelBox
+    piw = pw - 24
+    render t = panelBox pw
         [ panelHeader sc (thName t) EvClosePanel
         , hstack
             [ button "← all threads" EvShowThreads
@@ -1078,10 +1170,10 @@ threadViewPanel model file =
                     `styleBasic` [textSize (10 * sc), padding 3]
                 ]
             , wrapLabel ("“" <> T.unwords (teText e) <> "”")
-                `styleBasic` [textSize (12 * sc), width (panelInnerW - 8)]
+                `styleBasic` [textSize (12 * sc), width (piw - 8)]
             , widgetMaybe (teNote e) $ \nt -> wrapLabel nt
                 `styleBasic` [ textSize (11 * sc), textColor muted
-                             , width (panelInnerW - 8) ]
+                             , width (piw - 8) ]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
@@ -1090,15 +1182,15 @@ threadViewPanel model file =
 kindRowW :: Double -> WeaveKind -> WidgetNode AppModel AppEvent
 kindRowW sc k = label (kindLabel k) `styleBasic` [textSize (12 * sc)]
 
-weavesPanel :: AppModel -> WidgetNode AppModel AppEvent
-weavesPanel model = panelBox
+weavesPanel :: AppModel -> Double -> WidgetNode AppModel AppEvent
+weavesPanel model pw = panelBox pw
     [ panelHeader sc "weaves" EvClosePanel
     , label "parallel passages — links between verses, drawn across panes"
         `styleBasic` [textSize (10 * sc), textColor muted]
     , if null lws
         then wrapLabel ("none yet — open two panes, select verses in each, "
                 <> "then \"+ link\"")
-            `styleBasic` [textSize (12 * sc), textColor muted, width panelInnerW]
+            `styleBasic` [textSize (12 * sc), textColor muted, width piw]
         else vscroll (vstack_ [childSpacing_ 6] (map row lws))
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
     , label "kind for new links" `styleBasic` [textSize (10 * sc), textColor muted]
@@ -1110,6 +1202,7 @@ weavesPanel model = panelBox
     ]
   where
     sc = uiScaleOf model
+    piw = pw - 24
     -- order by where each weave first lands in the canon (filters to come)
     lws = sortOn (weaveStartKey . lwWeave) (model ^. amWeaves)
     row lw =
@@ -1128,18 +1221,19 @@ weavesPanel model = panelBox
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
-weaveViewPanel :: AppModel -> FilePath -> WidgetNode AppModel AppEvent
-weaveViewPanel model file =
+weaveViewPanel :: AppModel -> Double -> FilePath -> WidgetNode AppModel AppEvent
+weaveViewPanel model pw file =
     case find ((== file) . lwFile) (model ^. amWeaves) of
-        Nothing -> panelBox
+        Nothing -> panelBox pw
             [ panelHeader sc "weave" EvClosePanel
             , label "weave not found" `styleBasic` [textSize (12 * sc), textColor muted]
             ]
         Just lw -> render (lwWeave lw)
   where
     sc = uiScaleOf model
+    piw = pw - 24
     others = [wName (lwWeave o) | o <- model ^. amWeaves, lwFile o /= file]
-    render w = panelBox $
+    render w = panelBox pw $
         [ panelHeader sc (wName w) EvClosePanel
         , hstack
             [ button "← all weaves" EvShowWeaves
@@ -1151,7 +1245,7 @@ weaveViewPanel model file =
         , wrapLabel (if wApproved w
                 then "✓ reviewed and approved"
                 else "⚠ AI-generated for study — not reviewed or approved")
-            `styleBasic` [textSize (11 * sc), padding 5, width panelInnerW
+            `styleBasic` [textSize (11 * sc), padding 5, width piw
                 , textColor (if wApproved w
                     then rgbHex "#8FB88A" else rgbHex "#E0B05A")
                 , bgColor (rgbHex "#2A2620")]
@@ -1169,7 +1263,7 @@ weaveViewPanel model file =
             ]
         ]
         <> [ wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
-            `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
+            `styleBasic` [textSize (10 * sc), textColor muted, width piw]
         , label "comparing" `styleBasic` [textSize (10 * sc), textColor muted]
         , vstack_ [childSpacing_ 1]
             [ label ("· " <> spanText s)
@@ -1316,6 +1410,13 @@ handleEvent env _wenv _node model evt = case evt of
         , SetFocusOnKey "reader", saveLater]
     EvPanePrev i -> [Model (stepPane i (-1)), saveLater]
     EvPaneNext i -> [Model (stepPane i 1), saveLater]
+    EvPaneTrack i (b, c) ->
+        [ Model (setPane i (\p -> p & psBook .~ b & psChapter .~ c
+                & psAnchor .~ Nothing & psSel .~ []))
+        , SetFocusOnKey "reader", saveLater ]
+    EvSetMaxCols n ->
+        let m = clampMaxCols n
+        in [Model (model & amMaxCols .~ m & amPanes %~ take m), saveLater]
     EvToggleWeaves ->
         [Model (model & amPanel %~ \pm ->
             if pm == PWeaves then PNone else PWeaves)]
@@ -1325,7 +1426,8 @@ handleEvent env _wenv _node model evt = case evt of
         Just lw ->
             let w = lwWeave lw
                 tracks = weaveTracks w
-                newPanes = [PaneState b c Nothing [] | (b, c) <- take 4 tracks]
+                newPanes = [ PaneState b c Nothing []
+                           | (b, c) <- take (clampMaxCols (model ^. amMaxCols)) tracks ]
             in [Model (model
                     & amPanel .~ PWeaveView file
                     & amPanes .~ (if null newPanes then model ^. amPanes else newPanes)
@@ -1379,7 +1481,8 @@ handleEvent env _wenv _node model evt = case evt of
         [Model (model & amWeaves .~ lws & amPanel %~ adjustWeavePanel lws
             & amStatus .~ msg)]
     EvStatus t -> [Model (model & amStatus .~ t)]
-    EvSaveSession -> [Task (EvNoop <$ saveSession (model ^. amPanes))]
+    EvSaveSession ->
+        [Task (EvNoop <$ saveSession (model ^. amMaxCols) (model ^. amPanes))]
     EvVerseInspect ref x y ->
         -- open the compare card only for verses that actually have witnesses
         let touched = any (any (\l -> lA l == ref || lB l == ref)
@@ -1436,25 +1539,13 @@ handleEvent env _wenv _node model evt = case evt of
         (r : _) -> "parallel: " <> refText r
         [] -> "parallel"
 
-    -- distinct books among a weave's links, canon order, each at its first
-    -- linked chapter — used to point the panes at the weave's passages
-    weaveTracks w =
-        let refs = concatMap (\(Link a b _ _) -> [a, b]) (wLinks w)
-            books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
-                (nub (map fst3 refs))
-        in case books of
-            -- a same-book weave (two creation accounts, Ps 14 / Ps 53) would
-            -- otherwise collapse to one pane: split it by chapter instead
-            [b] -> [ (b, c) | c <- nub (sort [c | (_, c, _) <- refs]) ]
-            _   -> [ (b, minimum [c | (bb, c, _) <- refs, bb == b]) | b <- books ]
-
     setPane i f = model & amPanes %~ \ps ->
         [ if j == i then f p else p | (j, p) <- zip [0 ..] ps ]
 
     -- a new pane opens just after pane i, at the same place (then navigate it);
-    -- capped at four panes
+    -- capped at the live column limit
     insertPaneAfter i ps
-        | length ps >= 4 = ps
+        | length ps >= clampMaxCols (model ^. amMaxCols) = ps
         | otherwise =
             let seed = case drop i ps of
                     (p : _) -> p { _psSel = [], _psAnchor = Nothing }
@@ -1713,12 +1804,15 @@ guiMain = do
     (weaves, werrs) <- loadWeaves
     (serifR, serifI) <- resolveFonts (envSettings env)
     (sansR, sansB) <- resolveSans
-    panes <- restorePanes (envCorpus env) <$> loadSession
-    let status = T.intercalate " · " (filter (not . T.null)
+    session <- loadSession
+    let maxCols = clampMaxCols (sessMaxCols session)
+        panes = restorePanes (envCorpus env) maxCols (sessPanes session)
+        status = T.intercalate " · " (filter (not . T.null)
             [ if null terrs then "" else threadErrText terrs
             , if null werrs then "" else weaveErrText werrs ])
         model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
             status panes weaves "" Retelling "" "" Nothing (sBodySize (envSettings env))
+            maxCols
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized
