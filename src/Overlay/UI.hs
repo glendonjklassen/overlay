@@ -176,7 +176,7 @@ buildUI env wenv model = widgetTree
         if null openWeaveTracks then [] else
             [ dropdown_ (amPanes . singular (ix i) . psTrack)
                 openWeaveTracks trackRow trackRow [onChange (EvPaneTrack i)]
-                `styleBasic` [width 160, textSize (12 * sc), border 1 weaveAccent]
+                `styleBasic` [rangeWidth 96 160, textSize (12 * sc), border 1 weaveAccent]
                 `nodeKey` ("paneTrack_" <> showt i)
             , spacer
             , label "jump" `styleBasic` [textSize (10 * sc), textColor muted]
@@ -187,12 +187,12 @@ buildUI env wenv model = widgetTree
           <>
           [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
                 bookRow bookRow [onChange (EvPaneBook i)]
-                `styleBasic` [width 150, textSize (12 * sc)]
+                `styleBasic` [rangeWidth 96 150, textSize (12 * sc)]
           , spacer
           , dropdown_ (amPanes . singular (ix i) . psChapter)
                 [1 .. chapterCount corpus (_psBook p)] chRow chRow
                 [onChange (EvPaneChapter i)]
-                `styleBasic` [width 70, textSize (12 * sc)]
+                `styleBasic` [rangeWidth 48 70, textSize (12 * sc)]
                 `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook p)
           , button "<" (EvPanePrev i) `styleBasic` [textSize (12 * sc), padding 2]
           , button ">" (EvPaneNext i) `styleBasic` [textSize (12 * sc), padding 2]
