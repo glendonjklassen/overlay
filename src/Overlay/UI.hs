@@ -47,37 +47,42 @@ buildUI env wenv model = widgetTree
 
     canLink = length (filter (not . null . _psSel) panes) >= 2
 
-    -- a header opener whose background lights up while its panel is showing, so
-    -- you can see at a glance what is open
-    openerBtn lbl active ev = button lbl ev
-        `styleBasic` ([textSize (12 * sc)]
-            <> [bgColor (rgbHex "#3E4450") | active])
     threadPanelOpen = case model ^. amPanel of
         PThreads -> True; PThreadView _ -> True; _ -> False
     weavePanelOpen = case model ^. amPanel of
         PWeaves -> True; PWeaveView _ -> True; _ -> False
 
+    -- a panel switcher styled as an underlined tab: muted when closed, bright
+    -- with an accent underline when its panel is open
+    navTab name n active ev = button (name <> " " <> showt n) ev
+        `styleBasic` ([ textSize (13 * sc), padding 6, bgColor (rgba 0 0 0 0)
+                      , textColor (if active then rgbHex "#EAE6DE" else muted) ]
+                      <> [ borderB 2 (rgbHex "#6E93C9") | active ])
+        `styleHover` [ bgColor (rgbHex "#2E3238"), textColor (rgbHex "#EAE6DE") ]
+
+    -- a flat icon button (gear, + link) that has no filled-block look
+    flatBtn lbl col ev = button lbl ev
+        `styleBasic` [ textSize (13 * sc), padding 6, bgColor (rgba 0 0 0 0)
+                     , textColor col ]
+        `styleHover` [ bgColor (rgbHex "#2E3238") ]
+
+    -- top bar (app toolbar): brand left · panel tabs · status · gear (settings)
     header = hstack $
-        [ openerBtn "⚙ options" (model ^. amPanel == POptions) EvToggleOptions
+        [ label "overlay" `styleBasic`
+            [ textSize (15 * sc), textColor (rgbHex "#C8C4BD"), paddingH 8, paddingV 6 ]
         , spacer
-        , openerBtn ("patches (" <> showt (length patches + length rules) <> ")")
+        , navTab "patches" (length patches + length rules)
             (model ^. amPanel == PPatches) EvTogglePatches
-        , spacer
-        , openerBtn ("threads (" <> showt (length threads) <> ")")
-            threadPanelOpen EvToggleThreads
-        , spacer
-        , openerBtn ("weaves (" <> showt (length (model ^. amWeaves)) <> ")")
-            weavePanelOpen EvToggleWeaves
+        , navTab "threads" (length threads) threadPanelOpen EvToggleThreads
+        , navTab "weaves" (length (model ^. amWeaves)) weavePanelOpen EvToggleWeaves
         ]
-        <> (if canLink
-            then [ spacer, button "+ link" EvLink
-                    `styleBasic` [textSize (12 * sc), textColor (rgbHex "#C9A24B")] ]
-            else [])
+        <> [ flatBtn "+ link" (rgbHex "#C9A24B") EvLink | canLink ]
         <>
-        [ spacer
+        [ filler
         , label (model ^. amStatus) `styleBasic` [textSize (11 * sc), textColor muted]
-        , filler
-        , label "overlay" `styleBasic` [textColor muted, textSize (12 * sc)]
+        , spacer
+        , flatBtn "⚙" (if model ^. amPanel == POptions
+                          then rgbHex "#EAE6DE" else muted) EvToggleOptions
         ]
 
     bookRow b = label (displayName b) `styleBasic` [textSize (12 * sc)]
