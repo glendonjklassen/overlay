@@ -19,13 +19,23 @@ library
       Overlay
       Overlay.Canon
       Overlay.CanonMap
+      Overlay.Config
       Overlay.Corpus
+      Overlay.Events
       Overlay.Import
+      Overlay.Panels
       Overlay.Patch
       Overlay.ReaderView
+      Overlay.Refs
+      Overlay.Render
       Overlay.Rule
+      Overlay.Session
+      Overlay.Startup
       Overlay.Strongs
+      Overlay.Tasks
       Overlay.Thread
+      Overlay.Types
+      Overlay.UI
       Overlay.Weave
   other-modules:
       Paths_overlay
