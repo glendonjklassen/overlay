@@ -14,6 +14,8 @@ import qualified Monomer.Lens as L
 
 import Overlay.Canon (bookIds)
 import Overlay.CanonMap
+import Overlay.Concept (ConceptStat (..), conceptStat)
+import Overlay.ConceptMap
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Panels
@@ -249,7 +251,22 @@ buildUI env wenv model = widgetTree
       where nb = fromIntegral (length bookIds)
             otNT = 39  -- Matthew is the 40th book (index 39)
 
-    mainArea = vstack [navRow, reader, canonMap]
+    -- the concept dispersion strip: shown above the canon map while a Strong's
+    -- number is active, sharing its book-fraction coordinates so the two line up
+    conceptStrip
+        | null (model ^. amConcepts) = []
+        | otherwise =
+            [ conceptMapView ConceptMapCfg
+                { cmpBooks = bookIds
+                , cmpSeries =
+                    [ ConceptSeries r (maybe M.empty csByBook
+                        (conceptStat (envConcept env) r))
+                    | r <- model ^. amConcepts ]
+                , cmpDivider = 39 / fromIntegral (length bookIds)
+                , cmpOnClick = Just EvCanonGoto
+                } ]
+
+    mainArea = vstack ([navRow, reader] <> conceptStrip <> [canonMap])
 
     baseTree = vstack
         [ header `styleBasic` [padding 10]

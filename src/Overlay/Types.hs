@@ -95,6 +95,8 @@ data AppModel = AppModel
     , _amActivePane  :: Int      -- ^ last pane the user acted in; cross-reference
                                  -- jumps and the canon map target it
     , _amLineSpacing :: Double   -- ^ live line spacing, persisted to config.json
+    , _amConcepts    :: [Text]   -- ^ active Strong's numbers shown on the concept
+                                  -- dispersion strip (1…4); empty hides it
     } deriving (Eq, Show)
 
 data AppEvent

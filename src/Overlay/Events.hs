@@ -36,8 +36,10 @@ handleEvent
 handleEvent env _wenv _node model evt = case evt of
     EvInit -> [SetFocusOnKey "reader", saveLater]
     EvWordClicked rt -> case tokStrongs (rtTok rt) of
+        -- open the Strong's panel and light up that concept's canon dispersion
         (r : _) -> [Model (model & amPanel
-            .~ PStrongs (tokWord (rtTok rt)) r (rtRef rt))]
+            .~ PStrongs (tokWord (rtTok rt)) r (rtRef rt)
+            & amConcepts .~ [r])]
         [] -> []
     EvWordAlt rt -> altClickAt (rtRef rt) (rtIx rt)
     EvSpanSelected ref span_ -> openEditor ref span_
@@ -50,8 +52,9 @@ handleEvent env _wenv _node model evt = case evt of
         , SetFocusOnKey "reader"
         ]
     EvClosePanel ->
-        -- closing the weave list/detail brings the pre-weave reading layout back
-        let m0 = model & amPanel .~ PNone
+        -- closing the weave list/detail brings the pre-weave reading layout back;
+        -- closing the Strong's panel also clears its concept dispersion strip
+        let m0 = model & amPanel .~ PNone & amConcepts .~ []
             m1 = if inWeaveContext (model ^. amPanel) then restoreReading m0 else m0
         in [ Model m1, SetFocusOnKey "reader", saveLater ]
     EvToggleOptions ->
