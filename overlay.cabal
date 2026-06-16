@@ -19,6 +19,7 @@ library
       Overlay
       Overlay.Canon
       Overlay.CanonMap
+      Overlay.Concept
       Overlay.Config
       Overlay.Corpus
       Overlay.Events

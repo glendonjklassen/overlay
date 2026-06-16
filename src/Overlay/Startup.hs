@@ -2,13 +2,18 @@
 
 module Overlay.Startup where
 
-import Data.List (findIndex)
+import Data.Aeson (Value, decodeFileStrict, encodeFile, object, (.=))
+import Data.List (findIndex, sortBy)
 import qualified Data.Map.Strict as M
+import Data.Ord (Down (..), comparing)
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import Monomer
+import System.Directory (doesFileExist)
 import System.Exit (die)
 
+import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Events
@@ -25,9 +30,10 @@ import Overlay.Types
 import Overlay.UI
 import Overlay.Weave
 
-corpusPath, strongsPath :: FilePath
+corpusPath, strongsPath, conceptCachePath :: FilePath
 corpusPath = "data/kjv.jsonl"
 strongsPath = "data/strongs.json"
+conceptCachePath = "data/concept-cache.json"  -- ^ written by --analyze (gitignored)
 
 -- ── startup ─────────────────────────────────────────────────────────────────
 
@@ -37,7 +43,8 @@ loadEnv = do
     strongs <- loadStrongs strongsPath >>= either dieLoad pure
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
-    Env corpus strongs (occurrenceIndex corpus) keys notes <$> loadSettings
+    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus)
+        keys notes <$> loadSettings
   where
     dieLoad err = die $
         "could not load data: " <> err
@@ -89,6 +96,16 @@ checkMain = do
                 in (if T.null title then "" else "[" <> title <> "] ")
                     <> verseBody vr
         lordOccs = M.findWithDefault [] "H3068" (envOccIx env)
+        cix = envConcept env
+    cacheLine <- do
+        present <- doesFileExist conceptCachePath
+        if not present
+            then pure "concept:  cache absent (run --analyze to build it)"
+            else do
+                parsed <- decodeFileStrict conceptCachePath :: IO (Maybe Value)
+                pure $ case parsed of
+                    Just _  -> "concept:  cache present & parses"
+                    Nothing -> "concept:  cache present but UNPARSEABLE"
     st <- selfTest (envKeys env) (cTokVersion corpus)
     patches <- loadPatches (envKeys env) corpus
     rules <- loadRules (envKeys env) corpus
@@ -128,6 +145,9 @@ checkMain = do
         , "tokens:   " <> showt nTokens
         , "tokver:   " <> cTokVersion corpus
         , "strongs:  " <> showt (M.size (envStrongs env))
+        , "concepts: " <> showt (M.size cix) <> " Strong's numbers tagged, "
+            <> showt (length (hapaxes cix)) <> " hapax"
+        , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"
         , "fonts:    " <> serifR <> " / " <> serifI
@@ -166,6 +186,52 @@ checkMain = do
            , "Ps 3:1    " <> render "Ps" 3 1
            , "John 11:35  " <> render "John" 11 35
            ]
+
+-- | Build the heavy concept indices, cache them to disk, and print a report
+-- (--analyze). The light per-concept stats already live in 'envConcept'; this
+-- adds the full co-occurrence matrix and the within-language shared-lemma-run
+-- candidates, written to a gitignored cache for later phases to load.
+analyzeMain :: IO ()
+analyzeMain = do
+    env <- loadEnv
+    let corpus = envCorpus env
+        cix = envConcept env
+        co = coOccurrence corpus
+        coSorted = sortBy (comparing (Down . snd)) (M.toList co)
+        cands = quotationCandidates defaultMinRun corpus
+        topCoN = 20000 :: Int
+        topCandN = 2000 :: Int
+        topCo = take topCoN coSorted
+        topCand = take topCandN cands
+        cacheVal = object
+            [ "format" .= ("overlay-concept-cache-v1" :: Text)
+            , "tokenization" .= cTokVersion corpus
+            , "topCooccur" .=
+                [ object ["a" .= a, "b" .= b, "n" .= n] | ((a, b), n) <- topCo ]
+            , "candidates" .=
+                [ object [ "a" .= refKey (qcA c), "b" .= refKey (qcB c)
+                         , "run" .= qcRun c, "len" .= qcLen c ]
+                | c <- topCand ]
+            ]
+    encodeFile conceptCachePath cacheVal
+    putStrLn $ T.unpack $ T.unlines $
+        [ "concepts:   " <> showt (M.size cix) <> " Strong's numbers tagged"
+        , "hapax:      " <> showt (length (hapaxes cix))
+        , "co-occur:   " <> showt (M.size co) <> " distinct pairs ("
+            <> showt (length topCo) <> " cached)"
+        , "candidates: " <> showt (length cands)
+            <> " within-language parallels (run ≥ " <> showt defaultMinRun
+            <> "; " <> showt (length topCand) <> " cached)"
+        , "wrote:      " <> T.pack conceptCachePath
+        , ""
+        , "top co-occurring lemmas (share a verse):"
+        ]
+        <> [ "  " <> a <> " + " <> b <> "  ×" <> showt n
+           | ((a, b), n) <- take 12 coSorted ]
+        <> [ "", "longest within-language shared-lemma runs:" ]
+        <> [ "  " <> refKey (qcA c) <> " ↔ " <> refKey (qcB c)
+             <> "  (" <> showt (qcLen c) <> " lemmas)"
+           | c <- take 12 cands ]
 
 -- | Dev helper: create a signed patch from the command line.
 -- Usage: overlay --mkpatch <book> <chapter> <verse> <original-word> <replacement...>

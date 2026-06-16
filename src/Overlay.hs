@@ -1,4 +1,4 @@
-module Overlay (guiMain, checkMain, mkPatchCli, mkRuleCli, toRVerse) where
+module Overlay (guiMain, checkMain, analyzeMain, mkPatchCli, mkRuleCli, toRVerse) where
 
-import Overlay.Startup (guiMain, checkMain, mkPatchCli, mkRuleCli)
+import Overlay.Startup (guiMain, checkMain, analyzeMain, mkPatchCli, mkRuleCli)
 import Overlay.Render (toRVerse)

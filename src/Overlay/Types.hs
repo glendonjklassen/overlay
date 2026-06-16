@@ -7,6 +7,7 @@ import Control.Lens
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
 
+import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Patch
@@ -24,6 +25,7 @@ data Env = Env
     { envCorpus   :: Corpus
     , envStrongs  :: StrongsDict
     , envOccIx    :: OccurrenceIx
+    , envConcept  :: ConceptIx       -- ^ per-Strong's counts / distribution / rarity
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings

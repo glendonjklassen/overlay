@@ -16,6 +16,7 @@ import Test.Hspec
 import Overlay (toRVerse)
 import Overlay.Canon
     (Book (..), books, bookById, bookByImpName, bookIds)
+import Overlay.Concept
 import Overlay.Corpus
 import Overlay.Import (parseBlock, splitBlocks, tokenize)
 import Overlay.Patch
@@ -41,6 +42,23 @@ testCorpus = mkCorpus "test-tok1" $ V.fromList
     , Verse "Gen" 1 2 [tok "And" [], tok "the" [], tok "earth" ["H776"]]
     , Verse "Gen" 2 1 [tok "Thus" [], tok "the" [], tok "heavens" ["H8064"]]
     , Verse "Exod" 1 1 [tok "Now" [], tok "these" []]
+    ]
+
+-- A fixture for the concept engine: a 5-lemma Hebrew run shared by Exod 20:4 and
+-- Deut 5:8 (a Decalogue-style parallel, with an untagged word in Deut to prove
+-- the function-word drop), H6213 recurring across three OT books, a hapax
+-- (H9999), and a Greek (NT) verse so the testament split has something on each
+-- side. OT carries H-numbers, NT carries G-numbers, so the two never run together.
+conceptCorpus :: Corpus
+conceptCorpus = mkCorpus "test-tok1" $ V.fromList
+    [ Verse "Exod" 20 4
+        [ tok "make" ["H6213"], tok "thee" ["H6459"], tok "any" ["H3605"]
+        , tok "graven" ["H5566"], tok "image" ["H8544"] ]
+    , Verse "Deut" 5 8
+        [ tok "make" ["H6213"], tok "to" [], tok "thee" ["H6459"]
+        , tok "any" ["H3605"], tok "graven" ["H5566"], tok "image" ["H8544"] ]
+    , Verse "Gen" 1 1 [tok "God" ["H430"], tok "made" ["H6213"], tok "alone" ["H9999"]]
+    , Verse "John" 3 16 [tok "loved" ["G25"], tok "God" ["G2316"], tok "world" ["G2889"]]
     ]
 
 unsignedPatch :: Patch
@@ -506,6 +524,57 @@ main = hspec $ do
             M.lookup "H7225" ix `shouldBe` Just [("Gen", 1, 1)]
             M.lookup "H776" ix `shouldBe` Just [("Gen", 1, 2)]
             refLabel ("Gen", 1, 2) `shouldBe` "Genesis 1:2"
+
+    describe "concept engine" $ do
+        let cix = buildConceptIx conceptCorpus
+
+        it "counts token instances per concept and per book" $ do
+            -- H6213 appears once each in Exod, Deut, Gen
+            fmap csTotal (conceptStat cix "H6213") `shouldBe` Just 3
+            fmap csByBook (conceptStat cix "H6213")
+                `shouldBe` Just (M.fromList [("Exod", 1), ("Deut", 1), ("Gen", 1)])
+            -- a token tagged with one Strong's in two verses
+            fmap csTotal (conceptStat cix "H6459") `shouldBe` Just 2
+            conceptStat cix "H0000" `shouldBe` Nothing
+
+        it "splits occurrences across the testaments" $ do
+            -- H6213 is Old Testament only; G2316 is New Testament only
+            fmap testamentSplit (conceptStat cix "H6213") `shouldBe` Just (3, 0)
+            fmap testamentSplit (conceptStat cix "G2316") `shouldBe` Just (0, 1)
+
+        it "ranks the books a concept occurs in" $
+            fmap (map fst . topBooks 2) (conceptStat cix "H6213")
+                `shouldBe` Just ["Deut", "Exod"]  -- alphabetical tie-break at count 1
+
+        it "classifies rarity by total occurrences" $ do
+            rarityTier (ConceptStat 1 mempty) `shouldBe` Hapax
+            rarityTier (ConceptStat 3 mempty) `shouldBe` Rare 3
+            rarityTier (ConceptStat 9 mempty) `shouldBe` Common
+            -- H9999 occurs exactly once across the corpus
+            "H9999" `elem` hapaxes cix `shouldBe` True
+            "H6213" `elem` hapaxes cix `shouldBe` False
+
+        it "counts co-occurring lemma pairs within a verse" $ do
+            let co = coOccurrence conceptCorpus
+            -- H6213+H6459 share Exod 20:4 and Deut 5:8
+            M.lookup ("H6213", "H6459") co `shouldBe` Just 2
+            -- H430+H6213 share only Gen 1:1; pair key is in ascending order
+            M.lookup ("H430", "H6213") co `shouldBe` Just 1
+            -- a cross-verse, never-together pair is absent
+            M.lookup ("H8544", "G2316") co `shouldBe` Nothing
+
+        it "detects a within-language shared-lemma run, dropping function words" $ do
+            let cands = quotationCandidates defaultMinRun conceptCorpus
+            length cands `shouldBe` 1
+            let c = head cands
+            (qcA c, qcB c) `shouldBe` (("Exod", 20, 4), ("Deut", 5, 8))
+            qcLen c `shouldBe` 5
+            qcRun c `shouldBe` ["H6213", "H6459", "H3605", "H5566", "H8544"]
+
+        it "never runs a lemma sequence across the Hebrew/Greek divide" $
+            -- the Greek verse shares no Strong's numbers with any Hebrew verse
+            all (\c -> qcA c /= ("John", 3, 16) && qcB c /= ("John", 3, 16))
+                (quotationCandidates 1 conceptCorpus) `shouldBe` True
 
     describe "canon" $ do
         it "holds all 66 books in canonical order" $ do
