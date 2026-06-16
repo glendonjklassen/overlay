@@ -48,6 +48,9 @@ handleEvent env _wenv _node model evt = case evt of
         ]
     EvClosePanel ->
         [ Model (model & amPanel .~ PNone), SetFocusOnKey "reader" ]
+    EvToggleOptions ->
+        [Model (model & amPanel %~ \pm ->
+            if pm == POptions then PNone else POptions)]
     EvTogglePatches ->
         [Model (model & amPanel %~ \pm ->
             if pm == PPatches then PNone else PPatches)]

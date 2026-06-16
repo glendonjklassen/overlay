@@ -47,25 +47,27 @@ buildUI env wenv model = widgetTree
 
     canLink = length (filter (not . null . _psSel) panes) >= 2
 
+    -- a header opener whose background lights up while its panel is showing, so
+    -- you can see at a glance what is open
+    openerBtn lbl active ev = button lbl ev
+        `styleBasic` ([textSize (12 * sc)]
+            <> [bgColor (rgbHex "#3E4450") | active])
+    threadPanelOpen = case model ^. amPanel of
+        PThreads -> True; PThreadView _ -> True; _ -> False
+    weavePanelOpen = case model ^. amPanel of
+        PWeaves -> True; PWeaveView _ -> True; _ -> False
+
     header = hstack $
-        [ labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize (12 * sc)]
+        [ openerBtn "⚙ options" (model ^. amPanel == POptions) EvToggleOptions
         , spacer
-        , labeledCheckbox "heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
+        , openerBtn ("patches (" <> showt (length patches + length rules) <> ")")
+            (model ^. amPanel == PPatches) EvTogglePatches
         , spacer
-        , labeledCheckbox "links" amLinesOn `styleBasic` [textSize (12 * sc)]
+        , openerBtn ("threads (" <> showt (length threads) <> ")")
+            threadPanelOpen EvToggleThreads
         , spacer
-        , label "cols" `styleBasic` [textSize (12 * sc), textColor muted]
-        , dropdown_ amMaxCols [1 .. maxColsCap] colRow colRow [onChange EvSetMaxCols]
-            `styleBasic` [width 50, textSize (12 * sc)]
-        , spacer
-        , button ("patches (" <> showt (length patches + length rules) <> ")")
-            EvTogglePatches `styleBasic` [textSize (12 * sc)]
-        , spacer
-        , button ("threads (" <> showt (length threads) <> ")")
-            EvToggleThreads `styleBasic` [textSize (12 * sc)]
-        , spacer
-        , button ("weaves (" <> showt (length (model ^. amWeaves)) <> ")")
-            EvToggleWeaves `styleBasic` [textSize (12 * sc)]
+        , openerBtn ("weaves (" <> showt (length (model ^. amWeaves)) <> ")")
+            weavePanelOpen EvToggleWeaves
         ]
         <> (if canLink
             then [ spacer, button "+ link" EvLink
@@ -80,7 +82,6 @@ buildUI env wenv model = widgetTree
 
     bookRow b = label (displayName b) `styleBasic` [textSize (12 * sc)]
     chRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
-    colRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
 
     notesFor v = if model ^. amNotesOn
         then M.findWithDefault [] (vBook v, vChapter v, vVerse v) (envNotes env)
@@ -211,6 +212,7 @@ buildUI env wenv model = widgetTree
 
     sidePanel = case model ^. amPanel of
         PNone -> []
+        POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
             [strongsPanel env sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj))

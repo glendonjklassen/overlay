@@ -13,6 +13,7 @@ import Overlay.Patch
 import Overlay.Refs
 import Overlay.Render
 import Overlay.Rule
+import Overlay.Session (maxColsCap)
 import Overlay.Strongs
 import Overlay.Thread
 import Overlay.Types
@@ -58,6 +59,39 @@ panelHeader sc title closeEvt = hstack
     , filler
     , button "✕" closeEvt `styleBasic` [textSize (11 * sc), padding 4]
     ]
+
+-- | The central options panel: every global display/reading control in one
+-- place, opened from the header gear. Font and line-spacing still live in
+-- config.json (not yet live-editable here).
+optionsPanel :: AppModel -> Double -> WidgetNode AppModel AppEvent
+optionsPanel model pw = panelBox pw
+    [ panelHeader sc "Options" EvClosePanel
+    , sectionLabel "Display"
+    , labeledCheckbox "1769 margin notes" amNotesOn `styleBasic` [textSize (12 * sc)]
+    , labeledCheckbox "weave heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
+    , labeledCheckbox "weave links" amLinesOn `styleBasic` [textSize (12 * sc)]
+    , separator
+    , sectionLabel "Reading columns"
+    , dropdown_ amMaxCols [1 .. maxColsCap] colRow colRow [onChange EvSetMaxCols]
+        `styleBasic` [width (90 * sc), textSize (12 * sc)]
+    , separator
+    , sectionLabel "Text size"
+    , hstack_ [childSpacing_ 6]
+        [ button "−" (EvZoom (-1)) `styleBasic` [textSize (13 * sc), padding 4]
+        , label (showt (round (model ^. amBodySize) :: Int) <> " px")
+            `styleBasic` [textSize (12 * sc)]
+        , button "+" (EvZoom 1) `styleBasic` [textSize (13 * sc), padding 4]
+        , filler
+        , button "reset" (EvZoom 0) `styleBasic` [textSize (11 * sc), padding 4]
+        ]
+    , wrapLabel "Text size also follows Ctrl + scroll and Ctrl + / − / 0."
+        `styleBasic` [textSize (10 * sc), textColor muted, width (pw - 24)]
+    ]
+  where
+    sc = uiScaleOf model
+    sectionLabel t = label t `styleBasic` [textSize (11 * sc), textColor muted]
+    separator = separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
+    colRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
 
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.

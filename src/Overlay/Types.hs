@@ -40,6 +40,7 @@ data EditTarget = EditTarget
 
 data PanelMode
     = PNone
+    | POptions                             -- ^ central display/reading options
     | PStrongs Text Text (Text, Int, Int)  -- ^ clicked word, Strong's ref, verse
     | PEdit EditTarget
     | PPatches
@@ -95,6 +96,7 @@ data AppEvent
     | EvVerseClicked Int (Text, Int, Int) Bool
     | EvGoRef Text Int
     | EvClosePanel
+    | EvToggleOptions
     | EvTogglePatches
     | EvSavePatch
     | EvDeletePatch FilePath
