@@ -267,13 +267,8 @@ buildUI env wenv model = widgetTree
                 (label (refText other)
                     `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
             , filler
-            , button (if lApproved l then "✓" else "approve")
-                (EvApproveLinkIn file l (not (lApproved l)))
-                `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
-                    , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
-            , button "reject" (EvRejectLinkIn file l)
-                `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
-                    , bgColor (rgbHex "#5A3A36")]
+            , approveToggle sc (lApproved l) (EvApproveLinkIn file l (not (lApproved l)))
+            , dangerBtn sc "reject" (EvRejectLinkIn file l)
             ]
         , wrapLabel (verseTextOf other)
             `styleBasic` [textSize (model ^. amBodySize), textColor lightGray, width 336]
