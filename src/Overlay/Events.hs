@@ -138,7 +138,7 @@ handleEvent env _wenv _node model evt = case evt of
             in [Model (model
                     & amPanel .~ PWeaveView file
                     & amPanes .~ (if null newPanes then model ^. amPanes else newPanes)
-                    & amWeaveKind .~ wKind w
+                    & amWeaveViewKind .~ wKind w
                     & amWeaveNotes .~ wNotes w
                     & amCombinePick .~ "")]
     EvNewWeave ->

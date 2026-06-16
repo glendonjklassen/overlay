@@ -375,7 +375,7 @@ weavesPanel model pw = panelBox pw
             `styleBasic` [textSize (12 * sc), textColor muted, width piw]
         else vscroll (vstack_ [childSpacing_ 6] (map row lws))
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-    , label "kind for new links" `styleBasic` [textSize (10 * sc), textColor muted]
+    , label "kind for new weaves" `styleBasic` [textSize (10 * sc), textColor muted]
     , dropdown amWeaveKind allKinds (kindRowW sc) (kindRowW sc) `styleBasic` [textSize (12 * sc)]
     , label "new empty weave" `styleBasic` [textSize (10 * sc), textColor muted]
     , textField_ amWeaveNew [placeholder "weave name"]
@@ -451,8 +451,8 @@ weaveViewPanel model pw file =
             [ label ("· " <> spanText s)
                 `styleBasic` [textSize (11 * sc), textColor (rgbHex "#C8C4BD")]
             | s <- weaveSpans w ]
-        , label "kind" `styleBasic` [textSize (10 * sc), textColor muted]
-        , dropdown_ amWeaveKind allKinds (kindRowW sc) (kindRowW sc) [onChange EvSetWeaveKind]
+        , label "this weave's kind" `styleBasic` [textSize (10 * sc), textColor muted]
+        , dropdown_ amWeaveViewKind allKinds (kindRowW sc) (kindRowW sc) [onChange EvSetWeaveKind]
             `styleBasic` [textSize (12 * sc)]
         , label "weave notes" `styleBasic` [textSize (10 * sc), textColor muted]
         , textArea amWeaveNotes

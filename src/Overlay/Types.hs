@@ -79,7 +79,8 @@ data AppModel = AppModel
     , _amPanes       :: [PaneState]
     , _amWeaves      :: [LoadedWeave]
     , _amWeaveNew    :: Text       -- ^ new weave name
-    , _amWeaveKind   :: WeaveKind  -- ^ kind for new / linked / inspected weave
+    , _amWeaveKind   :: WeaveKind  -- ^ draft kind for the next new / linked weave
+    , _amWeaveViewKind :: WeaveKind  -- ^ kind of the weave currently inspected
     , _amWeaveNotes  :: Text       -- ^ notes draft for the inspected weave
     , _amCombinePick :: Text       -- ^ weave to combine into the inspected one
     , _amCompare     :: Maybe ((Text, Int, Int), Double, Double)

@@ -157,17 +157,25 @@ buildUI env wenv model = widgetTree
             Just lw -> weaveTracks (lwWeave lw)
             Nothing -> []
         _ -> []
-    trackRow t = label (trackText t) `styleBasic` [textSize (12 * sc)]
+    -- the weave passage picker reads in the weave accent colour with a ✦ marker,
+    -- so it is unmistakably "this weave's passages" and not the plain book/chapter
+    -- jump controls beside it
+    weaveAccent = rgbHex "#C9A24B"
+    trackRow t = label ("✦ " <> trackText t)
+        `styleBasic` [textSize (12 * sc), textColor weaveAccent]
 
-    -- when a weave is open, a picker swaps this column among its passages; the
-    -- weave may carry more passages than there are columns
+    -- when a weave is open, a picker swaps this column among its passages (the
+    -- weave may carry more passages than there are columns); the plain book +
+    -- chapter dropdowns beside it stay, prefixed "jump", for free navigation
     trackPicker i =
         if null openWeaveTracks then [] else
             [ dropdown_ (amPanes . singular (ix i) . psTrack)
                 openWeaveTracks trackRow trackRow [onChange (EvPaneTrack i)]
-                `styleBasic` [width 150, textSize (12 * sc)]
+                `styleBasic` [width 160, textSize (12 * sc), border 1 weaveAccent]
                 `nodeKey` ("paneTrack_" <> showt i)
-            , spacer ]
+            , spacer
+            , label "jump" `styleBasic` [textSize (10 * sc), textColor muted]
+            ]
 
     navStrip i p = hstack
         ( trackPicker i
