@@ -5,6 +5,7 @@ module Main (main) where
 import Data.Aeson (Value, decode, encode, object, (.=))
 import Data.Either (isLeft)
 import Data.Functor (void)
+import Data.List (find)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
@@ -14,6 +15,7 @@ import System.FilePath ((</>))
 import Test.Hspec
 
 import Overlay (toRVerse)
+import Overlay.Bridge
 import Overlay.Canon
     (Book (..), books, bookById, bookByImpName, bookIds)
 import Overlay.Concept
@@ -59,6 +61,31 @@ conceptCorpus = mkCorpus "test-tok1" $ V.fromList
         , tok "any" ["H3605"], tok "graven" ["H5566"], tok "image" ["H8544"] ]
     , Verse "Gen" 1 1 [tok "God" ["H430"], tok "made" ["H6213"], tok "alone" ["H9999"]]
     , Verse "John" 3 16 [tok "loved" ["G25"], tok "God" ["G2316"], tok "world" ["G2889"]]
+    ]
+
+-- Fixtures for the OT↔NT bridge. The dictionary exercises the etymology layer
+-- (one Greek entry cites a Hebrew origin, one does not). The corpus exercises
+-- the rendering layer: "love" bridges H157↔G26 distinctively; the generic word
+-- "things" bridges several pairs but scores lower; "god" is too short to count;
+-- "earth" never appears with a Greek lemma so yields no candidate.
+bridgeDict :: M.Map Text StrongsEntry
+bridgeDict = M.fromList
+    [ ("G10", StrongsEntry (Just "A") Nothing Nothing
+        (Just "of Hebrew origin (H0031);") Nothing (Just "Abiud"))
+    , ("G26", StrongsEntry (Just "a") Nothing Nothing
+        (Just "from G25;") Nothing (Just "love"))
+    , ("H31", StrongsEntry (Just "x") Nothing Nothing Nothing Nothing (Just "Abihud"))
+    ]
+
+bridgeCorpus :: Corpus
+bridgeCorpus = mkCorpus "test-tok1" $ V.fromList
+    [ Verse "Gen" 1 1 [tok "love" ["H157"]]
+    , Verse "John" 3 16 [tok "love" ["G26"]]
+    , Verse "Exod" 1 1 [tok "things" ["H1"], tok "things" ["H3"]]
+    , Verse "Acts" 1 1 [tok "things" ["G2"], tok "things" ["G4"]]
+    , Verse "Gen" 1 3 [tok "God" ["H430"]]   -- "god" is 3 letters, filtered
+    , Verse "John" 1 1 [tok "God" ["G2316"]]
+    , Verse "Gen" 1 2 [tok "earth" ["H776"]] -- OT-only, no Greek partner
     ]
 
 unsignedPatch :: Patch
@@ -575,6 +602,38 @@ main = hspec $ do
             -- the Greek verse shares no Strong's numbers with any Hebrew verse
             all (\c -> qcA c /= ("John", 3, 16) && qcB c /= ("John", 3, 16))
                 (quotationCandidates 1 conceptCorpus) `shouldBe` True
+
+    describe "OT↔NT bridge" $ do
+        it "extracts and normalises Hebrew refs from free text" $ do
+            hebRefsIn "of Hebrew origin (H0031);" `shouldBe` ["H31"]
+            hebRefsIn "compare H1234 and H56" `shouldBe` ["H1234", "H56"]
+            hebRefsIn "Hebrew" `shouldBe` []   -- no digits, no false match
+
+        it "links a Greek entry to its Strong's-cited Hebrew origin only" $
+            etymologyLinks bridgeDict `shouldBe` [BridgeLink "H31" "G10"]
+
+        it "proposes rendering candidates from shared 1769 words" $ do
+            let cs = renderingCandidates bridgeCorpus
+                pairOf c = (rcHeb c, rcGrk c)
+            -- "love" bridges H157↔G26 distinctively
+            map pairOf cs `shouldContain` [("H157", "G26")]
+            -- and it is the strongest candidate (fewest lemmas share the word)
+            pairOf (head cs) `shouldBe` ("H157", "G26")
+            rcWord (head cs) `shouldBe` "love"
+
+        it "scores distinctive renderings above generic ones" $ do
+            let cs = renderingCandidates bridgeCorpus
+                score p = rcScore <$> find ((== p) . \c -> (rcHeb c, rcGrk c)) cs
+            -- "love" (1 H + 1 G) beats "things" (2 H + 2 G)
+            score ("H157", "G26") `shouldSatisfy` (> score ("H1", "G2"))
+
+        it "skips short words and lemmas with no cross-testament partner" $ do
+            let cs = renderingCandidates bridgeCorpus
+                heb = map rcHeb cs
+            -- "god" (3 letters) is filtered, so H430 never bridges
+            heb `shouldNotContain` ["H430"]
+            -- "earth" only ever appears with a Hebrew lemma, so H776 has no partner
+            heb `shouldNotContain` ["H776"]
 
     describe "canon" $ do
         it "holds all 66 books in canonical order" $ do

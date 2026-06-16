@@ -17,6 +17,7 @@ build-type:     Simple
 library
   exposed-modules:
       Overlay
+      Overlay.Bridge
       Overlay.Canon
       Overlay.CanonMap
       Overlay.Concept

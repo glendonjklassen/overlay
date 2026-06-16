@@ -13,6 +13,7 @@ import Monomer
 import System.Directory (doesFileExist)
 import System.Exit (die)
 
+import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
@@ -203,6 +204,10 @@ analyzeMain = do
         topCandN = 2000 :: Int
         topCo = take topCoN coSorted
         topCand = take topCandN cands
+        -- OT↔NT bridge: Strong's etymology (auto) + 1769-rendering candidates
+        ety = etymologyLinks (envStrongs env)
+        rends = renderingCandidates corpus
+        topRend = take topCandN rends
         cacheVal = object
             [ "format" .= ("overlay-concept-cache-v1" :: Text)
             , "tokenization" .= cTokVersion corpus
@@ -212,6 +217,12 @@ analyzeMain = do
                 [ object [ "a" .= refKey (qcA c), "b" .= refKey (qcB c)
                          , "run" .= qcRun c, "len" .= qcLen c ]
                 | c <- topCand ]
+            , "bridgeEtymology" .=
+                [ object ["h" .= blHeb l, "g" .= blGrk l] | l <- ety ]
+            , "bridgeRenderCandidates" .=
+                [ object [ "h" .= rcHeb c, "g" .= rcGrk c
+                         , "word" .= rcWord c, "score" .= rcScore c ]
+                | c <- topRend ]
             ]
     encodeFile conceptCachePath cacheVal
     putStrLn $ T.unpack $ T.unlines $
@@ -232,6 +243,14 @@ analyzeMain = do
         <> [ "  " <> refKey (qcA c) <> " ↔ " <> refKey (qcB c)
              <> "  (" <> showt (qcLen c) <> " lemmas)"
            | c <- take 12 cands ]
+        <> [ ""
+           , "bridge:     " <> showt (length ety) <> " etymology links, "
+               <> showt (length rends) <> " rendering candidates ("
+               <> showt (length topRend) <> " cached)"
+           , ""
+           , "top OT↔NT rendering-bridge candidates (1769 equivalences):" ]
+        <> [ "  " <> rcHeb c <> " ↔ " <> rcGrk c <> "  “" <> rcWord c <> "”"
+           | c <- take 12 rends ]
 
 -- | Dev helper: create a signed patch from the command line.
 -- Usage: overlay --mkpatch <book> <chapter> <verse> <original-word> <replacement...>
