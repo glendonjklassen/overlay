@@ -12,9 +12,9 @@ import qualified Data.Vector as V
 import Monomer
 import qualified Monomer.Lens as L
 
+import Overlay.Bridge (applyStore, spannedByBook)
 import Overlay.Canon (bookIds)
 import Overlay.CanonMap
-import Overlay.Concept (ConceptStat (..), conceptStat)
 import Overlay.ConceptMap
 import Overlay.Config
 import Overlay.Corpus
@@ -230,8 +230,8 @@ buildUI env wenv model = widgetTree
         POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj))
-                vref (word, ref)]
+            [strongsPanel env (model ^. amBridge) sc panelPW
+                (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
         PPatches -> [patchesPanel model panelPW]
         PThreads -> [threadsPanel model panelPW]
         PThreadView f -> [threadViewPanel model panelPW f]
@@ -259,8 +259,12 @@ buildUI env wenv model = widgetTree
             [ conceptMapView ConceptMapCfg
                 { cmpBooks = bookIds
                 , cmpSeries =
-                    [ ConceptSeries r (maybe M.empty csByBook
-                        (conceptStat (envConcept env) r))
+                    -- counts span the OT/NT divide via the effective bridge, so a
+                    -- theme shows one footprint across its Hebrew and Greek lemmas
+                    [ ConceptSeries r
+                        (spannedByBook
+                            (applyStore (model ^. amBridge) (envBridge env))
+                            (envConcept env) r)
                     | r <- model ^. amConcepts ]
                 , cmpDivider = 39 / fromIntegral (length bookIds)
                 , cmpOnClick = Just EvCanonGoto

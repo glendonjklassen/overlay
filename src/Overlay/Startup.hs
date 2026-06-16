@@ -31,11 +31,10 @@ import Overlay.Types
 import Overlay.UI
 import Overlay.Weave
 
-corpusPath, strongsPath, conceptCachePath, bridgePath :: FilePath
+corpusPath, strongsPath, conceptCachePath :: FilePath
 corpusPath = "data/kjv.jsonl"
 strongsPath = "data/strongs.json"
 conceptCachePath = "data/concept-cache.json"  -- ^ written by --analyze (gitignored)
-bridgePath = "bridge.json"  -- ^ approved OT↔NT rendering links (curated, committed)
 
 -- ── startup ─────────────────────────────────────────────────────────────────
 
@@ -45,8 +44,9 @@ loadEnv = do
     strongs <- loadStrongs strongsPath >>= either dieLoad pure
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
-    bridge <- buildBridge strongs <$> loadApprovals bridgePath
-    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge
+    let bridge = etymologyBridge strongs            -- static; approvals live in the model
+        candIx = candidateIndex (renderingCandidates corpus)
+    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx
         keys notes <$> loadSettings
   where
     dieLoad err = die $
@@ -63,6 +63,7 @@ guiMain = do
     (serifR, serifI) <- resolveFonts (envSettings env)
     (sansR, sansB) <- resolveSans
     session <- loadSession
+    bridgeStore <- loadApprovals bridgeFile
     let maxCols = clampMaxCols (sessMaxCols session)
         panes = restorePanes (envCorpus env) maxCols (sessPanes session)
         status = T.intercalate " · " (filter (not . T.null)
@@ -71,6 +72,7 @@ guiMain = do
         model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
             status panes Nothing weaves "" Retelling Retelling "" "" Nothing
             (sBodySize (envSettings env)) maxCols 0 (sLineSpacing (envSettings env)) []
+            bridgeStore
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized

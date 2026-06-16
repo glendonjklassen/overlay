@@ -30,11 +30,15 @@ module Overlay.Bridge
     , rejectLink
     , loadApprovals
     , saveApprovals
+    , bridgeFile
     , Bridge
+    , etymologyBridge
+    , applyStore
     , buildBridge
     , bridgedPartners
     , bridgeSize
     , spannedByBook
+    , candidateIndex
     ) where
 
 import Data.Aeson
@@ -176,6 +180,10 @@ instance FromJSON BridgeStore where
         asPair [h, g] = Just (h, g)
         asPair _      = Nothing
 
+-- | The committed file the approvals persist to.
+bridgeFile :: FilePath
+bridgeFile = "bridge.json"
+
 -- | Load the approval store, or an empty one if the file is absent or corrupt
 -- (corruption shouldn't wipe the user's text experience — the bridge just falls
 -- back to etymology-only).
@@ -196,15 +204,30 @@ saveApprovals = encodeFile
 -- the user's approvals and honouring rejections.
 newtype Bridge = Bridge (Map Text (Set Text))
 
-buildBridge :: StrongsDict -> BridgeStore -> Bridge
-buildBridge dict store = Bridge (foldl' add M.empty links)
+insertBoth :: Text -> Text -> Map Text (Set Text) -> Map Text (Set Text)
+insertBoth a b =
+    M.insertWith S.union a (S.singleton b) . M.insertWith S.union b (S.singleton a)
+
+deleteBoth :: Text -> Text -> Map Text (Set Text) -> Map Text (Set Text)
+deleteBoth a b = M.adjust (S.delete b) a . M.adjust (S.delete a) b
+
+-- | The automatic layer: only Strong's etymological cross-references.
+etymologyBridge :: StrongsDict -> Bridge
+etymologyBridge dict =
+    Bridge (foldl' (\m l -> insertBoth (blHeb l) (blGrk l) m) M.empty (etymologyLinks dict))
+
+-- | Overlay the user's approvals (added) and rejections (removed) onto a base
+-- bridge. Used at runtime to fold live model approvals over the static
+-- etymology layer without re-parsing the dictionary.
+applyStore :: BridgeStore -> Bridge -> Bridge
+applyStore store (Bridge m0) = Bridge m2
   where
-    ety = [ (blHeb l, blGrk l) | l <- etymologyLinks dict ]
-    links = filter (`S.notMember` bsRejected store)
-        (ety <> S.toList (bsApproved store))
-    add m (h, g) =
-        M.insertWith S.union h (S.singleton g)
-            (M.insertWith S.union g (S.singleton h) m)
+    m1 = foldl' (\m (h, g) -> insertBoth h g m) m0 (S.toList (bsApproved store))
+    m2 = foldl' (\m (h, g) -> deleteBoth h g m) m1 (S.toList (bsRejected store))
+
+-- | Etymology layer plus a store's approvals, minus its rejections.
+buildBridge :: StrongsDict -> BridgeStore -> Bridge
+buildBridge dict store = applyStore store (etymologyBridge dict)
 
 -- | The Strong's numbers bridged to this one (the other testament's lemmas).
 bridgedPartners :: Bridge -> Text -> [Text]
@@ -221,3 +244,10 @@ spannedByBook :: Bridge -> ConceptIx -> Text -> Map Text Int
 spannedByBook br cix s =
     M.unionsWith (+)
         [ maybe M.empty csByBook (conceptStat cix p) | p <- s : bridgedPartners br s ]
+
+-- | Index rendering candidates under both endpoints, so the panel for any
+-- Strong's number can fetch its candidate partners directly. Per-key order
+-- follows the input's (so a score-sorted input yields score-sorted lists).
+candidateIndex :: [RenderCand] -> Map Text [RenderCand]
+candidateIndex = foldr add M.empty
+  where add c = M.insertWith (<>) (rcHeb c) [c] . M.insertWith (<>) (rcGrk c) [c]

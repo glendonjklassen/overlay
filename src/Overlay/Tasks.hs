@@ -9,6 +9,7 @@ import Data.Time.Clock (getCurrentTime)
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import System.Directory (doesFileExist, removeFile)
 
+import Overlay.Bridge
 import Overlay.Corpus
 import Overlay.Patch
 import Overlay.Refs
@@ -16,6 +17,14 @@ import Overlay.Rule
 import Overlay.Thread
 import Overlay.Types
 import Overlay.Weave
+
+-- | Persist the OT↔NT bridge approvals after an approve/reject.
+saveBridgeTask :: BridgeStore -> IO AppEvent
+saveBridgeTask store = do
+    r <- try (saveApprovals bridgeFile store)
+    pure $ case r of
+        Left (e :: SomeException) -> EvStatus ("bridge save failed: " <> showt e)
+        Right () -> EvStatus "bridge updated"
 
 saveTask :: Env -> EditTarget -> [Text] -> Maybe Text -> IO AppEvent
 saveTask env et repl note = do

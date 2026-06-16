@@ -11,6 +11,7 @@ import qualified Data.Text as T
 import qualified Data.Vector as V
 import Monomer
 
+import Overlay.Bridge (approveLink, rejectLink)
 import Overlay.Canon (bookIds)
 import Overlay.Config
 import Overlay.Corpus
@@ -163,6 +164,12 @@ handleEvent env _wenv _node model evt = case evt of
             s' = (envSettings env) { sLineSpacing = new }
         in [ Model (model & amLineSpacing .~ new)
            , Task (EvNoop <$ saveSettings s') ]
+    EvBridgeApprove h g ->
+        let store' = approveLink (h, g) (model ^. amBridge)
+        in [Model (model & amBridge .~ store'), Task (saveBridgeTask store')]
+    EvBridgeReject h g ->
+        let store' = rejectLink (h, g) (model ^. amBridge)
+        in [Model (model & amBridge .~ store'), Task (saveBridgeTask store')]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

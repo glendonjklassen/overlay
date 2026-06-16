@@ -27,7 +27,8 @@ data Env = Env
     , envStrongs  :: StrongsDict
     , envOccIx    :: OccurrenceIx
     , envConcept  :: ConceptIx       -- ^ per-Strong's counts / distribution / rarity
-    , envBridge   :: Bridge          -- ^ OT↔NT concept links (etymology + approvals)
+    , envBridge   :: Bridge          -- ^ OT↔NT etymology links (static; approvals live in the model)
+    , envBridgeCands :: M.Map Text [RenderCand]  -- ^ rendering candidates indexed by lemma
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings
@@ -99,6 +100,7 @@ data AppModel = AppModel
     , _amLineSpacing :: Double   -- ^ live line spacing, persisted to config.json
     , _amConcepts    :: [Text]   -- ^ active Strong's numbers shown on the concept
                                   -- dispersion strip (1…4); empty hides it
+    , _amBridge      :: BridgeStore  -- ^ user's OT↔NT rendering-link approvals
     } deriving (Eq, Show)
 
 data AppEvent
@@ -136,6 +138,9 @@ data AppEvent
     | EvSetMaxCols Int             -- ^ change the live reading-column limit
     | EvCanonGoto Double           -- ^ jump the active pane to a canon fraction 0…1
     | EvLineSpacing Double         -- ^ nudge line spacing by a delta (0 = reset)
+    -- OT↔NT bridge approvals (canonical (Hebrew, Greek) pair)
+    | EvBridgeApprove Text Text    -- ^ approve a rendering bridge link (H, G)
+    | EvBridgeReject Text Text     -- ^ reject a rendering bridge link (H, G)
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves

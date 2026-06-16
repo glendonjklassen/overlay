@@ -5,10 +5,13 @@ module Overlay.Panels where
 import Control.Lens hiding ((.=))
 import Data.List (find, sortOn)
 import qualified Data.Map.Strict as M
+import Data.Maybe (fromMaybe)
+import qualified Data.Set as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import Monomer
 
+import Overlay.Bridge
 import Overlay.Canon (Book (..), bookById)
 import Overlay.Concept
 import Overlay.Patch
@@ -173,9 +176,9 @@ optionsPanel model pw = panelBox pw $
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> Double -> Double -> [((Text, Int, Int), Text)] -> (Text, Int, Int)
-    -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env sc pw witnesses vref (word, ref) = panel
+    :: Env -> BridgeStore -> Double -> Double -> [((Text, Int, Int), Text)]
+    -> (Text, Int, Int) -> (Text, Text) -> WidgetNode AppModel AppEvent
+strongsPanel env store sc pw witnesses vref (word, ref) = panel
   where
     piw = pw - 24
     entry = M.lookup ref (envStrongs env)
@@ -224,6 +227,50 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
                 <> map bookRow (topBooks 6 cs)
                 <> [hrule]
 
+    -- cross-testament bridge: lemmas tied to this one across the OT/NT divide
+    -- (etymology + your approvals), plus 1769-rendering candidates to bless.
+    effective = applyStore store (envBridge env)
+    partners = bridgedPartners effective ref
+    candsHere = M.findWithDefault [] ref (envBridgeCands env)
+    pendingCands = take 5
+        [ c | c <- candsHere
+        , let p = (rcHeb c, rcGrk c)
+        , p `S.notMember` bsApproved store
+        , p `S.notMember` bsRejected store ]
+    glossOf s = case M.lookup s (envStrongs env) of
+        Nothing -> ""
+        Just e  -> fromMaybe (fromMaybe "" (seXlit e)) (seKjv e)
+    otherOf c = if rcHeb c == ref then rcGrk c else rcHeb c
+
+    partnerRow s = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
+        [ label s `styleBasic` [textSize (12 * sc), textColor (rgbHex "#8FB88A")]
+        , label (glossOf s) `styleBasic` [textSize (10 * sc), textColor muted] ]
+    candRow c = hstack_ [childSpacing_ 6]
+        [ box_ [alignLeft] $ vstack_ [childSpacing_ 1]
+            [ label (otherOf c <> "  “" <> rcWord c <> "”")
+                `styleBasic` [textSize (12 * sc), textColor lightGray]
+            , label (glossOf (otherOf c))
+                `styleBasic` [textSize (10 * sc), textColor muted] ]
+        , filler
+        , button "✓" (EvBridgeApprove (rcHeb c) (rcGrk c))
+            `styleBasic` [textSize (11 * sc), padding 3]
+        , button "✕" (EvBridgeReject (rcHeb c) (rcGrk c))
+            `styleBasic` [textSize (11 * sc), padding 3]
+        ]
+
+    bridgeSection
+        | null partners && null pendingCands = []
+        | otherwise =
+            [ sectionLabel sc "cross-testament" ]
+            <> [ label "linked" `styleBasic` [textSize (10 * sc), textColor muted]
+               | not (null partners) ]
+            <> map partnerRow partners
+            <> [ label "candidates — 1769 renderings"
+                    `styleBasic` [textSize (10 * sc), textColor muted]
+               | not (null pendingCands) ]
+            <> map candRow pendingCands
+            <> [hrule]
+
     -- a cross-referenced verse: jump on click, shared wording underneath
     witRow (r@(b, c, _), lbl) = box_ [onClick (EvGoRef b c), alignLeft]
         (vstack_ [childSpacing_ 1] $
@@ -263,6 +310,7 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
             `styleBasic` [textSize (11 * sc), textColor muted]
         ]
         <> dispersionSection
+        <> bridgeSection
         <> [occRow r | r <- occShown]
         <> [label ("… and " <> showt occMore <> " more")
                 `styleBasic` [textSize (11 * sc), textColor muted]
