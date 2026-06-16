@@ -9,6 +9,8 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Monomer
 
+import Overlay.Canon (Book (..), bookById)
+import Overlay.Concept
 import Overlay.Patch
 import Overlay.Refs
 import Overlay.Render
@@ -185,6 +187,43 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         (label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
+    -- where this concept lives across the canon: testament split, rarity, and
+    -- the books it occurs in most — each row jumps to its first occurrence
+    -- there. Counts are over the Strong's tag (the original-language lemma), so
+    -- the spread is era-faithful, not an artefact of the KJV's varied wording.
+    cstat = conceptStat (envConcept env) ref
+    bookDisplay b = maybe b bookName (M.lookup b bookById)
+    bookRow (b, n) = box_ (onClickRow <> [alignLeft])
+        (hstack
+            [ label (bookDisplay b)
+                `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , filler
+            , label (showt n) `styleBasic` [textSize (11 * sc), textColor muted]
+            ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+      where
+        onClickRow = case find (\(bb, _, _) -> bb == b) occs of
+            Just (bb, c, _) -> [onClick (EvGoRef bb c)]
+            Nothing         -> []
+
+    dispersionSection = case cstat of
+        Nothing -> []
+        Just cs ->
+            let (ot, nt) = testamentSplit cs
+                rarity = case rarityTier cs of
+                    Hapax  -> Just "hapax — occurs once (among tagged words)"
+                    Rare k -> Just ("rare — " <> showt k <> " occurrences")
+                    Common -> Nothing
+            in  [ sectionLabel sc "distribution"
+                , label ("OT " <> showt ot <> "   ·   NT " <> showt nt)
+                    `styleBasic` [textSize (13 * sc), textColor lightGray]
+                ]
+                <> [ label r `styleBasic`
+                        [textSize (11 * sc), textColor (rgbHex "#D2B46E")]
+                   | Just r <- [rarity] ]
+                <> map bookRow (topBooks 6 cs)
+                <> [hrule]
+
     -- a cross-referenced verse: jump on click, shared wording underneath
     witRow (r@(b, c, _), lbl) = box_ [onClick (EvGoRef b c), alignLeft]
         (vstack_ [childSpacing_ 1] $
@@ -223,6 +262,7 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         , label (showt (length occs) <> " occurrences")
             `styleBasic` [textSize (11 * sc), textColor muted]
         ]
+        <> dispersionSection
         <> [occRow r | r <- occShown]
         <> [label ("… and " <> showt occMore <> " more")
                 `styleBasic` [textSize (11 * sc), textColor muted]
