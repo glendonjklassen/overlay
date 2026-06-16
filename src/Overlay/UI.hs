@@ -12,7 +12,7 @@ import qualified Data.Vector as V
 import Monomer
 import qualified Monomer.Lens as L
 
-import Overlay.Bridge (applyStore, spannedByBook)
+import Overlay.Bridge (crossPartners, unionByBook)
 import Overlay.Canon (bookIds)
 import Overlay.CanonMap
 import Overlay.ConceptMap
@@ -252,20 +252,22 @@ buildUI env wenv model = widgetTree
             otNT = 39  -- Matthew is the 40th book (index 39)
 
     -- the concept dispersion strip: shown above the canon map while a Strong's
-    -- number is active, sharing its book-fraction coordinates so the two line up
+    -- number is active, sharing its book-fraction coordinates so the two line up.
+    -- Each concept paints its own footprint plus, in a distinct colour, the
+    -- footprint of its cross-testament partners — so an OT-only (or NT-only) word
+    -- still shows its bridged lemmas across the seam instead of a bare gap.
+    conceptSeriesFor r =
+        let cix = envConcept env
+            partners = crossPartners (envBridge env) (envBridgeCands env) 6 r
+        in ConceptSeries r (unionByBook cix [r])
+            : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
+              | not (null partners) ]
     conceptStrip
         | null (model ^. amConcepts) = []
         | otherwise =
             [ conceptMapView ConceptMapCfg
                 { cmpBooks = bookIds
-                , cmpSeries =
-                    -- counts span the OT/NT divide via the effective bridge, so a
-                    -- theme shows one footprint across its Hebrew and Greek lemmas
-                    [ ConceptSeries r
-                        (spannedByBook
-                            (applyStore (model ^. amBridge) (envBridge env))
-                            (envConcept env) r)
-                    | r <- model ^. amConcepts ]
+                , cmpSeries = concatMap conceptSeriesFor (model ^. amConcepts)
                 , cmpDivider = 39 / fromIntegral (length bookIds)
                 , cmpOnClick = Just EvCanonGoto
                 } ]

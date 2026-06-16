@@ -39,12 +39,14 @@ module Overlay.Bridge
     , bridgeSize
     , spannedByBook
     , candidateIndex
+    , crossPartners
+    , unionByBook
     ) where
 
 import Data.Aeson
 import Data.Char (isDigit, isLetter)
 import Data.Either (fromRight)
-import Data.List (foldl', partition, sortBy)
+import Data.List (foldl', nub, partition, sortBy)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
@@ -251,3 +253,18 @@ spannedByBook br cix s =
 candidateIndex :: [RenderCand] -> Map Text [RenderCand]
 candidateIndex = foldr add M.empty
   where add c = M.insertWith (<>) (rcHeb c) [c] . M.insertWith (<>) (rcGrk c) [c]
+
+-- | The cross-testament partner lemmas for a Strong's number: its etymology
+-- links plus its top-@n@ rendering candidates (the other-testament side of
+-- each), de-duplicated. Used to paint the bridge's footprint on the strip.
+crossPartners :: Bridge -> Map Text [RenderCand] -> Int -> Text -> [Text]
+crossPartners br candIx n s =
+    nub (bridgedPartners br s <> take n
+        [ if rcHeb c == s then rcGrk c else rcHeb c
+        | c <- M.findWithDefault [] s candIx ])
+
+-- | Per-book occurrence counts summed over a set of lemmas (e.g. a concept's
+-- bridged partners), for one combined footprint.
+unionByBook :: ConceptIx -> [Text] -> Map Text Int
+unionByBook cix ps =
+    M.unionsWith (+) [ maybe M.empty csByBook (conceptStat cix p) | p <- ps ]
