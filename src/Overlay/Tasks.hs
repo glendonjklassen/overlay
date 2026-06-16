@@ -154,6 +154,16 @@ editWeaveTask lw f msg = do
             pure (EvStatus ("weave save failed: " <> showt e))
         Right () -> reloadWeaves msg
 
+-- | Persist an already-updated weave without reloading. The model has already
+-- been changed optimistically (in the event handler), so there is no reload
+-- race when several edits land in quick succession — this just writes to disk.
+saveWeaveTask :: FilePath -> Weave -> IO AppEvent
+saveWeaveTask path w = do
+    r <- try (writeWeave path w)
+    pure $ case r of
+        Left (e :: SomeException) -> EvStatus ("weave save failed: " <> showt e)
+        Right () -> EvNoop
+
 deleteWeaveTask :: FilePath -> IO AppEvent
 deleteWeaveTask path = do
     r <- try (removeFile path)

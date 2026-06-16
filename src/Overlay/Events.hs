@@ -205,19 +205,18 @@ handleEvent env _wenv _node model evt = case evt of
                 Nothing ->
                     [Model clear, Task (newWeaveTask (autoName selected)
                         (model ^. amWeaveKind) (cTokVersion (envCorpus env)) links)]
-    EvSetWeaveKind k -> withInspected $ \lw ->
-        [Task (editWeaveTask lw (\w -> w { wKind = k }) "kind set")]
-    EvSaveWeaveNotes -> withInspected $ \lw ->
-        [Task (editWeaveTask lw (\w -> w { wNotes = model ^. amWeaveNotes })
-            "notes saved")]
-    EvRemoveLink l -> withInspected $ \lw ->
-        [Task (editWeaveTask lw (removeLink l) "link removed")]
-    EvApproveLink l val -> withInspected $ \lw ->
-        [Task (editWeaveTask lw (setLinkApproval l val)
-            (if val then "verse link approved" else "approval cleared"))]
-    EvApproveWeave val -> withInspected $ \lw ->
-        [Task (editWeaveTask lw (setAllApproval val)
-            (if val then "whole weave approved" else "approval cleared"))]
+    EvSetWeaveKind k -> withInspectedFile $ \file ->
+        editWeaveFile file (\w -> w { wKind = k }) "kind set"
+    EvSaveWeaveNotes -> withInspectedFile $ \file ->
+        editWeaveFile file (\w -> w { wNotes = model ^. amWeaveNotes }) "notes saved"
+    EvRemoveLink l -> withInspectedFile $ \file ->
+        editWeaveFile file (removeLink l) "link removed"
+    EvApproveLink l val -> withInspectedFile $ \file ->
+        editWeaveFile file (setLinkApproval l val)
+            (if val then "verse link approved" else "approval cleared")
+    EvApproveWeave val -> withInspectedFile $ \file ->
+        editWeaveFile file (setAllApproval val)
+            (if val then "whole weave approved" else "approval cleared")
     EvCombineWeave name -> withInspected $ \lw ->
         case find ((== name) . wName . lwWeave) (model ^. amWeaves) of
             Nothing -> [Model (model & amStatus .~ "pick a weave to combine")]
@@ -238,14 +237,10 @@ handleEvent env _wenv _node model evt = case evt of
         in [Model (model & amCompare ?~ (ref, x, y)) | touched]
     EvCloseCompare -> [Model (model & amCompare .~ Nothing)]
     EvApproveLinkIn file l val ->
-        case find ((== file) . lwFile) (model ^. amWeaves) of
-            Just lw -> [Task (editWeaveTask lw (setLinkApproval l val)
-                (if val then "witness approved" else "approval cleared"))]
-            Nothing -> []
+        editWeaveFile file (setLinkApproval l val)
+            (if val then "witness approved" else "approval cleared")
     EvRejectLinkIn file l ->
-        case find ((== file) . lwFile) (model ^. amWeaves) of
-            Just lw -> [Task (editWeaveTask lw (removeLink l) "witness rejected")]
-            Nothing -> []
+        editWeaveFile file (removeLink l) "witness rejected"
     EvZoom delta ->
         let new | delta == 0 = sBodySize defaultSettings
                 | otherwise  = max 10 (min 40 (model ^. amBodySize + delta))
@@ -298,6 +293,26 @@ handleEvent env _wenv _node model evt = case evt of
             maybe [Model (model & amStatus .~ "weave not found")] f
                 (find ((== file) . lwFile) (model ^. amWeaves))
         _ -> []
+
+    withInspectedFile g = case model ^. amPanel of
+        PWeaveView file -> g file
+        _ -> []
+
+    -- Apply a pure edit to one weave: update the model in place (so the change
+    -- shows at once and the next edit builds on it — no reload race), then
+    -- persist to disk best-effort. Used for every per-weave edit except combine.
+    editWeaveFile file f msg =
+        case find ((== file) . lwFile) (model ^. amWeaves) of
+            Nothing -> [Model (model & amStatus .~ "weave not found")]
+            Just lw ->
+                let w' = f (lwWeave lw)
+                in [ Model (model
+                        & amWeaves %~ map (\o ->
+                            if lwFile o == file then o { lwWeave = w' } else o)
+                        & amStatus .~ msg
+                        & (if model ^. amPanel == PWeaveView file
+                             then amWeaveViewKind .~ wKind w' else id))
+                   , Task (saveWeaveTask file w') ]
 
     weaveVerses lw = concatMap (\(Link a b _ _) -> [a, b]) (wLinks (lwWeave lw))
 
