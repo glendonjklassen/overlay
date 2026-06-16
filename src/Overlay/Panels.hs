@@ -240,17 +240,33 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
     glossOf s = case M.lookup s (envStrongs env) of
         Nothing -> ""
         Just e  -> fromMaybe (fromMaybe "" (seXlit e)) (seKjv e)
+    -- the other-testament lemma a rendering candidate points at, from here
+    otherOf c = if rcHeb c == ref then rcGrk c else rcHeb c
+    -- 1769-rendering candidates for this lemma, strongest first, minus any the
+    -- etymology layer already links (no duplicates). Read-only — sources attest,
+    -- the reader doesn't approve.
+    candsHere = take 6
+        [ c | c <- M.findWithDefault [] ref (envBridgeCands env)
+        , otherOf c `notElem` partners ]
 
     partnerRow s = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
         [ label s `styleBasic` [textSize (12 * sc), textColor (rgbHex "#8FB88A")]
         , label (glossOf s) `styleBasic` [textSize (10 * sc), textColor muted] ]
+    candRow c = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
+        [ label (otherOf c <> "   “" <> rcWord c <> "”")
+            `styleBasic` [textSize (12 * sc), textColor lightGray]
+        , label (glossOf (otherOf c))
+            `styleBasic` [textSize (10 * sc), textColor muted] ]
 
     bridgeSection
-        | null partners = []
+        | null partners && null candsHere = []
         | otherwise =
-            [ panelSection sc "cross-testament"
-            , sectionLabel sc "linked across the testaments · via Strong's etymology" ]
+            [ panelSection sc "cross-testament" ]
+            <> [ sectionLabel sc "linked · Strong's etymology" | not (null partners) ]
             <> map partnerRow partners
+            <> [ sectionLabel sc "candidates · 1769 renderings (weaker, single source)"
+               | not (null candsHere) ]
+            <> map candRow candsHere
             <> [hrule]
 
     -- a cross-referenced verse: jump on click, shared wording underneath
