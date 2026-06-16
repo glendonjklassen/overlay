@@ -31,10 +31,11 @@ import Overlay.Types
 import Overlay.UI
 import Overlay.Weave
 
-corpusPath, strongsPath, conceptCachePath :: FilePath
+corpusPath, strongsPath, conceptCachePath, bridgePath :: FilePath
 corpusPath = "data/kjv.jsonl"
 strongsPath = "data/strongs.json"
 conceptCachePath = "data/concept-cache.json"  -- ^ written by --analyze (gitignored)
+bridgePath = "bridge.json"  -- ^ approved OT↔NT rendering links (curated, committed)
 
 -- ── startup ─────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,8 @@ loadEnv = do
     strongs <- loadStrongs strongsPath >>= either dieLoad pure
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
-    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus)
+    bridge <- buildBridge strongs <$> loadApprovals bridgePath
+    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge
         keys notes <$> loadSettings
   where
     dieLoad err = die $
@@ -148,6 +150,8 @@ checkMain = do
         , "strongs:  " <> showt (M.size (envStrongs env))
         , "concepts: " <> showt (M.size cix) <> " Strong's numbers tagged, "
             <> showt (length (hapaxes cix)) <> " hapax"
+        , "bridge:   " <> showt (bridgeSize (envBridge env))
+            <> " linked Strong's numbers (etymology + approvals)"
         , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"

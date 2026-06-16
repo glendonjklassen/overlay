@@ -23,19 +23,36 @@ module Overlay.Bridge
     , RenderCand (..)
     , renderingCandidates
     , hebRefsIn
+      -- * Persisted approvals and the resolved bridge
+    , BridgeStore (..)
+    , emptyStore
+    , approveLink
+    , rejectLink
+    , loadApprovals
+    , saveApprovals
+    , Bridge
+    , buildBridge
+    , bridgedPartners
+    , bridgeSize
+    , spannedByBook
     ) where
 
+import Data.Aeson
 import Data.Char (isDigit, isLetter)
+import Data.Either (fromRight)
 import Data.List (foldl', partition, sortBy)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
+import Data.Maybe (mapMaybe)
 import Data.Ord (Down (..), comparing)
 import Data.Set (Set)
 import qualified Data.Set as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Vector as V
+import System.Directory (doesFileExist)
 
+import Overlay.Concept (ConceptIx, ConceptStat (..), conceptStat)
 import Overlay.Corpus
 import Overlay.Strongs
 
@@ -117,3 +134,90 @@ renderingCandidates corpus =
                 acc
                 [ (h, g) | h <- S.toList hs, g <- S.toList gs ]
     stronger new old = if rcScore new > rcScore old then new else old
+
+-- ── persisted approvals ─────────────────────────────────────────────────────
+
+-- | The user's curation of the rendering candidates: which (H, G) pairs they
+-- have blessed, and which they have struck out (so they don't resurface). Each
+-- pair is canonical (Hebrew first). Etymology links are not stored — they are
+-- always active — but an explicit rejection still overrides one.
+data BridgeStore = BridgeStore
+    { bsApproved :: !(Set (Text, Text))
+    , bsRejected :: !(Set (Text, Text))
+    } deriving (Eq, Show)
+
+emptyStore :: BridgeStore
+emptyStore = BridgeStore S.empty S.empty
+
+approveLink :: (Text, Text) -> BridgeStore -> BridgeStore
+approveLink p bs = bs
+    { bsApproved = S.insert p (bsApproved bs)
+    , bsRejected = S.delete p (bsRejected bs) }
+
+rejectLink :: (Text, Text) -> BridgeStore -> BridgeStore
+rejectLink p bs = bs
+    { bsRejected = S.insert p (bsRejected bs)
+    , bsApproved = S.delete p (bsApproved bs) }
+
+instance ToJSON BridgeStore where
+    toJSON bs = object
+        [ "format"   .= ("overlay-bridge-v1" :: Text)
+        , "approved" .= map asList (S.toList (bsApproved bs))
+        , "rejected" .= map asList (S.toList (bsRejected bs)) ]
+      where asList (h, g) = [h, g]
+
+instance FromJSON BridgeStore where
+    parseJSON = withObject "BridgeStore" $ \o -> do
+        ap <- o .:? "approved" .!= []
+        rj <- o .:? "rejected" .!= []
+        pure (BridgeStore (asSet ap) (asSet rj))
+      where
+        asSet = S.fromList . mapMaybe asPair
+        asPair [h, g] = Just (h, g)
+        asPair _      = Nothing
+
+-- | Load the approval store, or an empty one if the file is absent or corrupt
+-- (corruption shouldn't wipe the user's text experience — the bridge just falls
+-- back to etymology-only).
+loadApprovals :: FilePath -> IO BridgeStore
+loadApprovals path = do
+    present <- doesFileExist path
+    if not present
+        then pure emptyStore
+        else fromRight emptyStore <$> eitherDecodeFileStrict path
+
+saveApprovals :: FilePath -> BridgeStore -> IO ()
+saveApprovals = encodeFile
+
+-- ── the resolved bridge ─────────────────────────────────────────────────────
+
+-- | The active bridge: each Strong's number to its bridged partners across the
+-- testaments, both directions, after combining automatic etymology links with
+-- the user's approvals and honouring rejections.
+newtype Bridge = Bridge (Map Text (Set Text))
+
+buildBridge :: StrongsDict -> BridgeStore -> Bridge
+buildBridge dict store = Bridge (foldl' add M.empty links)
+  where
+    ety = [ (blHeb l, blGrk l) | l <- etymologyLinks dict ]
+    links = filter (`S.notMember` bsRejected store)
+        (ety <> S.toList (bsApproved store))
+    add m (h, g) =
+        M.insertWith S.union h (S.singleton g)
+            (M.insertWith S.union g (S.singleton h) m)
+
+-- | The Strong's numbers bridged to this one (the other testament's lemmas).
+bridgedPartners :: Bridge -> Text -> [Text]
+bridgedPartners (Bridge m) s = S.toList (M.findWithDefault S.empty s m)
+
+-- | How many Strong's numbers participate in at least one bridge link.
+bridgeSize :: Bridge -> Int
+bridgeSize (Bridge m) = M.size m
+
+-- | A concept's per-book counts unified with its bridged partners', so a theme
+-- like \"righteousness\" shows a single canon-wide footprint spanning the
+-- Hebrew (OT) and Greek (NT) lemmas the bridge ties together.
+spannedByBook :: Bridge -> ConceptIx -> Text -> Map Text Int
+spannedByBook br cix s =
+    M.unionsWith (+)
+        [ maybe M.empty csByBook (conceptStat cix p) | p <- s : bridgedPartners br s ]

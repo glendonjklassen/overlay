@@ -635,6 +635,34 @@ main = hspec $ do
             -- "earth" only ever appears with a Hebrew lemma, so H776 has no partner
             heb `shouldNotContain` ["H776"]
 
+        it "resolves a bidirectional bridge from etymology + approvals" $ do
+            let store = approveLink ("H157", "G26") emptyStore
+                br = buildBridge bridgeDict store
+            -- etymology link, both directions
+            bridgedPartners br "H31" `shouldBe` ["G10"]
+            bridgedPartners br "G10" `shouldBe` ["H31"]
+            -- approved rendering link, both directions
+            bridgedPartners br "H157" `shouldBe` ["G26"]
+            bridgedPartners br "G26" `shouldBe` ["H157"]
+
+        it "honours rejection over an approval" $ do
+            let store = rejectLink ("H31", "G10") (approveLink ("H31", "G10") emptyStore)
+                br = buildBridge bridgeDict store
+            bridgedPartners br "H31" `shouldBe` []
+
+        it "round-trips the approval store through JSON" $ do
+            let store = rejectLink ("H1", "G2")
+                    (approveLink ("H157", "G26") emptyStore)
+            decode (encode store) `shouldBe` Just store
+
+        it "spans per-book counts across bridged partners" $ do
+            let cix = M.fromList
+                    [ ("H6664", ConceptStat 5 (M.singleton "Ps" 5))
+                    , ("G1343", ConceptStat 3 (M.singleton "Rom" 3)) ]
+                br = buildBridge bridgeDict (approveLink ("H6664", "G1343") emptyStore)
+            spannedByBook br cix "H6664"
+                `shouldBe` M.fromList [("Ps", 5), ("Rom", 3)]
+
     describe "canon" $ do
         it "holds all 66 books in canonical order" $ do
             length books `shouldBe` 66

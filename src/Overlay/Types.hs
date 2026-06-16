@@ -7,6 +7,7 @@ import Control.Lens
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
 
+import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
@@ -26,6 +27,7 @@ data Env = Env
     , envStrongs  :: StrongsDict
     , envOccIx    :: OccurrenceIx
     , envConcept  :: ConceptIx       -- ^ per-Strong's counts / distribution / rarity
+    , envBridge   :: Bridge          -- ^ OT↔NT concept links (etymology + approvals)
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings
