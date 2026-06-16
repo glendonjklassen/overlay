@@ -230,7 +230,7 @@ buildUI env wenv model = widgetTree
         POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env (model ^. amBridge) sc panelPW
+            [strongsPanel env sc panelPW
                 (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
         PPatches -> [patchesPanel model panelPW]
         PThreads -> [threadsPanel model panelPW]

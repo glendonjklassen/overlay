@@ -3,9 +3,10 @@
 module Overlay.Panels where
 
 import Control.Lens hiding ((.=))
-import Data.List (find, sortOn)
+import Data.List (find, nub, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
+import Data.Ord (Down (..))
 import Data.Text (Text)
 import qualified Data.Text as T
 import Monomer
@@ -181,9 +182,9 @@ optionsPanel model pw = panelBox pw $
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> BridgeStore -> Double -> Double -> [((Text, Int, Int), Text)]
+    :: Env -> Double -> Double -> [((Text, Int, Int), Text)]
     -> (Text, Int, Int) -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env store sc pw witnesses vref (word, ref) = panel
+strongsPanel env sc pw witnesses vref (word, ref) = panel
   where
     piw = pw - 24
     entry = M.lookup ref (envStrongs env)
@@ -235,38 +236,41 @@ strongsPanel env store sc pw witnesses vref (word, ref) = panel
     -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,
     -- not the reader's own judgement. Today that's Strong's 1890 etymology; the
     -- LXX / semantic-corroboration sources land with the multi-source bridge.
-    effective = applyStore store (envBridge env)
-    partners = bridgedPartners effective ref
+    -- not the reader's own judgement.
     glossOf s = case M.lookup s (envStrongs env) of
         Nothing -> ""
         Just e  -> fromMaybe (fromMaybe "" (seXlit e)) (seKjv e)
-    -- the other-testament lemma a rendering candidate points at, from here
     otherOf c = if rcHeb c == ref then rcGrk c else rcHeb c
-    -- 1769-rendering candidates for this lemma, strongest first, minus any the
-    -- etymology layer already links (no duplicates). Read-only — sources attest,
-    -- the reader doesn't approve.
-    candsHere = take 6
-        [ c | c <- M.findWithDefault [] ref (envBridgeCands env)
-        , otherOf c `notElem` partners ]
 
-    partnerRow s = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
-        [ label s `styleBasic` [textSize (12 * sc), textColor (rgbHex "#8FB88A")]
-        , label (glossOf s) `styleBasic` [textSize (10 * sc), textColor muted] ]
-    candRow c = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
-        [ label (otherOf c <> "   “" <> rcWord c <> "”")
-            `styleBasic` [textSize (12 * sc), textColor lightGray]
-        , label (glossOf (otherOf c))
-            `styleBasic` [textSize (10 * sc), textColor muted] ]
+    -- Fuse the sources into one ranked list. Each witness contributes a
+    -- confidence c_s = trust_s · weight; we combine by noisy-OR (1 - Π(1-c_s)),
+    -- so a link two sources vouch for outranks a single-source guess. As more
+    -- FOSS sources land they just add attestations here.
+    attests :: [(Text, Double, Text)]   -- (other lemma, confidence, source tag)
+    attests =
+        [ (o, 0.90, "etymology") | o <- bridgedPartners (envBridge env) ref ]
+        <> [ (otherOf c, 0.55 * min 1 (2 * rcScore c), "1769 “" <> rcWord c <> "”")
+           | c <- M.findWithDefault [] ref (envBridgeCands env) ]
+    fused = sortOn (Down . snd) $ M.toList $
+        M.fromListWith comb [ (o, (c, [tag])) | (o, c, tag) <- attests ]
+      where comb (c1, t1) (c2, t2) = (1 - (1 - c1) * (1 - c2), t1 <> t2)
+    confColor c
+        | c >= 0.7  = rgbHex "#8FB88A"   -- corroborated / etymology — strong
+        | c >= 0.4  = rgbHex "#C9A86A"   -- a distinctive single source — fair
+        | otherwise = rgbHex "#9A9488"   -- weak
+    xRow (o, (c, tags)) = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
+        [ hstack_ [childSpacing_ 6]
+            [ label o `styleBasic` [textSize (12 * sc), textColor (confColor c)]
+            , label (glossOf o) `styleBasic` [textSize (10 * sc), textColor muted] ]
+        , label (T.intercalate " · " (nub tags))
+            `styleBasic` [textSize (9 * sc), textColor muted] ]
 
     bridgeSection
-        | null partners && null candsHere = []
+        | null fused = []
         | otherwise =
-            [ panelSection sc "cross-testament" ]
-            <> [ sectionLabel sc "linked · Strong's etymology" | not (null partners) ]
-            <> map partnerRow partners
-            <> [ sectionLabel sc "candidates · 1769 renderings (weaker, single source)"
-               | not (null candsHere) ]
-            <> map candRow candsHere
+            [ panelSection sc "cross-testament"
+            , sectionLabel sc "Hebrew/Greek links by source · strongest first" ]
+            <> map xRow (take 8 fused)
             <> [hrule]
 
     -- a cross-referenced verse: jump on click, shared wording underneath
