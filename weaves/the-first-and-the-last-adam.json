@@ -1,12 +1,1 @@
-{
-  "format": "overlay-weave-v2",
-  "name": "The first and the last Adam",
-  "kind": "quotation",
-  "tokenization": "kjv1769-tok2",
-  "notes": "Paul cites the creation of man from Genesis to set up his teaching on the resurrection body. Genesis records that the LORD God formed man and breathed into him, so that man became a living soul; Paul appeals to this written word, naming the first man Adam as the one made a living soul. The shared core is the exact phrase 'a living soul', the natural life given at creation. Paul then adds a clause with no counterpart in Genesis, that the last Adam was made a quickening spirit; this added clause about the last Adam reads in place as Paul's own complementary teaching. Genesis keeps its unique detail of the dust of the ground and the breath of life breathed into his nostrils.",
-  "created": "2026-06-15T00:00:00Z",
-  "approved": false,
-  "links": [
-    {"a": "Gen 2:7", "b": "1Cor 15:45", "label": "a living soul"}
-  ]
-}
+{"approved":true,"created":"2026-06-15T00:00:00Z","format":"overlay-weave-v2","kind":"quotation","links":[{"a":"Gen 2:7","approved":true,"b":"1Cor 15:45","label":"a living soul"}],"name":"The first and the last Adam","notes":"Paul cites the creation of man from Genesis to set up his teaching on the resurrection body. Genesis records that the LORD God formed man and breathed into him, so that man became a living soul; Paul appeals to this written word, naming the first man Adam as the one made a living soul. The shared core is the exact phrase 'a living soul', the natural life given at creation. Paul then adds a clause with no counterpart in Genesis, that the last Adam was made a quickening spirit; this added clause about the last Adam reads in place as Paul's own complementary teaching. Genesis keeps its unique detail of the dust of the ground and the breath of life breathed into his nostrils.","tokenization":"kjv1769-tok2"}
