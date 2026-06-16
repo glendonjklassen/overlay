@@ -482,7 +482,7 @@ weaveViewPanel model pw file =
                  `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
                      , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
                  `styleHover` [bgColor (if lApproved l then rgbHex "#4B6344" else rgbHex "#524A3C")]
-             , button "x" (EvRemoveLink l) `styleBasic` [textSize (10 * sc), padding 2]
+             , button "remove" (EvRemoveLink l) `styleBasic` [textSize (10 * sc), padding 2]
              ] )
     combineSeg =
         [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]

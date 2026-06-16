@@ -196,7 +196,7 @@ buildUI env wenv model = widgetTree
           <> [ button "+ pane" (EvAddPane i)
                 `styleBasic` [textSize (11 * sc), padding 3]
              | npanes < clampMaxCols (model ^. amMaxCols) ]
-          <> [ button "x" (EvClosePane i)
+          <> [ button "✕" (EvClosePane i)
                 `styleBasic` [textSize (11 * sc), padding 3, textColor (rgbHex "#B07A7A")]
              | npanes > 1 ]
         ) `styleBasic` [padding 4, bgColor (rgbHex "#202225")]

@@ -124,9 +124,7 @@ handleEvent env _wenv _node model evt = case evt of
     EvSetMaxCols n ->
         let m = clampMaxCols n
         in [Model (model & amMaxCols .~ m & amPanes %~ take m), saveLater]
-    EvToggleWeaves ->
-        [Model (model & amPanel %~ \pm ->
-            if pm == PWeaves then PNone else PWeaves)]
+    EvToggleWeaves -> [Model (model & amPanel %~ toggleWeaves)]
     EvShowWeaves -> [Model (model & amPanel .~ PWeaves)]
     EvOpenWeave file -> case find ((== file) . lwFile) (model ^. amWeaves) of
         Nothing -> [Model (model & amStatus .~ "weave not found")]
@@ -224,6 +222,13 @@ handleEvent env _wenv _node model evt = case evt of
         PThreads -> PNone
         PThreadView _ -> PNone
         _ -> PThreads
+
+    -- mirror toggleThreads: the header weaves button also collapses the weave
+    -- *detail* view, not just the list
+    toggleWeaves pm = case pm of
+        PWeaves -> PNone
+        PWeaveView _ -> PNone
+        _ -> PWeaves
 
     adjustThreadPanel lts pm = case pm of
         PEdit _ -> PNone
