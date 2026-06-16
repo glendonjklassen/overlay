@@ -30,8 +30,12 @@ module Overlay.Weave
       -- graph ops
     , canonLink
     , canonLinkL
+    , linkKey
     , addLinks
     , removeLink
+    , setLinkApproval
+    , setAllApproval
+    , approvedCount
     , combine
     , components
     , componentOf
@@ -69,8 +73,23 @@ type VRef = (Text, Int, Int)
 -- reads as A —(Jim)→ B instead of a rats' nest. Two edges between the same pair
 -- of verses with different labels are distinct edges; an empty label is the
 -- plain, unlabelled case (and the only case older files produce).
-data Link = Link { lA :: !VRef, lB :: !VRef, lLabel :: !Text }
-    deriving (Eq, Ord, Show)
+--
+-- 'lApproved' marks that a human reviewer has blessed this single
+-- correspondence. It is deliberately excluded from 'Eq'/'Ord' (see below) so
+-- that an edge's identity is just its endpoints and label: toggling approval
+-- never creates a duplicate edge, and 'removeLink' matches regardless of state.
+data Link = Link { lA :: !VRef, lB :: !VRef, lLabel :: !Text, lApproved :: !Bool }
+    deriving (Show)
+
+-- | Edge identity: endpoints and label, ignoring the approval flag.
+linkKey :: Link -> (VRef, VRef, Text)
+linkKey (Link a b lbl _) = (a, b, lbl)
+
+instance Eq Link where
+    x == y = linkKey x == linkKey y
+
+instance Ord Link where
+    compare x y = compare (linkKey x) (linkKey y)
 
 -- | Reading-order key for a verse (book in canon order, then chapter, verse).
 vrKey :: VRef -> (Int, Int, Int)
@@ -84,8 +103,8 @@ canonLink a b = canonLinkL a b ""
 -- property of the edge, so reordering the endpoints leaves it untouched.
 canonLinkL :: VRef -> VRef -> Text -> Link
 canonLinkL a b lbl
-    | vrKey a <= vrKey b = Link a b lbl
-    | otherwise          = Link b a lbl
+    | vrKey a <= vrKey b = Link a b lbl False
+    | otherwise          = Link b a lbl False
 
 -- | What sort of parallel a weave records. Stored as a frozen token.
 data WeaveKind = Retelling | Typological | Prophecy | Quotation
@@ -117,18 +136,20 @@ parseKind t = case t of
     _           -> Nothing
 
 instance ToJSON Link where
-    toJSON (Link a b lbl) = object $
+    toJSON (Link a b lbl approved) = object $
         ["a" .= refKey a, "b" .= refKey b]
         <> ["label" .= lbl | not (T.null lbl)]
+        <> ["approved" .= True | approved]
 
 instance FromJSON Link where
     parseJSON = withObject "Link" $ \o -> do
         aT <- o .: "a"
         bT <- o .: "b"
         lbl <- o .:? "label" .!= ""
+        approved <- o .:? "approved" .!= False
         a <- maybe (fail ("bad link ref: " <> T.unpack aT)) pure (parseRefKey aT)
         b <- maybe (fail ("bad link ref: " <> T.unpack bT)) pure (parseRefKey bT)
-        pure (canonLinkL a b lbl)
+        pure (canonLinkL a b lbl) { lApproved = approved }
 
 data Weave = Weave
     { wName       :: !Text
@@ -140,12 +161,10 @@ data Weave = Weave
     , wApproved   :: !Bool       -- ^ has the human arbiter approved it? (default
                                  -- False: every weave is AI-made study material
                                  -- until a person reviews and blesses it)
-    , wTension    :: !Text       -- ^ note of scholarly/theological tension or
-                                 -- controversy in the parallel; "" when none
     } deriving (Eq, Show)
 
 instance ToJSON Weave where
-    toJSON w = object $
+    toJSON w = object
         [ "format" .= ("overlay-weave-v2" :: Text)
         , "name" .= wName w
         , "kind" .= kindToken (wKind w)
@@ -155,7 +174,6 @@ instance ToJSON Weave where
         , "approved" .= wApproved w
         , "links" .= wLinks w
         ]
-        <> [ "tension" .= wTension w | not (T.null (wTension w)) ]
 
 instance FromJSON Weave where
     parseJSON = withObject "Weave" $ \o -> do
@@ -173,7 +191,6 @@ instance FromJSON Weave where
             <*> o .: "created"
             <*> o .:? "links" .!= []
             <*> o .:? "approved" .!= False
-            <*> o .:? "tension" .!= ""
 
 data LoadedWeave = LoadedWeave
     { lwFile  :: !FilePath
@@ -182,16 +199,41 @@ data LoadedWeave = LoadedWeave
 
 -- | A fresh, empty weave (no links yet).
 emptyWeave :: Text -> WeaveKind -> Text -> Text -> Weave
-emptyWeave name kind tokv created = Weave name kind tokv "" created [] False ""
+emptyWeave name kind tokv created = Weave name kind tokv "" created [] False
 
 -- ── graph operations ────────────────────────────────────────────────────────
 
--- | Add links, keeping the set deduplicated and sorted.
+-- | Add links, keeping the set deduplicated and sorted. New links arrive
+-- unapproved, so a fully-approved weave drops back to unapproved when extended.
 addLinks :: [Link] -> Weave -> Weave
-addLinks new w = w { wLinks = Set.toList (Set.fromList (wLinks w <> new)) }
+addLinks new w = reapprove w { wLinks = Set.toList (Set.fromList (wLinks w <> new)) }
 
 removeLink :: Link -> Weave -> Weave
-removeLink l w = w { wLinks = filter (/= l) (wLinks w) }
+removeLink l w = reapprove w { wLinks = filter (/= l) (wLinks w) }
+
+-- | Recompute the weave-level approval flag from its links: a weave is approved
+-- exactly when it has links and every one of them is approved. This keeps the
+-- whole-weave flag and the per-link flags in one consistent story.
+reapprove :: Weave -> Weave
+reapprove w = w { wApproved = not (null (wLinks w)) && all lApproved (wLinks w) }
+
+-- | Set the approval of a single edge (matched by identity, ignoring its
+-- current approval), then recompute the weave-level flag.
+setLinkApproval :: Link -> Bool -> Weave -> Weave
+setLinkApproval target val w =
+    reapprove w { wLinks = map flip' (wLinks w) }
+  where
+    flip' l | l == target = l { lApproved = val }
+            | otherwise   = l
+
+-- | Approve or unapprove every edge at once (the whole-weave shortcut).
+setAllApproval :: Bool -> Weave -> Weave
+setAllApproval val w =
+    reapprove w { wLinks = map (\l -> l { lApproved = val }) (wLinks w) }
+
+-- | How many edges are approved.
+approvedCount :: Weave -> Int
+approvedCount = length . filter lApproved . wLinks
 
 -- | Union two weaves' edges into the first (the transitive merge: shared
 -- verses join their components). The first weave's metadata is kept.
@@ -202,9 +244,9 @@ combine a b = addLinks (wLinks b) a
 components :: [Link] -> [[VRef]]
 components links = go (Set.fromList verts) []
   where
-    verts = concatMap (\(Link a b _) -> [a, b]) links
+    verts = concatMap (\(Link a b _ _) -> [a, b]) links
     adj = M.fromListWith (<>)
-        (concatMap (\(Link a b _) -> [(a, [b]), (b, [a])]) links)
+        (concatMap (\(Link a b _ _) -> [(a, [b]), (b, [a])]) links)
     go remaining acc = case Set.lookupMin remaining of
         Nothing -> reverse acc
         Just v  -> let comp = bfs [v] Set.empty
@@ -225,7 +267,7 @@ componentOf links v =
 -- rendering: edges of weaves that touch what is currently on screen).
 linksTouching :: Set VRef -> Weave -> [Link]
 linksTouching vs w =
-    [ l | l@(Link a b _) <- wLinks w, a `Set.member` vs || b `Set.member` vs ]
+    [ l | l@(Link a b _ _) <- wLinks w, a `Set.member` vs || b `Set.member` vs ]
 
 -- | Build links from a per-pane selection. Two equal-length panes zip 1:1
 -- (4→8, 5→9, …); anything else connects every selected verse to every selected
@@ -327,7 +369,7 @@ instance FromJSON V1Weave where
 
 migrateV1 :: V1Weave -> Weave
 migrateV1 v = Weave (v1Name v) (v1Kind v) (v1Tok v) (v1Notes v) (v1Created v)
-    (Set.toList (Set.fromList (concatMap rowLinks (v1Rows v)))) False ""
+    (Set.toList (Set.fromList (concatMap rowLinks (v1Rows v)))) False
   where
     rowLinks cells =
         let lists = map (concatMap expand) cells

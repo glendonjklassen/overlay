@@ -25,6 +25,7 @@ import Data.Time.Clock (getCurrentTime)
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import qualified Data.Vector as V
 import Monomer
+import qualified Monomer.Lens as L
 import System.Directory (doesFileExist, getXdgDirectory, removeFile,
                          XdgDirectory (XdgConfig), createDirectoryIfMissing)
 import System.Exit (die)
@@ -92,26 +93,115 @@ loadSettings = do
                     putStrLn ("config.json ignored (" <> err <> ")")
                     pure defaultSettings
 
+-- | Persist settings back to config.json (best-effort), e.g. after a live zoom.
+saveSettings :: Settings -> IO ()
+saveSettings s = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    _ <- try (createDirectoryIfMissing True dir
+        >> BL.writeFile (dir </> "config.json") (encode s <> "\n"))
+        :: IO (Either SomeException ())
+    pure ()
+
+-- | The last-open session: which passage (book, chapter) each reading pane
+-- showed. Saved on close and restored on the next launch, so the app reopens
+-- where you left it instead of resetting to Genesis 1. Selections and scroll
+-- offsets are transient and not persisted.
+newtype Session = Session { sessPanes :: [(Text, Int)] }
+
+instance ToJSON Session where
+    toJSON (Session ps) = object
+        [ "panes" .= [ object ["book" .= b, "chapter" .= c] | (b, c) <- ps ] ]
+
+instance FromJSON Session where
+    parseJSON = withObject "Session" $ \o -> do
+        arr <- o .:? "panes" .!= []
+        Session <$> mapM (withObject "pane" $ \p ->
+            (,) <$> p .: "book" <*> p .: "chapter") arr
+
+sessionPath :: IO FilePath
+sessionPath = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    pure (dir </> "session.json")
+
+-- | Persist the panes' passages. Best-effort: a write failure must never crash
+-- the app on close, so errors are swallowed.
+saveSession :: [PaneState] -> IO ()
+saveSession panes = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    path <- sessionPath
+    let sess = Session [ (_psBook p, _psChapter p) | p <- panes ]
+    _ <- try (createDirectoryIfMissing True dir
+        >> BL.writeFile path (encode sess <> "\n")) :: IO (Either SomeException ())
+    pure ()
+
+-- | Read the saved passages (raw, unvalidated). Missing or unreadable → none.
+loadSession :: IO [(Text, Int)]
+loadSession = do
+    path <- sessionPath
+    exists <- doesFileExist path
+    if not exists then pure [] else do
+        raw <- BC.readFile path
+        pure $ either (const []) sessPanes (eitherDecodeStrict raw)
+
+-- | Build the initial panes from a saved session, validated against the corpus:
+-- unknown books are dropped, chapters clamped to range, at most four panes. An
+-- empty or invalid session falls back to a single Genesis 1 pane.
+restorePanes :: Corpus -> [(Text, Int)] -> [PaneState]
+restorePanes corpus saved =
+    case mapMaybe valid (take 4 saved) of
+        []  -> [PaneState "Gen" 1 Nothing []]
+        ps  -> ps
+  where
+    valid (b, c)
+        | b `elem` bookIds =
+            Just (PaneState b (max 1 (min c (chapterCount corpus b))) Nothing [])
+        | otherwise = Nothing
+
+-- DejaVu lives in a different directory on every distro (Debian, Arch, Fedora),
+-- so probe them all rather than hard-coding one. Bundled EB Garamond is always
+-- present, so it backstops every list — the UI never ends up glyphless.
+dejavuDirs :: [Text]
+dejavuDirs =
+    [ "/usr/share/fonts/truetype/dejavu/"  -- Debian, Ubuntu, WSL
+    , "/usr/share/fonts/TTF/"              -- Arch
+    , "/usr/share/fonts/dejavu/"           -- Fedora and others
+    ]
+
+-- | Pick the first font path that exists, from an optional explicit override
+-- then a list of fallbacks; if none exist, return the last candidate.
+pickFont :: Maybe Text -> [Text] -> IO Text
+pickFont explicit fallbacks = do
+    let candidates = maybe [] (pure . T.unpack) explicit <> map T.unpack fallbacks
+    found <- firstExisting candidates
+    pure (T.pack (fromMaybe (last candidates) found))
+  where
+    firstExisting (c : cs) = do
+        ok <- doesFileExist c
+        if ok then pure (Just c) else firstExisting cs
+    firstExisting [] = pure Nothing
+
 -- | Resolve the serif faces: explicit config path, else bundled EB Garamond,
 -- else DejaVu.
 resolveFonts :: Settings -> IO (Text, Text)
 resolveFonts s = do
-    regular <- pick (sSerif s)
-        ["assets/fonts/EBGaramond.ttf", dejavu <> "DejaVuSerif.ttf"]
-    italic <- pick (sSerifItalic s)
-        ["assets/fonts/EBGaramond-Italic.ttf", dejavu <> "DejaVuSerif-Italic.ttf"]
+    regular <- pickFont (sSerif s)
+        ("assets/fonts/EBGaramond.ttf" : map (<> "DejaVuSerif.ttf") dejavuDirs)
+    italic <- pickFont (sSerifItalic s)
+        ("assets/fonts/EBGaramond-Italic.ttf" : map (<> "DejaVuSerif-Italic.ttf") dejavuDirs)
     pure (regular, italic)
-  where
-    dejavu = "/usr/share/fonts/truetype/dejavu/"
-    pick explicit fallbacks = do
-        let candidates = maybe [] (pure . T.unpack) explicit
-                <> map T.unpack fallbacks
-        found <- filterMissing candidates
-        pure (T.pack (fromMaybe (last candidates) found))
-    filterMissing (c : cs) = do
-        ok <- doesFileExist c
-        if ok then pure (Just c) else filterMissing cs
-    filterMissing [] = pure Nothing
+
+-- | Resolve the sans UI faces (regular, bold). Prefers the bundled DejaVu Sans
+-- (so symbols like ✓ ↔ ⚠ always render and the UI never depends on a system
+-- font), then any system DejaVu, then the bundled serif as a last resort.
+resolveSans :: IO (Text, Text)
+resolveSans = do
+    regular <- pickFont Nothing
+        ("assets/fonts/DejaVuSans.ttf"
+            : map (<> "DejaVuSans.ttf") dejavuDirs <> ["assets/fonts/EBGaramond.ttf"])
+    bold <- pickFont Nothing
+        ("assets/fonts/DejaVuSans-Bold.ttf"
+            : map (<> "DejaVuSans-Bold.ttf") dejavuDirs <> ["assets/fonts/EBGaramond.ttf"])
+    pure (regular, bold)
 
 -- ── margin notes ────────────────────────────────────────────────────────────
 
@@ -154,7 +244,7 @@ data EditTarget = EditTarget
 
 data PanelMode
     = PNone
-    | PStrongs Text Text       -- ^ clicked word, Strong's ref
+    | PStrongs Text Text (Text, Int, Int)  -- ^ clicked word, Strong's ref, verse
     | PEdit EditTarget
     | PPatches
     | PThreads
@@ -176,6 +266,8 @@ data PaneState = PaneState
 data AppModel = AppModel
     { _amPanel       :: PanelMode
     , _amNotesOn     :: Bool
+    , _amHeatmapOn   :: Bool  -- ^ shade verses by their number of weave witnesses
+    , _amLinesOn     :: Bool  -- ^ draw the weave connector lines across panes
     , _amPatches     :: [LoadedPatch]
     , _amRules       :: [LoadedRule]
     , _amThreads     :: [LoadedThread]
@@ -193,6 +285,9 @@ data AppModel = AppModel
     , _amWeaveKind   :: WeaveKind  -- ^ kind for new / linked / inspected weave
     , _amWeaveNotes  :: Text       -- ^ notes draft for the inspected weave
     , _amCombinePick :: Text       -- ^ weave to combine into the inspected one
+    , _amCompare     :: Maybe ((Text, Int, Int), Double, Double)
+      -- ^ hovered linked verse + window x,y, for the floating compare card
+    , _amBodySize    :: Double   -- ^ live scripture text size (Ctrl +/-/0 zoom)
     } deriving (Eq, Show)
 
 data AppEvent
@@ -234,10 +329,18 @@ data AppEvent
     | EvSetWeaveKind WeaveKind
     | EvSaveWeaveNotes
     | EvRemoveLink Link
+    | EvApproveLink Link Bool
+    | EvApproveWeave Bool
     | EvCombineWeave Text
     | EvDeleteWeave FilePath
     | EvWeavesLoaded [LoadedWeave] Text
     | EvStatus Text
+    | EvSaveSession
+    | EvVerseInspect (Text, Int, Int) Double Double
+    | EvCloseCompare
+    | EvApproveLinkIn FilePath Link Bool
+    | EvRejectLinkIn FilePath Link
+    | EvZoom Double  -- ^ change scripture text size by delta px (0 = reset)
     | EvNoop
     deriving (Eq, Show)
 
@@ -261,7 +364,7 @@ weaveSpans w =
     [ (b, minimum rs, maximum rs)
     | b <- books, let rs = [(c, v) | (bb, c, v) <- refs, bb == b], not (null rs) ]
   where
-    refs = concatMap (\(Link a b _) -> [a, b]) (wLinks w)
+    refs = concatMap (\(Link a b _ _) -> [a, b]) (wLinks w)
     books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
         (nub (map fst3 refs))
 
@@ -300,11 +403,47 @@ paneColor i = case i `mod` 4 of
 -- | Compose the patch and rule overlays over a verse, producing renderable
 -- tokens. Patches claim their spans first, so rules never override them.
 -- @marks@ are word spans to highlight (thread passages / weave selection).
+-- | Per-verse "witnesses": for each verse, the other verses linked to it by
+-- any weave (with the edge label). The count is its degree in the union of all
+-- weave graphs — the heatmap and the verse-level cross-reference list both read
+-- from this.
+type VRef3 = (Text, Int, Int)
+
+witnessIndex :: [LoadedWeave] -> M.Map VRef3 [(VRef3, Text)]
+witnessIndex weaves = M.map dedup $ M.fromListWith (<>) $ concat
+    [ [ (lA l, [(lB l, lLabel l)]), (lB l, [(lA l, lLabel l)]) ]
+    | lw <- weaves, l <- wLinks (lwWeave lw) ]
+  where
+    -- one entry per distinct neighbour verse, keeping a non-empty label if any
+    dedup xs = M.toList (M.fromListWith pickLabel xs)
+    pickLabel a b = if T.null a then b else a
+
+-- | Sort verse references into canonical reading order (book, chapter, verse).
+canonKey :: VRef3 -> (Int, Int, Int)
+canonKey (b, c, v) = (fromMaybe maxBound (elemIndex b bookIds), c, v)
+
+sortOnCanon :: [(VRef3, Text)] -> [(VRef3, Text)]
+sortOnCanon = sortOn (canonKey . fst)
+
+-- | Where a weave first lands in the canon — the earliest verse among all its
+-- link endpoints — for ordering the weaves list. Linkless weaves sort last.
+weaveStartKey :: Weave -> (Int, Int, Int)
+weaveStartKey w = case concatMap (\l -> [lA l, lB l]) (wLinks w) of
+    [] -> (maxBound, maxBound, maxBound)
+    es -> minimum (map canonKey es)
+
+-- | Heat tier 0…4 for a witness count, relative to the busiest verse so the
+-- scale always spans the data on hand: 0 none, then four even bands.
+heatTierFor :: Int -> Int -> Int
+heatTierFor maxWit d
+    | d <= 0 || maxWit <= 0 = 0
+    | otherwise = max 1 (min 4 (ceiling (fromIntegral d / fromIntegral maxWit * 4 :: Double)))
+
 toRVerse
     :: Text -> [LoadedPatch] -> [LoadedRule] -> [(Int, Int)] -> [Text]
-    -> Verse -> RVerse
-toRVerse ownHex patches rules marks notes v =
-    RVerse (vVerse v) (walk 0 (vTokens v)) notes
+    -> Int -> Verse -> RVerse
+toRVerse ownHex patches rules marks notes heat v =
+    RVerse (vVerse v) (walk 0 (vTokens v)) notes heat
   where
     ref = (vBook v, vChapter v, vVerse v)
     patchEdits =
@@ -403,8 +542,15 @@ panelW, panelInnerW :: Double
 panelW = 330
 panelInnerW = panelW - 24
 
+-- | Secondary label text. Monomer's built-in 'gray' (#808080) only reaches
+-- ~3.7:1 on the dark panels — below WCAG AA at the small sizes used here — so
+-- the side panels use this lighter warm grey (~7:1) for readable section
+-- labels and help text.
+muted :: Color
+muted = rgbHex "#B7B2A8"
+
 buildUI :: Env -> WidgetEnv AppModel AppEvent -> AppModel -> WidgetNode AppModel AppEvent
-buildUI env _wenv model = widgetTree
+buildUI env wenv model = widgetTree
   where
     corpus = envCorpus env
     own = kPubHex (envKeys env)
@@ -418,6 +564,10 @@ buildUI env _wenv model = widgetTree
 
     header = hstack $
         [ labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize 12]
+        , spacer
+        , labeledCheckbox "heatmap" amHeatmapOn `styleBasic` [textSize 12]
+        , spacer
+        , labeledCheckbox "links" amLinesOn `styleBasic` [textSize 12]
         , spacer
         , button ("patches (" <> showt (length patches + length rules) <> ")")
             EvTogglePatches `styleBasic` [textSize 12]
@@ -434,9 +584,9 @@ buildUI env _wenv model = widgetTree
             else [])
         <>
         [ spacer
-        , label (model ^. amStatus) `styleBasic` [textSize 11, textColor gray]
+        , label (model ^. amStatus) `styleBasic` [textSize 11, textColor muted]
         , filler
-        , label "overlay" `styleBasic` [textColor gray, textSize 12]
+        , label "overlay" `styleBasic` [textColor muted, textSize 12]
         ]
 
     bookRow b = label (displayName b) `styleBasic` [textSize 12]
@@ -458,9 +608,18 @@ buildUI env _wenv model = widgetTree
             sel = [(0, maxBound) | vVerse v `elem` _psSel p]
         in M.findWithDefault [] ref threadMarks <> sel
 
+    -- witness graph (all weaves): adjacency for the sidebar, counts for heat
+    witAdj = witnessIndex (model ^. amWeaves)
+    witCount = M.map length witAdj
+    maxWit = if M.null witCount then 0 else maximum (M.elems witCount)
+    heatFor v = if model ^. amHeatmapOn
+        then heatTierFor maxWit
+            (M.findWithDefault 0 (vBook v, vChapter v, vVerse v) witCount)
+        else 0
+
     paneColumn i p = ColumnCfg
         (showt i <> ":" <> _psBook p <> ":" <> showt (_psChapter p))
-        [ toRVerse own patches rules (marksFor p v) (notesFor v) v
+        [ toRVerse own patches rules (marksFor p v) (notesFor v) (heatFor v) v
         | v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
         (alignFor p)
 
@@ -484,7 +643,7 @@ buildUI env _wenv model = widgetTree
                 Nothing -> Nothing
         _ -> Nothing
     alignFor p = case openWeaveFirstLink of
-        Just (Link a b _) ->
+        Just (Link a b _ _) ->
             let m (bk, c, v) = if bk == _psBook p && c == _psChapter p
                     then Just v else Nothing
             in case m a of
@@ -498,7 +657,7 @@ buildUI env _wenv model = widgetTree
         | p <- panes, v <- chapterVerses corpus (_psBook p) (_psChapter p) ]
     ambientLinks = nub
         [ (a, b, lbl)
-        | lw <- model ^. amWeaves, Link a b lbl <- wLinks (lwWeave lw)
+        | lw <- model ^. amWeaves, Link a b lbl _ <- wLinks (lwWeave lw)
         , a `Set.member` visibleRefs, b `Set.member` visibleRefs ]
 
     navStrip i p = hstack
@@ -526,20 +685,25 @@ buildUI env _wenv model = widgetTree
 
     reader = readerView ReaderCfg
         { rcColumns = zipWith paneColumn [0 :: Int ..] panes
-        , rcBodySize = sBodySize (envSettings env)
+        , rcBodySize = model ^. amBodySize
         , rcLineSpacing = sLineSpacing (envSettings env)
-        , rcLinks = ambientLinks
+        , rcLinks = if model ^. amLinesOn then ambientLinks else []
+        , rcHeatOn = model ^. amHeatmapOn
         , rcOnWordClick = EvWordClicked
         , rcOnWordAlt = EvWordAlt
         , rcOnSpanSelect = EvSpanSelected
         , rcOnVerseClick = EvVerseClicked
         , rcOnPaneNav = \c d -> if d < 0 then EvPanePrev c else EvPaneNext c
+        , rcOnVerseInspect = EvVerseInspect
+        , rcOnZoom = EvZoom
         } `nodeKey` "reader"
 
     sidePanel = case model ^. amPanel of
         PNone -> []
         PEdit et -> [editorPanel model et]
-        PStrongs word ref -> [strongsPanel env (word, ref)]
+        PStrongs word ref vref ->
+            [strongsPanel env (sortOnCanon (M.findWithDefault [] vref witAdj))
+                vref (word, ref)]
         PPatches -> [patchesPanel model]
         PThreads -> [threadsPanel model]
         PThreadView f -> [threadViewPanel model f]
@@ -560,10 +724,69 @@ buildUI env _wenv model = widgetTree
 
     mainArea = vstack [navRow, reader, canonMap]
 
-    widgetTree = vstack
+    baseTree = vstack
         [ header `styleBasic` [padding 10]
         , hstack (mainArea : sidePanel)
         ]
+
+    -- every passage linked to a verse, with the weave + edge it rides, so the
+    -- compare card can approve or reject each correspondence in place
+    comparePassagesFor ref = sortOn (\(r, _, _, _) -> canonKey r)
+        [ (other, lLabel l, lwFile lw, l)
+        | lw <- model ^. amWeaves, l <- wLinks (lwWeave lw)
+        , lA l == ref || lB l == ref
+        , let other = if lA l == ref then lB l else lA l ]
+
+    verseTextOf ref = maybe "" (T.unwords . map renderToken . vTokens)
+        (M.lookup ref (cByRef corpus) >>= (cVerses corpus V.!?))
+
+    compareRow (other, lbl, file, l) = vstack_ [childSpacing_ 2] $
+        [ hstack
+            [ box_ [onClick (EvGoRef (fst3 other) (snd3 other)), alignLeft]
+                (label (refText other)
+                    `styleBasic` [textSize 12, textColor lightSkyBlue])
+            , filler
+            , button (if lApproved l then "✓" else "approve")
+                (EvApproveLinkIn file l (not (lApproved l)))
+                `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                    , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
+            , button "reject" (EvRejectLinkIn file l)
+                `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                    , bgColor (rgbHex "#5A3A36")]
+            ]
+        , wrapLabel (verseTextOf other)
+            `styleBasic` [textSize (model ^. amBodySize), textColor lightGray, width 336]
+        ]
+        <> [ wrapLabel ("· " <> lbl) `styleBasic`
+                 [textSize 10, textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
+
+    compareCard ref = vstack_ [childSpacing_ 6] $
+        [ hstack
+            [ label (refText ref) `styleBasic` [textSize 13, textColor lightGray]
+            , filler
+            , button "✕" EvCloseCompare `styleBasic` [textSize 11, padding 2]
+            ]
+        , wrapLabel (verseTextOf ref)
+            `styleBasic` [textSize (model ^. amBodySize), width 336]
+        , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
+        , label "parallels" `styleBasic` [textSize 10, textColor muted]
+        ]
+        <> map compareRow (comparePassagesFor ref)
+
+    -- floating overlay near the hovered verse; empty area is click-through
+    compareOverlay = case model ^. amCompare of
+        Just (ref, x, y) | not (null (comparePassagesFor ref)) ->
+            let Size winW winH = wenv ^. L.windowSize
+                px = max 10 (min x (winW - 372))
+                py = max 10 (min y (winH - 360))
+            in [ box_ [alignLeft, alignTop, ignoreEmptyArea]
+                    (compareCard ref `styleBasic`
+                        [width 360, padding 10, radius 6
+                        , bgColor (rgbHex "#23262B"), border 1 (rgbHex "#3A3F45")])
+                    `styleBasic` [paddingL px, paddingT py] ]
+        _ -> []
+
+    widgetTree = zstack (baseTree : compareOverlay)
 
 -- multiline label for panel body text (see Label.getSizeReq); resizeFactorH 0
 -- fixes the wrapped height so a sibling vscroll can't squeeze it
@@ -572,7 +795,7 @@ wrapLabel t = label_ t [multiline, resizeFactorH 0]
 
 captionField :: Text -> Maybe Text -> WidgetNode AppModel AppEvent
 captionField name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
-    [ label name `styleBasic` [textSize 10, textColor gray]
+    [ label name `styleBasic` [textSize 10, textColor muted]
     , wrapLabel v `styleBasic` [textSize 13, width panelInnerW]
     ]
 
@@ -587,8 +810,12 @@ panelHeader title closeEvt = hstack
     , button "✕" closeEvt `styleBasic` [textSize 11, padding 4]
     ]
 
-strongsPanel :: Env -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env (word, ref) = panel
+-- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
+-- on top, then word-level Strong's detail below — both levels in one place.
+strongsPanel
+    :: Env -> [((Text, Int, Int), Text)] -> (Text, Int, Int) -> (Text, Text)
+    -> WidgetNode AppModel AppEvent
+strongsPanel env witnesses vref (word, ref) = panel
   where
     entry = M.lookup ref (envStrongs env)
     occs = M.findWithDefault [] ref (envOccIx env)
@@ -599,28 +826,53 @@ strongsPanel env (word, ref) = panel
         (label (refLabel r) `styleBasic` [textSize 12, textColor lightSkyBlue])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
-    panel = panelBox
-        [ panelHeader (ref <> " — " <> word) EvClosePanel
-        , vscroll $ vstack_ [childSpacing_ 8] $
-            [ widgetMaybe (entry >>= seLemma) $ \l ->
-                label l `styleBasic` [textSize 22]
-            , hstack_ [childSpacing_ 8]
-                [ widgetMaybe (entry >>= seXlit) $ \x ->
-                    label x `styleBasic` [textSize 13, textColor lightGray]
-                , widgetMaybe (entry >>= sePron) $ \p ->
-                    label p `styleBasic` [textSize 12, textColor gray]
-                ]
-            , captionField "derivation" (entry >>= seDeriv)
-            , captionField "definition" (entry >>= seDef)
-            , captionField "KJV renderings" (entry >>= seKjv)
-            , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-            , label (showt (length occs) <> " occurrences")
-                `styleBasic` [textSize 11, textColor gray]
+    -- a cross-referenced verse: jump on click, shared wording underneath
+    witRow (r@(b, c, _), lbl) = box_ [onClick (EvGoRef b c), alignLeft]
+        (vstack_ [childSpacing_ 1] $
+            (label (refLabel r) `styleBasic` [textSize 12, textColor lightSkyBlue])
+            : [ wrapLabel lbl `styleBasic`
+                  [textSize 10, textColor (rgbHex "#D2B46E"), width panelInnerW]
+              | not (T.null lbl) ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+
+    verseSection =
+        [ label "this verse" `styleBasic` [textSize 10, textColor muted]
+        , label (refText vref) `styleBasic` [textSize 14, textColor lightGray]
+        , label (showt (length witnesses) <> " cross-reference"
+                <> (if length witnesses == 1 then "" else "s")
+                <> " (witnesses)")
+            `styleBasic` [textSize 11, textColor muted]
+        ]
+        <> map witRow witnesses
+        <> [ wrapLabel "no linked passages yet — add weave links to build them"
+                `styleBasic` [textSize 10, textColor muted, width panelInnerW]
+           | null witnesses ]
+        <> [separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]]
+
+    wordSection =
+        [ label ("word — " <> ref) `styleBasic` [textSize 10, textColor muted]
+        , widgetMaybe (entry >>= seLemma) $ \l ->
+            label l `styleBasic` [textSize 22]
+        , hstack_ [childSpacing_ 8]
+            [ widgetMaybe (entry >>= seXlit) $ \x ->
+                label x `styleBasic` [textSize 13, textColor lightGray]
+            , widgetMaybe (entry >>= sePron) $ \p ->
+                label p `styleBasic` [textSize 12, textColor muted]
             ]
-            <> [occRow r | r <- occShown]
-            <> [label ("… and " <> showt occMore <> " more")
-                    `styleBasic` [textSize 11, textColor gray]
-               | occMore > 0]
+        , captionField "derivation" (entry >>= seDeriv)
+        , captionField "definition" (entry >>= seDef)
+        , captionField "KJV renderings" (entry >>= seKjv)
+        , label (showt (length occs) <> " occurrences")
+            `styleBasic` [textSize 11, textColor muted]
+        ]
+        <> [occRow r | r <- occShown]
+        <> [label ("… and " <> showt occMore <> " more")
+                `styleBasic` [textSize 11, textColor muted]
+           | occMore > 0]
+
+    panel = panelBox
+        [ panelHeader (refText vref <> " — " <> word) EvClosePanel
+        , vscroll $ vstack_ [childSpacing_ 8] (verseSection <> wordSection)
         ]
 
 editorPanel :: AppModel -> EditTarget -> WidgetNode AppModel AppEvent
@@ -631,15 +883,15 @@ editorPanel model et = panelBox $
         `styleBasic` [textSize 10, textColor (rgbHex "#C99A4B"), width panelInnerW]
     , label (refText (etRef et) <> ", words "
         <> showt (fst (etSpan et)) <> "–" <> showt (snd (etSpan et)))
-        `styleBasic` [textSize 11, textColor gray]
+        `styleBasic` [textSize 11, textColor muted]
     , wrapLabel ("replacing: " <> T.unwords (etWords et))
         `styleBasic` [textSize 13, width panelInnerW]
     , widgetMaybe (etRuleHit et) ruleHitBox
-    , label "replacement" `styleBasic` [textSize 10, textColor gray]
+    , label "replacement" `styleBasic` [textSize 10, textColor muted]
     , textField amReplace `nodeKey` "replace"
-    , label "note (optional)" `styleBasic` [textSize 10, textColor gray]
+    , label "note (optional)" `styleBasic` [textSize 10, textColor muted]
     , textField amNote
-    , label "scope" `styleBasic` [textSize 10, textColor gray]
+    , label "scope" `styleBasic` [textSize 10, textColor muted]
     , labeledRadio "this verse only" False amEverywhere
         `styleBasic` [textSize 12]
     , labeledRadio ("everywhere — " <> showt (etMatches et) <> " match"
@@ -655,10 +907,10 @@ editorPanel model et = panelBox $
         ]
     , wrapLabel ("signed with your key, applied instantly; manage from the "
         <> "patches panel")
-        `styleBasic` [textSize 10, textColor gray, width panelInnerW]
+        `styleBasic` [textSize 10, textColor muted, width panelInnerW]
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
     , label "add to thread (the note above travels with it)"
-        `styleBasic` [textSize 10, textColor gray]
+        `styleBasic` [textSize 10, textColor muted]
     ]
     <> [ textDropdown amThreadPick threadNames `styleBasic` [textSize 12]
        | not (null threadNames) ]
@@ -673,7 +925,7 @@ editorPanel model et = panelBox $
     threadNames = [thName (ltThread lt) | lt <- model ^. amThreads]
     ruleHitBox (file, desc, own) = vstack_ [childSpacing_ 4] $
         [ wrapLabel ("this span is rewritten by rule: " <> desc)
-            `styleBasic` [textSize 10, textColor gray, width panelInnerW]
+            `styleBasic` [textSize 10, textColor muted, width panelInnerW]
         ]
         <> [ box_ [alignLeft]
                 (button "exclude this verse from the rule"
@@ -686,7 +938,7 @@ patchesPanel model = panelBox
     [ panelHeader "patches & rules" EvClosePanel
     , if null lps && null lrs
         then label "none yet — right-click a word, or drag across several"
-            `styleBasic` [textSize 12, textColor gray]
+            `styleBasic` [textSize 12, textColor muted]
         else vscroll (vstack_ [childSpacing_ 6] rows)
     ]
   where
@@ -697,7 +949,7 @@ patchesPanel model = panelBox
         <> map row lps
         <> [ sectionLabel "rules" | not (null lrs) ]
         <> map ruleRow lrs
-    sectionLabel t = label t `styleBasic` [textSize 10, textColor gray]
+    sectionLabel t = label t `styleBasic` [textSize 10, textColor muted]
     ruleRow lr =
         let r = lrRule lr
             excl = case length (rExclude r) of
@@ -715,7 +967,7 @@ patchesPanel model = panelBox
             , label (statusText (lrStatus lr) <> " · "
                 <> showt (lrMatches lr) <> " places" <> excl <> " · "
                 <> T.take 10 (rCreated r))
-                `styleBasic` [textSize 10, textColor gray]
+                `styleBasic` [textSize 10, textColor muted]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
     row lp =
@@ -735,7 +987,7 @@ patchesPanel model = panelBox
                 `styleBasic` [textSize 12, width (panelInnerW - 8)]
             , label (statusText (lpStatus lp) <> " · "
                 <> T.take 10 (pCreated p))
-                `styleBasic` [textSize 10, textColor gray]
+                `styleBasic` [textSize 10, textColor muted]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
@@ -745,7 +997,7 @@ threadsPanel model = panelBox
     , if null lts
         then wrapLabel ("none yet — right-click a word or drag a span, "
                 <> "then \"add span to thread\"")
-            `styleBasic` [textSize 12, textColor gray, width panelInnerW]
+            `styleBasic` [textSize 12, textColor muted, width panelInnerW]
         else vscroll (vstack_ [childSpacing_ 6] (map row lts))
     ]
   where
@@ -758,7 +1010,7 @@ threadsPanel model = panelBox
                     `styleBasic` [textSize 13, textColor lightSkyBlue]
                 , label (showt (length (thEntries t)) <> " passages · since "
                     <> T.take 10 (thCreated t))
-                    `styleBasic` [textSize 10, textColor gray]
+                    `styleBasic` [textSize 10, textColor muted]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -767,7 +1019,7 @@ threadViewPanel model file =
     case find ((== file) . ltFile) (model ^. amThreads) of
         Nothing -> panelBox
             [ panelHeader "thread" EvClosePanel
-            , label "thread not found" `styleBasic` [textSize 12, textColor gray]
+            , label "thread not found" `styleBasic` [textSize 12, textColor muted]
             ]
         Just lt -> render (ltThread lt)
   where
@@ -782,8 +1034,8 @@ threadViewPanel model file =
             ]
         , label (showt (length (thEntries t)) <> " passages · since "
             <> T.take 10 (thCreated t))
-            `styleBasic` [textSize 11, textColor gray]
-        , label "thread notes" `styleBasic` [textSize 10, textColor gray]
+            `styleBasic` [textSize 11, textColor muted]
+        , label "thread notes" `styleBasic` [textSize 10, textColor muted]
         , textArea amThreadNotes
             `styleBasic` [textSize 12, height 140]
             `nodeKey` "threadNotes"
@@ -791,7 +1043,7 @@ threadViewPanel model file =
             `styleBasic` [textSize 11, padding 4])
         , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label "passages (highlighted in the text)"
-            `styleBasic` [textSize 10, textColor gray]
+            `styleBasic` [textSize 10, textColor muted]
         , vscroll (vstack_ [childSpacing_ 6]
             (zipWith entryRow [0 ..] (thEntries t)))
         ]
@@ -810,7 +1062,7 @@ threadViewPanel model file =
             , wrapLabel ("“" <> T.unwords (teText e) <> "”")
                 `styleBasic` [textSize 12, width (panelInnerW - 8)]
             , widgetMaybe (teNote e) $ \nt -> wrapLabel nt
-                `styleBasic` [ textSize 11, textColor gray
+                `styleBasic` [ textSize 11, textColor muted
                              , width (panelInnerW - 8) ]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
@@ -824,22 +1076,23 @@ weavesPanel :: AppModel -> WidgetNode AppModel AppEvent
 weavesPanel model = panelBox
     [ panelHeader "weaves" EvClosePanel
     , label "parallel passages — links between verses, drawn across panes"
-        `styleBasic` [textSize 10, textColor gray]
+        `styleBasic` [textSize 10, textColor muted]
     , if null lws
         then wrapLabel ("none yet — open two panes, select verses in each, "
-                <> "then \"＋ link\"")
-            `styleBasic` [textSize 12, textColor gray, width panelInnerW]
+                <> "then \"+ link\"")
+            `styleBasic` [textSize 12, textColor muted, width panelInnerW]
         else vscroll (vstack_ [childSpacing_ 6] (map row lws))
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-    , label "kind for new links" `styleBasic` [textSize 10, textColor gray]
+    , label "kind for new links" `styleBasic` [textSize 10, textColor muted]
     , dropdown amWeaveKind allKinds kindRowW kindRowW `styleBasic` [textSize 12]
-    , label "new empty weave" `styleBasic` [textSize 10, textColor gray]
+    , label "new empty weave" `styleBasic` [textSize 10, textColor muted]
     , textField_ amWeaveNew [placeholder "weave name"]
     , box_ [alignLeft] (button "Create" EvNewWeave
         `styleBasic` [textSize 11, padding 4])
     ]
   where
-    lws = model ^. amWeaves
+    -- order by where each weave first lands in the canon (filters to come)
+    lws = sortOn (weaveStartKey . lwWeave) (model ^. amWeaves)
     row lw =
         let w = lwWeave lw
         in box_ [onClick (EvOpenWeave (lwFile lw)), alignLeft]
@@ -848,12 +1101,11 @@ weavesPanel model = panelBox
                     `styleBasic` [textSize 13, textColor lightSkyBlue]
                 , label (kindLabel (wKind w) <> " · "
                     <> showt (length (wLinks w)) <> " links"
-                    <> (if wApproved w then "" else " · ⚠ unapproved")
-                    <> (if T.null (wTension w) then "" else " · tension"))
+                    <> (if wApproved w then "" else " · ⚠ unapproved"))
                     `styleBasic` [textSize 10, textColor
                         (if wApproved w then gray else rgbHex "#C99A4B")]
                 , label (T.intercalate "  ↔  " (map spanText (weaveSpans w)))
-                    `styleBasic` [textSize 10, textColor (rgbHex "#9A968F")]
+                    `styleBasic` [textSize 10, textColor muted]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -862,7 +1114,7 @@ weaveViewPanel model file =
     case find ((== file) . lwFile) (model ^. amWeaves) of
         Nothing -> panelBox
             [ panelHeader "weave" EvClosePanel
-            , label "weave not found" `styleBasic` [textSize 12, textColor gray]
+            , label "weave not found" `styleBasic` [textSize 12, textColor muted]
             ]
         Just lw -> render (lwWeave lw)
   where
@@ -883,22 +1135,30 @@ weaveViewPanel model file =
                 , textColor (if wApproved w
                     then rgbHex "#8FB88A" else rgbHex "#E0B05A")
                 , bgColor (rgbHex "#2A2620")]
+        , hstack
+            [ button (if wApproved w then "Clear approval" else "✓ Approve whole weave")
+                (EvApproveWeave (not (wApproved w)))
+                `styleBasic` [textSize 11, padding 4
+                    , textColor (rgbHex "#EAE6DE")
+                    , bgColor (if wApproved w then rgbHex "#574A38" else rgbHex "#3E5239")]
+                `styleHover` [bgColor (if wApproved w then rgbHex "#6A5942" else rgbHex "#4B6344")]
+            , filler
+            , label (showt (approvedCount w) <> " / " <> showt (length (wLinks w))
+                    <> " verse links approved")
+                `styleBasic` [textSize 10, textColor muted]
+            ]
         ]
-        <> [ wrapLabel ("tension — " <> wTension w)
-                `styleBasic` [textSize 11, padding 5, width panelInnerW
-                    , textColor (rgbHex "#E08A5A"), bgColor (rgbHex "#2A2620")]
-           | not (T.null (wTension w)) ]
         <> [ wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
-            `styleBasic` [textSize 10, textColor gray, width panelInnerW]
-        , label "comparing" `styleBasic` [textSize 10, textColor gray]
+            `styleBasic` [textSize 10, textColor muted, width panelInnerW]
+        , label "comparing" `styleBasic` [textSize 10, textColor muted]
         , vstack_ [childSpacing_ 1]
             [ label ("· " <> spanText s)
                 `styleBasic` [textSize 11, textColor (rgbHex "#C8C4BD")]
             | s <- weaveSpans w ]
-        , label "kind" `styleBasic` [textSize 10, textColor gray]
+        , label "kind" `styleBasic` [textSize 10, textColor muted]
         , dropdown_ amWeaveKind allKinds kindRowW kindRowW [onChange EvSetWeaveKind]
             `styleBasic` [textSize 12]
-        , label "weave notes" `styleBasic` [textSize 10, textColor gray]
+        , label "weave notes" `styleBasic` [textSize 10, textColor muted]
         , textArea amWeaveNotes
             `styleBasic` [textSize 12, height 110]
             `nodeKey` "weaveNotes"
@@ -906,14 +1166,14 @@ weaveViewPanel model file =
             `styleBasic` [textSize 11, padding 4])
         , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label (showt (length (wLinks w)) <> " links")
-            `styleBasic` [textSize 10, textColor gray]
+            `styleBasic` [textSize 10, textColor muted]
         , vscroll (vstack_ [childSpacing_ 4] (map linkRow (wLinks w)))
         ]
         <> combineSeg
-    linkRow l@(Link a b lbl) = hstack
+    linkRow l@(Link a b lbl _) = hstack
         ( [ box_ [onClick (EvGoRef (fst3 a) (snd3 a)), alignLeft]
             (label (refText a) `styleBasic` [textSize 11, textColor lightSkyBlue])
-          , label " ↔ " `styleBasic` [textSize 11, textColor gray]
+          , label " ↔ " `styleBasic` [textSize 11, textColor muted]
           , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
             (label (refText b) `styleBasic` [textSize 11, textColor lightSkyBlue])
           ]
@@ -921,12 +1181,17 @@ weaveViewPanel model file =
                  `styleBasic` [textSize 10, textColor (rgbHex "#D2B46E")]
              | not (T.null lbl) ]
           <> [ filler
+             , button (if lApproved l then "✓" else "approve")
+                 (EvApproveLink l (not (lApproved l)))
+                 `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                     , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
+                 `styleHover` [bgColor (if lApproved l then rgbHex "#4B6344" else rgbHex "#524A3C")]
              , button "x" (EvRemoveLink l) `styleBasic` [textSize 10, padding 2]
              ] )
     combineSeg =
         [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label "combine another weave in (merge links)"
-            `styleBasic` [textSize 10, textColor gray]
+            `styleBasic` [textSize 10, textColor muted]
         , textDropdown amCombinePick others `styleBasic` [textSize 12]
         , box_ [alignLeft] (button "Combine" (EvCombineWeave (model ^. amCombinePick))
             `styleBasic` [textSize 11, padding 4])
@@ -949,9 +1214,10 @@ handleEvent
     -> AppEvent
     -> [AppEventResponse AppModel AppEvent]
 handleEvent env _wenv _node model evt = case evt of
-    EvInit -> [SetFocusOnKey "reader"]
+    EvInit -> [SetFocusOnKey "reader", saveLater]
     EvWordClicked rt -> case tokStrongs (rtTok rt) of
-        (r : _) -> [Model (model & amPanel .~ PStrongs (tokWord (rtTok rt)) r)]
+        (r : _) -> [Model (model & amPanel
+            .~ PStrongs (tokWord (rtTok rt)) r (rtRef rt))]
         [] -> []
     EvWordAlt rt -> altClickAt (rtRef rt) (rtIx rt)
     EvSpanSelected ref span_ -> openEditor ref span_
@@ -1020,14 +1286,16 @@ handleEvent env _wenv _node model evt = case evt of
     EvThreadsLoaded lts msg ->
         [Model (model & amThreads .~ lts & amPanel %~ adjustThreadPanel lts
             & amStatus .~ msg)]
-    EvAddPane i -> [Model (model & amPanes %~ insertPaneAfter i)]
-    EvClosePane i -> [Model (model & amPanes %~ closePane i)]
+    EvAddPane i -> [Model (model & amPanes %~ insertPaneAfter i), saveLater]
+    EvClosePane i -> [Model (model & amPanes %~ closePane i), saveLater]
     EvPaneBook i b -> [Model (setPane i (\p ->
-        p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ []))]
+        p & psBook .~ b & psChapter .~ 1 & psAnchor .~ Nothing & psSel .~ []))
+        , SetFocusOnKey "reader", saveLater]
     EvPaneChapter i c -> [Model (setPane i (\p ->
-        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ []))]
-    EvPanePrev i -> [Model (stepPane i (-1))]
-    EvPaneNext i -> [Model (stepPane i 1)]
+        p & psChapter .~ c & psAnchor .~ Nothing & psSel .~ []))
+        , SetFocusOnKey "reader", saveLater]
+    EvPanePrev i -> [Model (stepPane i (-1)), saveLater]
+    EvPaneNext i -> [Model (stepPane i 1), saveLater]
     EvToggleWeaves ->
         [Model (model & amPanel %~ \pm ->
             if pm == PWeaves then PNone else PWeaves)]
@@ -1074,6 +1342,12 @@ handleEvent env _wenv _node model evt = case evt of
             "notes saved")]
     EvRemoveLink l -> withInspected $ \lw ->
         [Task (editWeaveTask lw (removeLink l) "link removed")]
+    EvApproveLink l val -> withInspected $ \lw ->
+        [Task (editWeaveTask lw (setLinkApproval l val)
+            (if val then "verse link approved" else "approval cleared"))]
+    EvApproveWeave val -> withInspected $ \lw ->
+        [Task (editWeaveTask lw (setAllApproval val)
+            (if val then "whole weave approved" else "approval cleared"))]
     EvCombineWeave name -> withInspected $ \lw ->
         case find ((== name) . wName . lwWeave) (model ^. amWeaves) of
             Nothing -> [Model (model & amStatus .~ "pick a weave to combine")]
@@ -1085,8 +1359,33 @@ handleEvent env _wenv _node model evt = case evt of
         [Model (model & amWeaves .~ lws & amPanel %~ adjustWeavePanel lws
             & amStatus .~ msg)]
     EvStatus t -> [Model (model & amStatus .~ t)]
+    EvSaveSession -> [Task (EvNoop <$ saveSession (model ^. amPanes))]
+    EvVerseInspect ref x y ->
+        -- open the compare card only for verses that actually have witnesses
+        let touched = any (\lw -> any (\l -> lA l == ref || lB l == ref)
+                            (wLinks (lwWeave lw))) (model ^. amWeaves)
+        in [Model (model & amCompare .~ Just (ref, x, y)) | touched]
+    EvCloseCompare -> [Model (model & amCompare .~ Nothing)]
+    EvApproveLinkIn file l val ->
+        case find ((== file) . lwFile) (model ^. amWeaves) of
+            Just lw -> [Task (editWeaveTask lw (setLinkApproval l val)
+                (if val then "witness approved" else "approval cleared"))]
+            Nothing -> []
+    EvRejectLinkIn file l ->
+        case find ((== file) . lwFile) (model ^. amWeaves) of
+            Just lw -> [Task (editWeaveTask lw (removeLink l) "witness rejected")]
+            Nothing -> []
+    EvZoom delta ->
+        let new | delta == 0 = sBodySize defaultSettings
+                | otherwise  = max 10 (min 40 (model ^. amBodySize + delta))
+        in [ Model (model & amBodySize .~ new
+                & amStatus .~ ("text size " <> showt (round new :: Int) <> "px"))
+           , Task (EvNoop <$ saveSettings (envSettings env) { sBodySize = new }) ]
     EvNoop -> []
   where
+    -- queue a session save as a follow-up event, so it runs against the model
+    -- *after* the current pane change has been applied
+    saveLater = Task (pure EvSaveSession)
     closeEditorOnly pm = case pm of
         PEdit _ -> PNone
         other -> other
@@ -1111,7 +1410,7 @@ handleEvent env _wenv _node model evt = case evt of
                 (find ((== file) . lwFile) (model ^. amWeaves))
         _ -> []
 
-    weaveVerses lw = concatMap (\(Link a b _) -> [a, b]) (wLinks (lwWeave lw))
+    weaveVerses lw = concatMap (\(Link a b _ _) -> [a, b]) (wLinks (lwWeave lw))
 
     autoName refs = case refs of
         (r : _) -> "parallel: " <> refText r
@@ -1120,7 +1419,7 @@ handleEvent env _wenv _node model evt = case evt of
     -- distinct books among a weave's links, canon order, each at its first
     -- linked chapter — used to point the panes at the weave's passages
     weaveTracks w =
-        let refs = concatMap (\(Link a b _) -> [a, b]) (wLinks w)
+        let refs = concatMap (\(Link a b _ _) -> [a, b]) (wLinks w)
             books = sortOn (\b -> fromMaybe maxBound (elemIndex b bookIds))
                 (nub (map fst3 refs))
         in case books of
@@ -1393,21 +1692,23 @@ guiMain = do
     (threads, terrs) <- loadThreads
     (weaves, werrs) <- loadWeaves
     (serifR, serifI) <- resolveFonts (envSettings env)
+    (sansR, sansB) <- resolveSans
+    panes <- restorePanes (envCorpus env) <$> loadSession
     let status = T.intercalate " · " (filter (not . T.null)
             [ if null terrs then "" else threadErrText terrs
             , if null werrs then "" else weaveErrText werrs ])
-        model = AppModel PNone False patches rules threads "" "" False "" "" ""
-            status [PaneState "Gen" 1 Nothing []] weaves "" Retelling "" ""
-        fontDir = "/usr/share/fonts/truetype/dejavu/"
+        model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
+            status panes weaves "" Retelling "" "" Nothing (sBodySize (envSettings env))
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized
             , appTheme darkTheme
-            , appFontDef "Regular" (T.pack (fontDir <> "DejaVuSans.ttf"))
-            , appFontDef "Bold" (T.pack (fontDir <> "DejaVuSans-Bold.ttf"))
+            , appFontDef "Regular" sansR
+            , appFontDef "Bold" sansB
             , appFontDef "Serif" serifR
             , appFontDef "Serif Italic" serifI
             , appInitEvent EvInit
+            , appDisposeEvent EvSaveSession
             ]
     startApp model (handleEvent env) (buildUI env) config
 
@@ -1437,11 +1738,11 @@ checkMain = do
             _ -> True
         isApplied = applied . lpStatus
         renderVerse v = T.unwords (map (renderToken . rtTok) (rvTokens
-            (toRVerse (kPubHex (envKeys env)) patches rules [] [] v)))
+            (toRVerse (kPubHex (envKeys env)) patches rules [] [] 0 v)))
         renderRef ref = case M.lookup ref (cByRef corpus) of
             Nothing -> "?"
             Just i -> renderVerse (vs V.! i)
-        linkRender (Link a b lbl) =
+        linkRender (Link a b lbl _) =
             refKey a <> " ↔ " <> refKey b
                 <> (if T.null lbl then "" else " (" <> lbl <> ")")
                 <> " — “"

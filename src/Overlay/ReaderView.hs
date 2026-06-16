@@ -64,6 +64,7 @@ data RVerse = RVerse
     { rvNum    :: !Int
     , rvTokens :: ![RTok]
     , rvNotes  :: ![Text]  -- ^ 1769 margin notes, when the toggle is on
+    , rvHeat   :: !Int     -- ^ witness heat tier, 0 (none) … 4 (extravaganza)
     } deriving (Eq, Show)
 
 -- | One reading column: an identity (changing it resets that column's scroll)
@@ -83,6 +84,7 @@ data ReaderCfg e = ReaderCfg
     , rcLinks        :: [((Text, Int, Int), (Text, Int, Int), Text)]
       -- ^ weave edges to draw between verses (any columns); the third element
       -- is the edge label (empty for a plain connector)
+    , rcHeatOn       :: Bool   -- ^ draw the per-verse witness heat strips
     , rcOnWordClick  :: RTok -> e   -- ^ Ctrl+left-click on a word with Strong's
     , rcOnWordAlt    :: RTok -> e   -- ^ right click: start a one-word patch
     , rcOnSpanSelect :: (Text, Int, Int) -> (Int, Int) -> e
@@ -91,6 +93,10 @@ data ReaderCfg e = ReaderCfg
       -- ^ verse number clicked: column index + verse ref + Shift held
     , rcOnPaneNav    :: Int -> Int -> e
       -- ^ Left/Right arrow over a column: (column index, direction -1/+1)
+    , rcOnVerseInspect :: (Text, Int, Int) -> Double -> Double -> e
+      -- ^ Ctrl+click on a verse number: verse ref + window x,y (compare card)
+    , rcOnZoom       :: Double -> e
+      -- ^ Ctrl+wheel: zoom the text by this delta (+1 in, -1 out)
     }
 
 -- A word placed on a line. Verse numbers carry their ref in 'pwVerse'; note
@@ -114,6 +120,11 @@ data RLine = RLine
     }
 
 -- | Per-column scroll + layout state.
+--
+-- 'clOffset' is the committed (target) scroll position — what hit-testing,
+-- layout, and the saved session use. Scrolling animates the *displayed* offset
+-- from 'clAnimFrom' toward 'clOffset' over 'scrollAnimMs', starting at
+-- 'clAnimAt' (0 = settled, drawing straight at 'clOffset'). See 'displayedOffset'.
 data ColState = ColState
     { clKey      :: !Text
     , clOffset   :: !Double
@@ -121,7 +132,26 @@ data ColState = ColState
     , clContentH :: !Double
     , clX        :: !Double   -- ^ left edge of this column (relative to content area)
     , clW        :: !Double   -- ^ this column's width
+    , clAnimFrom :: !Double   -- ^ displayed offset when the current glide began
+    , clAnimAt   :: !Millisecond  -- ^ when it began (0 = settled, no animation)
+    , clHeat     :: !(M.Map Int Int)  -- ^ verse number -> witness heat tier 0..4
     }
+
+-- | Scroll glide duration. ~150 ms with an ease-out curve reads as smooth
+-- without feeling laggy.
+scrollAnimMs :: Double
+scrollAnimMs = 150
+
+-- | The on-screen offset of a column at time @now@: the eased interpolation
+-- from 'clAnimFrom' to 'clOffset' while a glide is running, else 'clOffset'.
+displayedOffset :: Millisecond -> ColState -> Double
+displayedOffset now c
+    | clAnimAt c == 0 = clOffset c
+    | otherwise =
+        let elapsed = fromIntegral (now - clAnimAt c) :: Double
+            t = max 0 (min 1 (elapsed / scrollAnimMs))
+            e = 1 - (1 - t) ** 3   -- ease-out cubic
+        in clAnimFrom c + (clOffset c - clAnimFrom c) * e
 
 data ReaderState = ReaderState
     { rsCols    :: ![ColState]
@@ -132,17 +162,18 @@ data ReaderState = ReaderState
     , rsAnchor  :: !(Maybe (Int, (Text, Int, Int), Int))
     , rsSel     :: !(Maybe (Int, (Text, Int, Int), Int, Int))  -- ^ (col, ref, s, e)
     , rsDragged :: !Bool
+    , rsHeatAnim :: !Bool   -- ^ a perpetual heat-pulse render loop is running
     }
 
 emptyState :: ReaderState
-emptyState = ReaderState [] 0 0 0 Nothing Nothing Nothing False
+emptyState = ReaderState [] 0 0 0 Nothing Nothing Nothing False False
 
 -- palette (dark theme)
 bodyColor, titleColor, numColor, noteColor, underlineColor, selColor :: Color
 bodyColor = rgbHex "#D8D4CD"
-titleColor = rgbHex "#8E8B85"
-numColor = rgbHex "#6E6B66"
-noteColor = rgbHex "#8A8273"
+titleColor = rgbHex "#9C988F"
+numColor = rgbHex "#94908A"
+noteColor = rgbHex "#9C9488"
 underlineColor = rgbHex "#7FB4E6"
 selColor = rgbHex "#2F4156"
 
@@ -155,6 +186,23 @@ patchColor = rgbHex "#D9A95B"
 patchWarnColor = rgbHex "#D97C5B"
 sbTrackColor = rgbHex "#3A3A3A"
 sbThumbColor = rgbHex "#5C5C5C"
+
+-- active-pane left-edge marker: bright when the reader holds keyboard focus,
+-- dim when it's the active pane but focus is elsewhere (e.g. a dropdown)
+activeBarColor, idleBarColor :: Color
+activeBarColor = rgbHex "#7FB4E6"
+idleBarColor = rgbHex "#454B52"
+
+-- witness heat ramp for the left-margin strip: cool → warm with rising witness
+-- count, none (0) drawn nothing. The top two tiers breathe — their alpha rides
+-- a 0..1 pulse — so the most cross-referenced verses quietly stand out.
+heatStripColor :: Int -> Double -> Maybe Color
+heatStripColor tier pulse = case tier of
+    1 -> Just (rgba 108 124 98 0.50)               -- some
+    2 -> Just (rgba 196 158 78 0.72)               -- more
+    3 -> Just (rgba 226 150 60 (0.45 + 0.45 * pulse))  -- lots (animated)
+    4 -> Just (rgba 233 96 60 (0.50 + 0.50 * pulse))   -- extravaganza (animated)
+    _ -> Nothing
 
 -- weave connector lines: translucent gold, brighter when a verse is hovered
 linkColorBase, linkColorHot :: Color
@@ -209,9 +257,18 @@ makeReader cfg state = widget
 
     replace newState node = node & L.widget .~ makeReader cfg newState
 
+    -- the heat pulse needs a steady frame source; start a perpetual render loop
+    -- when the heatmap turns on, stop it when it turns off (this same loop also
+    -- carries scroll glides, so they ask for no extra frames while it runs)
     merge wenv node _oldNode oldState =
-        let st = relayout wenv (rsViewW oldState) (rsViewH oldState) oldState
-        in resultReqs (replace st node) [RenderOnce]
+        let st0 = relayout wenv (rsViewW oldState) (rsViewH oldState) oldState
+            want = rcHeatOn cfg
+            wid = node ^. L.info . L.widgetId
+            st = st0 { rsHeatAnim = want }
+            reqs = RenderOnce :
+                if want && not (rsHeatAnim oldState) then [RenderEvery wid 16 Nothing]
+                else [RenderStop wid | not want && rsHeatAnim oldState]
+        in resultReqs (replace st node) reqs
 
     getSizeReq _wenv _node = (expandSize 100 1, expandSize 100 1)
 
@@ -250,8 +307,10 @@ makeReader cfg state = widget
                             (c : _) -> clOffset c
                             _ -> 0
                         | otherwise = maybe 0 (fromMaybe 0 . firstY) av
-                in ColState key (clampOffset ch h off) lns ch
-                    (leftPad + fromIntegral j * (cw + colGap)) cw
+                    off' = clampOffset ch h off
+                    heat = M.fromList [ (rvNum rv, rvHeat rv) | rv <- vs ]
+                in ColState key off' lns ch
+                    (leftPad + fromIntegral j * (cw + colGap)) cw off' 0 heat
             cols = zipWith mk [0 ..] cfgs
         in st { rsCols = cols, rsViewW = w, rsViewH = h
               , rsActive = min (rsActive st) (max 0 (n - 1)) }
@@ -273,8 +332,19 @@ makeReader cfg state = widget
         WheelScroll p (Point _ wy) dir ->
             let mul = if dir == WheelNormal then 1 else -1
                 d = negate wy * 60 * mul
-            in if shiftHeld then scrollAllBy d else scrollBy (colAtX state carea p) d
+                z = wy * mul
+            in if ctrlHeld
+                -- Ctrl+wheel zooms the text (browser-style) instead of scrolling.
+                -- Ignore zero/near-zero deltas (horizontal scroll, trackpad
+                -- jitter) so merely holding Ctrl never drifts the zoom.
+                then if abs z < 0.01 then Just (resultNode node)
+                    else Just (resultEvts node [rcOnZoom cfg (if z > 0 then 1 else -1)])
+                else if shiftHeld then scrollAllBy d
+                    else scrollBy (colAtX state carea p) d
         KeyAction _ code KeyPressed
+            | ctrlHeld && code == keyEquals -> Just (resultEvts node [rcOnZoom cfg 1])
+            | ctrlHeld && code == keyMinus -> Just (resultEvts node [rcOnZoom cfg (-1)])
+            | ctrlHeld && code == key0 -> Just (resultEvts node [rcOnZoom cfg 0])
             | isKeyUp code -> vScroll (negate lineStep)
             | isKeyDown code -> vScroll lineStep
             | isKeyPageUp code -> vScroll (negate pageStep)
@@ -288,6 +358,19 @@ makeReader cfg state = widget
       where
         carea = getContentArea node (currentStyle wenv node)
         pageStep = rsViewH state * 0.85
+
+        now = wenv ^. L.timestamp
+        wid = node ^. L.info . L.widgetId
+        -- keep re-rendering for the length of the glide, then stop on its own;
+        -- when the heat pulse loop is already running it carries the frames
+        animReqs | rcHeatOn cfg = []
+                 | otherwise    = [RenderEvery wid 15 (Just 14)]
+        -- begin a glide on one column: aim at o', easing out from wherever it is
+        -- shown right now (so a mid-glide nudge re-eases from the visible spot)
+        glide c o' = c { clOffset = o'
+                       , clAnimFrom = displayedOffset now c, clAnimAt = now }
+        updCol ci f st = st { rsCols =
+            [ if i == ci then f c else c | (i, c) <- zip [0 ..] (rsCols st) ] }
 
         shiftHeld =
             let km = wenv ^. L.inputStatus . L.keyMod
@@ -313,17 +396,17 @@ makeReader cfg state = widget
 
         scrollAllBy d =
             let st = state { rsCols =
-                    [ c { clOffset = clampOffset (clContentH c) (rsViewH state)
-                            (clOffset c + d) }
+                    [ glide c (clampOffset (clContentH c) (rsViewH state)
+                            (clOffset c + d))
                     | c <- rsCols state ] }
-            in Just (resultReqs (replace st node) [RenderOnce])
+            in Just (resultReqs (replace st node) animReqs)
         scrollTo ci o = case drop ci (rsCols state) of
             (c : _) ->
                 let o' = clampOffset (clContentH c) (rsViewH state) o
                 in if o' == clOffset c
                     then Just (resultNode node)
-                    else Just (resultReqs (replace
-                        (setOffset ci o' state) node) [RenderOnce])
+                    else Just (resultReqs
+                        (replace (updCol ci (`glide` o') state) node) animReqs)
             [] -> Nothing
 
         hitWord p = do
@@ -362,7 +445,9 @@ makeReader cfg state = widget
                     if isJust (rtPatch rt) then Nothing
                         else Just (ci, rtRef rt, rtIx rt)
                 st = state { rsAnchor = anchor, rsSel = Nothing
-                           , rsDragged = False }
+                           , rsDragged = False
+                           , rsActive = fromMaybe (rsActive state)
+                                (colAtX state carea p) }
             in Just (resultReqs (replace st node) [RenderOnce])
 
         onRelease = case (rsDragged state, rsSel state) of
@@ -375,12 +460,16 @@ makeReader cfg state = widget
                                , rsDragged = False }
                 in Just (resultReqs (replace st node) [RenderOnce])
 
-        -- a click on a verse number selects that verse for weaving; Strong's
-        -- needs Ctrl-click, so a stray click while scrolling doesn't replace the
-        -- side panel (and clear the weave view) with a lookup
+        -- a click on a verse number selects that verse for weaving; Ctrl+click
+        -- on the number instead opens the compare card (deliberate, never on a
+        -- stray pass). Strong's likewise needs Ctrl-click on a word.
         onLeftClick p = case verseNumberAt state carea p of
-            Just (ci, ref) ->
-                Just (resultEvts node [rcOnVerseClick cfg ci ref shiftHeld])
+            Just (ci, ref)
+                | ctrlHeld -> let Point px py = p
+                              in Just (resultEvts node
+                                   [rcOnVerseInspect cfg ref px py])
+                | otherwise ->
+                    Just (resultEvts node [rcOnVerseClick cfg ci ref shiftHeld])
             Nothing
                 | not ctrlHeld -> Just (resultNode node)
                 | otherwise -> case hitWord p of
@@ -398,29 +487,49 @@ makeReader cfg state = widget
             Rect cx cy _cw chh = carea
             fm = wenv ^. L.fontManager
             st = state
+            now = wenv ^. L.timestamp
+            focused = isNodeFocused wenv node
+            active = rsActive st
         forM_ (zip [0 ..] (rsCols st)) $
-            uncurry (renderColumn renderer cx cy chh st)
+            uncurry (renderColumn renderer now focused active cx cy chh st)
         -- weave connector lines, on top of the text
         let hov = do
                 (ci, li, _) <- rsHover st
                 col <- listToMaybe (drop ci (rsCols st))
                 ln <- listToMaybe (drop li (clLines col))
                 lineVerse ln
-        drawLinks renderer fm cx cy chh st hov (rcLinks cfg)
+        drawLinks renderer now fm cx cy chh st hov (rcLinks cfg)
         -- patch hover card, last so it sits above everything
         forM_ (rsHover st) $ \(ci, li, wi) ->
             forM_ (cardFor st ci li wi) $ \(col, pw, ln, pinfo) -> do
-                let baseY = cy + rlY ln - clOffset col + rlBase ln
+                let baseY = cy + rlY ln - displayedOffset now col + rlBase ln
                 drawCard renderer fm carea (cx + clX col + pwX pw) baseY pinfo
 
-    renderColumn renderer cx cy chh st ci col = do
-        let offset = clOffset col
+    renderColumn renderer now focused active cx cy chh st ci col = do
+        let offset = displayedOffset now col
             ox = cx + clX col
             visible ln = rlY ln + rlH ln >= offset && rlY ln <= offset + chh
             selected pw = case (rsSel st, pwTok pw) of
                 (Just (sc, ref, s, e), Just rt) ->
                     sc == ci && rtRef rt == ref && rtIx rt >= s && rtIx rt <= e
                 _ -> False
+        -- a thin bar on the active column's left edge marks where keyboard
+        -- scroll/arrows will land; it brightens when the reader holds focus,
+        -- so it's never a mystery what's receiving the keys
+        when (ci == active && length (rsCols st) > 1 || ci == active && focused) $
+            drawRect renderer (Rect ox cy 2.5 chh)
+                (Just (if focused then activeBarColor else idleBarColor)) Nothing
+        -- witness heat: a per-verse strip in the gutter, tier by cross-reference
+        -- count, the top two tiers breathing on a slow pulse
+        when (rcHeatOn cfg) $ do
+            let pulse = (sin (fromIntegral now / 320) + 1) / 2
+            forM_ (M.toList (verseBands col)) $ \((_, _, vn), (top, bot)) ->
+                forM_ (heatStripColor (M.findWithDefault 0 vn (clHeat col)) pulse) $ \hc ->
+                    let y0 = max cy (cy + top - offset)
+                        y1 = min (cy + chh) (cy + bot - offset)
+                    in when (y1 > y0 + 2) $
+                        drawRect renderer (Rect (ox + 4) (y0 + 1) 3.5 (y1 - y0 - 2))
+                            (Just hc) Nothing
         forM_ (zip [0 ..] (clLines col)) $ \(li, ln) -> when (visible ln) $ do
             let lineTop = cy + rlY ln - offset
                 baseY = lineTop + rlBase ln
@@ -463,35 +572,54 @@ makeReader cfg state = widget
             drawRect renderer (Rect trackX thumbY 4 thumbH)
                 (Just sbThumbColor) Nothing
 
-    -- draw a connector for every link whose endpoints fall in two different
-    -- columns, from the right edge of the left verse to the left edge of the
-    -- right verse (vertical centre of each verse's lines, clamped to view)
-    drawLinks renderer fm cx cy chh st hov links = do
-        let findIn ref = listToMaybe
-                [ (col, cy + (top + bot) / 2 - clOffset col)
-                | col <- rsCols st
-                , Just (top, bot) <- [M.lookup ref (verseBands col)] ]
+    -- Connectors are routed by connected component, not per raw edge: for each
+    -- group of linked verses we find which columns it occupies, then join only
+    -- *consecutive* occupied columns. So a 3- or 4-way parallel chains
+    -- A→B→C→D and no line is ever drawn straight across a middle column's text.
+    -- (Where a middle column holds no member, the hop spans it — nothing to
+    -- anchor to.) Within a pair of adjacent columns every member joins every
+    -- member, so 2-to-1 correspondences still draw as converging lines.
+    drawLinks renderer now fm cx cy chh st hov links = do
+        let cols = rsCols st
+            locate ref = listToMaybe
+                [ (i, c, cy + (top + bot) / 2 - displayedOffset now c)
+                | (i, c) <- zip [0 :: Int ..] cols
+                , Just (top, bot) <- [M.lookup ref (verseBands c)] ]
             clampY y = max (cy + 2) (min (cy + chh - 2) y)
-        forM_ links $ \(a, b, lbl) -> case (findIn a, findIn b) of
-            (Just (cola, ya), Just (colb, yb)) | clX cola /= clX colb -> do
-                let (lc, ly, rc, ry)
-                        | clX cola <= clX colb = (cola, ya, colb, yb)
-                        | otherwise = (colb, yb, cola, ya)
-                    hot = hov == Just a || hov == Just b
-                    col = if hot then linkColorHot else linkColorBase
+            -- undirected adjacency + label lookup over the visible edges
+            adj = M.fromListWith (<>)
+                (concat [ [(a, [b]), (b, [a])] | (a, b, _) <- links ])
+            labelOf a b = fromMaybe "" $ listToMaybe
+                [ l | (x, y, l) <- links, not (T.null l)
+                    , (x == a && y == b) || (x == b && y == a) ]
+            reach acc [] = acc
+            reach acc (x : xs)
+                | x `elem` acc = reach acc xs
+                | otherwise = reach (x : acc) (M.findWithDefault [] x adj <> xs)
+            comps = foldl step [] (M.keys adj)
+              where step seen r | any (r `elem`) seen = seen
+                                | otherwise = reach [] [r] : seen
+            drawSeg (lc, ly) (rc, ry) lbl hot = do
+                let col = if hot then linkColorHot else linkColorBase
                     wdt = if hot then 2.4 else 1.3
                     p1@(Point x1 y1) = Point (cx + clX lc + clW lc - 14) (clampY ly)
                     p2@(Point x2 y2) = Point (cx + clX rc + 14) (clampY ry)
                 drawCurve renderer wdt col p1 p2
                 drawDot renderer col p1
                 drawDot renderer col p2
-                -- show the label only for the hovered verse's edges, sat just
-                -- above the connector midpoint (a straight line would otherwise
-                -- strike through the text); showing them all at once is a wall
                 when (hot && not (T.null lbl)) $
                     drawLinkLabel renderer fm
                         (Point ((x1 + x2) / 2) ((y1 + y2) / 2 - 10)) hot lbl
-            _ -> pure ()
+        forM_ comps $ \comp -> do
+            -- members of this component that are on screen, grouped by column
+            let byCol = M.toAscList $ M.fromListWith (<>)
+                    [ (i, [(ref, c, y)]) | ref <- comp, Just (i, c, y) <- [locate ref] ]
+            -- join each pair of consecutive occupied columns, all-to-all
+            forM_ (zip byCol (drop 1 byCol)) $ \((_, ms1), (_, ms2)) ->
+                forM_ ms1 $ \(ra, ca, ya) ->
+                    forM_ ms2 $ \(rb, cb, yb) ->
+                        drawSeg (ca, ya) (cb, yb) (labelOf ra rb)
+                            (hov == Just ra || hov == Just rb)
 
     cardFor st ci li wi = do
         col <- nth ci (rsCols st)
@@ -513,11 +641,6 @@ verseBands col = M.fromListWith merge
 lineVerse :: RLine -> Maybe (Text, Int, Int)
 lineVerse ln = listToMaybe
     (mapMaybe (\pw -> pwVerse pw <|> (rtRef <$> pwTok pw)) (rlWords ln))
-
-setOffset :: Int -> Double -> ReaderState -> ReaderState
-setOffset ci o st = st
-    { rsCols = [ if i == ci then c { clOffset = o } else c
-              | (i, c) <- zip [0 ..] (rsCols st) ] }
 
 drawCard :: Renderer -> FontManager -> Rect -> Double -> Double -> PatchInfo -> IO ()
 drawCard renderer fm (Rect cx cy cw chh) wordX baseY pinfo = do
