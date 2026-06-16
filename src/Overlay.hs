@@ -93,6 +93,11 @@ loadSettings = do
                     putStrLn ("config.json ignored (" <> err <> ")")
                     pure defaultSettings
 
+-- | UI scale factor for the chrome: text rides the same zoom as the scripture
+-- body (1.0 at the default size), so buttons/labels/panels grow with Ctrl+/-.
+uiScaleOf :: AppModel -> Double
+uiScaleOf m = _amBodySize m / sBodySize defaultSettings
+
 -- | Persist settings back to config.json (best-effort), e.g. after a live zoom.
 saveSettings :: Settings -> IO ()
 saveSettings s = do
@@ -552,6 +557,9 @@ muted = rgbHex "#B7B2A8"
 buildUI :: Env -> WidgetEnv AppModel AppEvent -> AppModel -> WidgetNode AppModel AppEvent
 buildUI env wenv model = widgetTree
   where
+    -- UI scale: chrome text rides the same zoom as the scripture body, so it
+    -- grows together (Ctrl +/-/scroll). 1.0 at the default body size.
+    sc = model ^. amBodySize / sBodySize defaultSettings
     corpus = envCorpus env
     own = kPubHex (envKeys env)
     patches = model ^. amPatches
@@ -563,34 +571,34 @@ buildUI env wenv model = widgetTree
     canLink = length (filter (not . null . _psSel) panes) >= 2
 
     header = hstack $
-        [ labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize 12]
+        [ labeledCheckbox "1769 notes" amNotesOn `styleBasic` [textSize (12 * sc)]
         , spacer
-        , labeledCheckbox "heatmap" amHeatmapOn `styleBasic` [textSize 12]
+        , labeledCheckbox "heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
         , spacer
-        , labeledCheckbox "links" amLinesOn `styleBasic` [textSize 12]
+        , labeledCheckbox "links" amLinesOn `styleBasic` [textSize (12 * sc)]
         , spacer
         , button ("patches (" <> showt (length patches + length rules) <> ")")
-            EvTogglePatches `styleBasic` [textSize 12]
+            EvTogglePatches `styleBasic` [textSize (12 * sc)]
         , spacer
         , button ("threads (" <> showt (length threads) <> ")")
-            EvToggleThreads `styleBasic` [textSize 12]
+            EvToggleThreads `styleBasic` [textSize (12 * sc)]
         , spacer
         , button ("weaves (" <> showt (length (model ^. amWeaves)) <> ")")
-            EvToggleWeaves `styleBasic` [textSize 12]
+            EvToggleWeaves `styleBasic` [textSize (12 * sc)]
         ]
         <> (if canLink
             then [ spacer, button "+ link" EvLink
-                    `styleBasic` [textSize 12, textColor (rgbHex "#C9A24B")] ]
+                    `styleBasic` [textSize (12 * sc), textColor (rgbHex "#C9A24B")] ]
             else [])
         <>
         [ spacer
-        , label (model ^. amStatus) `styleBasic` [textSize 11, textColor muted]
+        , label (model ^. amStatus) `styleBasic` [textSize (11 * sc), textColor muted]
         , filler
-        , label "overlay" `styleBasic` [textColor muted, textSize 12]
+        , label "overlay" `styleBasic` [textColor muted, textSize (12 * sc)]
         ]
 
-    bookRow b = label (displayName b) `styleBasic` [textSize 12]
-    chRow n = label (showt n) `styleBasic` [textSize 12]
+    bookRow b = label (displayName b) `styleBasic` [textSize (12 * sc)]
+    chRow n = label (showt n) `styleBasic` [textSize (12 * sc)]
 
     notesFor v = if model ^. amNotesOn
         then M.findWithDefault [] (vBook v, vChapter v, vVerse v) (envNotes env)
@@ -663,21 +671,21 @@ buildUI env wenv model = widgetTree
     navStrip i p = hstack
         ( [ dropdown_ (amPanes . singular (ix i) . psBook) bookIds
                 bookRow bookRow [onChange (EvPaneBook i)]
-                `styleBasic` [width 150, textSize 12]
+                `styleBasic` [width 150, textSize (12 * sc)]
           , spacer
           , dropdown_ (amPanes . singular (ix i) . psChapter)
                 [1 .. chapterCount corpus (_psBook p)] chRow chRow
                 [onChange (EvPaneChapter i)]
-                `styleBasic` [width 70, textSize 12]
+                `styleBasic` [width 70, textSize (12 * sc)]
                 `nodeKey` ("paneCh_" <> showt i <> "_" <> _psBook p)
-          , button "<" (EvPanePrev i) `styleBasic` [textSize 12, padding 2]
-          , button ">" (EvPaneNext i) `styleBasic` [textSize 12, padding 2]
+          , button "<" (EvPanePrev i) `styleBasic` [textSize (12 * sc), padding 2]
+          , button ">" (EvPaneNext i) `styleBasic` [textSize (12 * sc), padding 2]
           , filler
           , button "+ pane" (EvAddPane i)
-                `styleBasic` [textSize 11, padding 3]
+                `styleBasic` [textSize (11 * sc), padding 3]
           ]
           <> [ button "x" (EvClosePane i)
-                `styleBasic` [textSize 11, padding 3, textColor (rgbHex "#B07A7A")]
+                `styleBasic` [textSize (11 * sc), padding 3, textColor (rgbHex "#B07A7A")]
              | npanes > 1 ]
         ) `styleBasic` [padding 4, bgColor (rgbHex "#202225")]
 
@@ -702,7 +710,7 @@ buildUI env wenv model = widgetTree
         PNone -> []
         PEdit et -> [editorPanel model et]
         PStrongs word ref vref ->
-            [strongsPanel env (sortOnCanon (M.findWithDefault [] vref witAdj))
+            [strongsPanel env sc (sortOnCanon (M.findWithDefault [] vref witAdj))
                 vref (word, ref)]
         PPatches -> [patchesPanel model]
         PThreads -> [threadsPanel model]
@@ -744,35 +752,35 @@ buildUI env wenv model = widgetTree
         [ hstack
             [ box_ [onClick (EvGoRef (fst3 other) (snd3 other)), alignLeft]
                 (label (refText other)
-                    `styleBasic` [textSize 12, textColor lightSkyBlue])
+                    `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
             , filler
             , button (if lApproved l then "✓" else "approve")
                 (EvApproveLinkIn file l (not (lApproved l)))
-                `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
                     , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
             , button "reject" (EvRejectLinkIn file l)
-                `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
                     , bgColor (rgbHex "#5A3A36")]
             ]
         , wrapLabel (verseTextOf other)
             `styleBasic` [textSize (model ^. amBodySize), textColor lightGray, width 336]
         ]
         <> [ wrapLabel ("· " <> lbl) `styleBasic`
-                 [textSize 10, textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
+                 [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
 
     -- header pinned; the verse + parallels scroll, so a verse with many
     -- witnesses never runs off the bottom of the screen
     compareCard ref = vstack_ [childSpacing_ 6]
         [ hstack
-            [ label (refText ref) `styleBasic` [textSize 13, textColor lightGray]
+            [ label (refText ref) `styleBasic` [textSize (13 * sc), textColor lightGray]
             , filler
-            , button "✕" EvCloseCompare `styleBasic` [textSize 11, padding 2]
+            , button "✕" EvCloseCompare `styleBasic` [textSize (11 * sc), padding 2]
             ]
         , vscroll_ [wheelRate 50] (vstack_ [childSpacing_ 6] $
             [ wrapLabel (verseTextOf ref)
                 `styleBasic` [textSize (model ^. amBodySize), width 336]
             , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-            , label "parallels" `styleBasic` [textSize 10, textColor muted]
+            , label "parallels" `styleBasic` [textSize (10 * sc), textColor muted]
             ]
             <> map compareRow (comparePassagesFor ref))
         ]
@@ -799,29 +807,29 @@ buildUI env wenv model = widgetTree
 wrapLabel :: Text -> WidgetNode AppModel AppEvent
 wrapLabel t = label_ t [multiline, resizeFactorH 0]
 
-captionField :: Text -> Maybe Text -> WidgetNode AppModel AppEvent
-captionField name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
-    [ label name `styleBasic` [textSize 10, textColor muted]
-    , wrapLabel v `styleBasic` [textSize 13, width panelInnerW]
+captionField :: Double -> Text -> Maybe Text -> WidgetNode AppModel AppEvent
+captionField sc name mval = widgetMaybe mval $ \v -> vstack_ [childSpacing_ 2]
+    [ label name `styleBasic` [textSize (10 * sc), textColor muted]
+    , wrapLabel v `styleBasic` [textSize (13 * sc), width panelInnerW]
     ]
 
 panelBox :: [WidgetNode AppModel AppEvent] -> WidgetNode AppModel AppEvent
 panelBox items = vstack_ [childSpacing_ 8] items
     `styleBasic` [width panelW, padding 12, bgColor (rgbHex "#26282B")]
 
-panelHeader :: Text -> AppEvent -> WidgetNode AppModel AppEvent
-panelHeader title closeEvt = hstack
-    [ label title `styleBasic` [textSize 15]
+panelHeader :: Double -> Text -> AppEvent -> WidgetNode AppModel AppEvent
+panelHeader sc title closeEvt = hstack
+    [ label title `styleBasic` [textSize (15 * sc)]
     , filler
-    , button "✕" closeEvt `styleBasic` [textSize 11, padding 4]
+    , button "✕" closeEvt `styleBasic` [textSize (11 * sc), padding 4]
     ]
 
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> [((Text, Int, Int), Text)] -> (Text, Int, Int) -> (Text, Text)
-    -> WidgetNode AppModel AppEvent
-strongsPanel env witnesses vref (word, ref) = panel
+    :: Env -> Double -> [((Text, Int, Int), Text)] -> (Text, Int, Int)
+    -> (Text, Text) -> WidgetNode AppModel AppEvent
+strongsPanel env sc witnesses vref (word, ref) = panel
   where
     entry = M.lookup ref (envStrongs env)
     occs = M.findWithDefault [] ref (envOccIx env)
@@ -829,81 +837,81 @@ strongsPanel env witnesses vref (word, ref) = panel
     occMore = length occs - length occShown
 
     occRow r@(b, c, _) = box_ [onClick (EvGoRef b c), alignLeft]
-        (label (refLabel r) `styleBasic` [textSize 12, textColor lightSkyBlue])
+        (label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
     -- a cross-referenced verse: jump on click, shared wording underneath
     witRow (r@(b, c, _), lbl) = box_ [onClick (EvGoRef b c), alignLeft]
         (vstack_ [childSpacing_ 1] $
-            (label (refLabel r) `styleBasic` [textSize 12, textColor lightSkyBlue])
+            (label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
             : [ wrapLabel lbl `styleBasic`
-                  [textSize 10, textColor (rgbHex "#D2B46E"), width panelInnerW]
+                  [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width panelInnerW]
               | not (T.null lbl) ])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
     verseSection =
-        [ label "this verse" `styleBasic` [textSize 10, textColor muted]
-        , label (refText vref) `styleBasic` [textSize 14, textColor lightGray]
+        [ label "this verse" `styleBasic` [textSize (10 * sc), textColor muted]
+        , label (refText vref) `styleBasic` [textSize (14 * sc), textColor lightGray]
         , label (showt (length witnesses) <> " cross-reference"
                 <> (if length witnesses == 1 then "" else "s")
                 <> " (witnesses)")
-            `styleBasic` [textSize 11, textColor muted]
+            `styleBasic` [textSize (11 * sc), textColor muted]
         ]
         <> map witRow witnesses
         <> [ wrapLabel "no linked passages yet — add weave links to build them"
-                `styleBasic` [textSize 10, textColor muted, width panelInnerW]
+                `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
            | null witnesses ]
         <> [separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]]
 
     wordSection =
-        [ label ("word — " <> ref) `styleBasic` [textSize 10, textColor muted]
+        [ label ("word — " <> ref) `styleBasic` [textSize (10 * sc), textColor muted]
         , widgetMaybe (entry >>= seLemma) $ \l ->
-            label l `styleBasic` [textSize 22]
+            label l `styleBasic` [textSize (22 * sc)]
         , hstack_ [childSpacing_ 8]
             [ widgetMaybe (entry >>= seXlit) $ \x ->
-                label x `styleBasic` [textSize 13, textColor lightGray]
+                label x `styleBasic` [textSize (13 * sc), textColor lightGray]
             , widgetMaybe (entry >>= sePron) $ \p ->
-                label p `styleBasic` [textSize 12, textColor muted]
+                label p `styleBasic` [textSize (12 * sc), textColor muted]
             ]
-        , captionField "derivation" (entry >>= seDeriv)
-        , captionField "definition" (entry >>= seDef)
-        , captionField "KJV renderings" (entry >>= seKjv)
+        , captionField sc "derivation" (entry >>= seDeriv)
+        , captionField sc "definition" (entry >>= seDef)
+        , captionField sc "KJV renderings" (entry >>= seKjv)
         , label (showt (length occs) <> " occurrences")
-            `styleBasic` [textSize 11, textColor muted]
+            `styleBasic` [textSize (11 * sc), textColor muted]
         ]
         <> [occRow r | r <- occShown]
         <> [label ("… and " <> showt occMore <> " more")
-                `styleBasic` [textSize 11, textColor muted]
+                `styleBasic` [textSize (11 * sc), textColor muted]
            | occMore > 0]
 
     panel = panelBox
-        [ panelHeader (refText vref <> " — " <> word) EvClosePanel
+        [ panelHeader sc (refText vref <> " — " <> word) EvClosePanel
         , vscroll $ vstack_ [childSpacing_ 8] (verseSection <> wordSection)
         ]
 
 editorPanel :: AppModel -> EditTarget -> WidgetNode AppModel AppEvent
 editorPanel model et = panelBox $
-    [ panelHeader (if everywhere then "new rule" else "new patch") EvClosePanel
+    [ panelHeader sc (if everywhere then "new rule" else "new patch") EvClosePanel
     , wrapLabel ("For modernizing archaisms only — e.g. fourscore → eighty. "
         <> "Never to add to, take from, or change the meaning of the text.")
-        `styleBasic` [textSize 10, textColor (rgbHex "#C99A4B"), width panelInnerW]
+        `styleBasic` [textSize (10 * sc), textColor (rgbHex "#C99A4B"), width panelInnerW]
     , label (refText (etRef et) <> ", words "
         <> showt (fst (etSpan et)) <> "–" <> showt (snd (etSpan et)))
-        `styleBasic` [textSize 11, textColor muted]
+        `styleBasic` [textSize (11 * sc), textColor muted]
     , wrapLabel ("replacing: " <> T.unwords (etWords et))
-        `styleBasic` [textSize 13, width panelInnerW]
+        `styleBasic` [textSize (13 * sc), width panelInnerW]
     , widgetMaybe (etRuleHit et) ruleHitBox
-    , label "replacement" `styleBasic` [textSize 10, textColor muted]
+    , label "replacement" `styleBasic` [textSize (10 * sc), textColor muted]
     , textField amReplace `nodeKey` "replace"
-    , label "note (optional)" `styleBasic` [textSize 10, textColor muted]
+    , label "note (optional)" `styleBasic` [textSize (10 * sc), textColor muted]
     , textField amNote
-    , label "scope" `styleBasic` [textSize 10, textColor muted]
+    , label "scope" `styleBasic` [textSize (10 * sc), textColor muted]
     , labeledRadio "this verse only" False amEverywhere
-        `styleBasic` [textSize 12]
+        `styleBasic` [textSize (12 * sc)]
     , labeledRadio ("everywhere — " <> showt (etMatches et) <> " match"
         <> (if etMatches et == 1 then "" else "es") <> " (rule)")
         True amEverywhere
-        `styleBasic` [textSize 12]
+        `styleBasic` [textSize (12 * sc)]
     , spacer
     , hstack
         [ button (if everywhere then "Sign & save rule" else "Sign & save")
@@ -913,41 +921,43 @@ editorPanel model et = panelBox $
         ]
     , wrapLabel ("signed with your key, applied instantly; manage from the "
         <> "patches panel")
-        `styleBasic` [textSize 10, textColor muted, width panelInnerW]
+        `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
     , label "add to thread (the note above travels with it)"
-        `styleBasic` [textSize 10, textColor muted]
+        `styleBasic` [textSize (10 * sc), textColor muted]
     ]
-    <> [ textDropdown amThreadPick threadNames `styleBasic` [textSize 12]
+    <> [ textDropdown amThreadPick threadNames `styleBasic` [textSize (12 * sc)]
        | not (null threadNames) ]
     <> [ textField_ amThreadNew
             [placeholder (if null threadNames
                 then "thread name" else "or a new thread name")]
        , box_ [alignLeft] (button "Add span to thread" EvAddToThread
-            `styleBasic` [textSize 11, padding 4])
+            `styleBasic` [textSize (11 * sc), padding 4])
        ]
   where
+    sc = uiScaleOf model
     everywhere = model ^. amEverywhere
     threadNames = [thName (ltThread lt) | lt <- model ^. amThreads]
     ruleHitBox (file, desc, own) = vstack_ [childSpacing_ 4] $
         [ wrapLabel ("this span is rewritten by rule: " <> desc)
-            `styleBasic` [textSize 10, textColor muted, width panelInnerW]
+            `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
         ]
         <> [ box_ [alignLeft]
                 (button "exclude this verse from the rule"
                     (EvExcludeRule file (etRef et))
-                    `styleBasic` [textSize 11, padding 4])
+                    `styleBasic` [textSize (11 * sc), padding 4])
            | own ]
 
 patchesPanel :: AppModel -> WidgetNode AppModel AppEvent
 patchesPanel model = panelBox
-    [ panelHeader "patches & rules" EvClosePanel
+    [ panelHeader sc "patches & rules" EvClosePanel
     , if null lps && null lrs
         then label "none yet — right-click a word, or drag across several"
-            `styleBasic` [textSize 12, textColor muted]
+            `styleBasic` [textSize (12 * sc), textColor muted]
         else vscroll (vstack_ [childSpacing_ 6] rows)
     ]
   where
+    sc = uiScaleOf model
     lps = model ^. amPatches
     lrs = model ^. amRules
     rows =
@@ -955,7 +965,7 @@ patchesPanel model = panelBox
         <> map row lps
         <> [ sectionLabel "rules" | not (null lrs) ]
         <> map ruleRow lrs
-    sectionLabel t = label t `styleBasic` [textSize 10, textColor muted]
+    sectionLabel t = label t `styleBasic` [textSize (10 * sc), textColor muted]
     ruleRow lr =
         let r = lrRule lr
             excl = case length (rExclude r) of
@@ -965,15 +975,15 @@ patchesPanel model = panelBox
             [ hstack
                 [ wrapLabel (T.unwords (rMatch r) <> " → "
                     <> T.unwords (rReplacement r))
-                    `styleBasic` [textSize 12, width (panelInnerW - 64)]
+                    `styleBasic` [textSize (12 * sc), width (panelInnerW - 64)]
                 , filler
                 , button "delete" (EvDeleteRule (lrFile lr))
-                    `styleBasic` [textSize 10, padding 3]
+                    `styleBasic` [textSize (10 * sc), padding 3]
                 ]
             , label (statusText (lrStatus lr) <> " · "
                 <> showt (lrMatches lr) <> " places" <> excl <> " · "
                 <> T.take 10 (rCreated r))
-                `styleBasic` [textSize 10, textColor muted]
+                `styleBasic` [textSize (10 * sc), textColor muted]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
     row lp =
@@ -983,40 +993,41 @@ patchesPanel model = panelBox
             [ hstack
                 [ box_ [onClick (EvGoRef (pBook p) (pChapter p)), alignLeft]
                     (label (refText ref)
-                        `styleBasic` [textSize 12, textColor lightSkyBlue])
+                        `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
                 , filler
                 , button "delete" (EvDeletePatch (lpFile lp))
-                    `styleBasic` [textSize 10, padding 3]
+                    `styleBasic` [textSize (10 * sc), padding 3]
                 ]
             , wrapLabel (T.unwords (pOriginal p) <> " → "
                 <> T.unwords (pReplacement p))
-                `styleBasic` [textSize 12, width (panelInnerW - 8)]
+                `styleBasic` [textSize (12 * sc), width (panelInnerW - 8)]
             , label (statusText (lpStatus lp) <> " · "
                 <> T.take 10 (pCreated p))
-                `styleBasic` [textSize 10, textColor muted]
+                `styleBasic` [textSize (10 * sc), textColor muted]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
 threadsPanel :: AppModel -> WidgetNode AppModel AppEvent
 threadsPanel model = panelBox
-    [ panelHeader "threads" EvClosePanel
+    [ panelHeader sc "threads" EvClosePanel
     , if null lts
         then wrapLabel ("none yet — right-click a word or drag a span, "
                 <> "then \"add span to thread\"")
-            `styleBasic` [textSize 12, textColor muted, width panelInnerW]
+            `styleBasic` [textSize (12 * sc), textColor muted, width panelInnerW]
         else vscroll (vstack_ [childSpacing_ 6] (map row lts))
     ]
   where
+    sc = uiScaleOf model
     lts = model ^. amThreads
     row lt =
         let t = ltThread lt
         in box_ [onClick (EvOpenThread (ltFile lt)), alignLeft]
             (vstack_ [childSpacing_ 2]
                 [ label (thName t)
-                    `styleBasic` [textSize 13, textColor lightSkyBlue]
+                    `styleBasic` [textSize (13 * sc), textColor lightSkyBlue]
                 , label (showt (length (thEntries t)) <> " passages · since "
                     <> T.take 10 (thCreated t))
-                    `styleBasic` [textSize 10, textColor muted]
+                    `styleBasic` [textSize (10 * sc), textColor muted]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -1024,32 +1035,33 @@ threadViewPanel :: AppModel -> FilePath -> WidgetNode AppModel AppEvent
 threadViewPanel model file =
     case find ((== file) . ltFile) (model ^. amThreads) of
         Nothing -> panelBox
-            [ panelHeader "thread" EvClosePanel
-            , label "thread not found" `styleBasic` [textSize 12, textColor muted]
+            [ panelHeader sc "thread" EvClosePanel
+            , label "thread not found" `styleBasic` [textSize (12 * sc), textColor muted]
             ]
         Just lt -> render (ltThread lt)
   where
+    sc = uiScaleOf model
     render t = panelBox
-        [ panelHeader (thName t) EvClosePanel
+        [ panelHeader sc (thName t) EvClosePanel
         , hstack
             [ button "← all threads" EvShowThreads
-                `styleBasic` [textSize 10, padding 3]
+                `styleBasic` [textSize (10 * sc), padding 3]
             , filler
             , button "delete thread" (EvDeleteThread file)
-                `styleBasic` [textSize 10, padding 3]
+                `styleBasic` [textSize (10 * sc), padding 3]
             ]
         , label (showt (length (thEntries t)) <> " passages · since "
             <> T.take 10 (thCreated t))
-            `styleBasic` [textSize 11, textColor muted]
-        , label "thread notes" `styleBasic` [textSize 10, textColor muted]
+            `styleBasic` [textSize (11 * sc), textColor muted]
+        , label "thread notes" `styleBasic` [textSize (10 * sc), textColor muted]
         , textArea amThreadNotes
-            `styleBasic` [textSize 12, height 140]
+            `styleBasic` [textSize (12 * sc), height 140]
             `nodeKey` "threadNotes"
         , box_ [alignLeft] (button "Save notes" (EvSaveThreadNotes file)
-            `styleBasic` [textSize 11, padding 4])
+            `styleBasic` [textSize (11 * sc), padding 4])
         , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label "passages (highlighted in the text)"
-            `styleBasic` [textSize 10, textColor muted]
+            `styleBasic` [textSize (10 * sc), textColor muted]
         , vscroll (vstack_ [childSpacing_ 6]
             (zipWith entryRow [0 ..] (thEntries t)))
         ]
@@ -1059,44 +1071,45 @@ threadViewPanel model file =
             [ hstack
                 [ box_ [onClick (EvGoRef b c), alignLeft]
                     (label (refText (teRef e))
-                        `styleBasic` [textSize 12, textColor lightSkyBlue])
+                        `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
                     `styleHover` [bgColor (rgbHex "#3A3F45")]
                 , filler
                 , button "remove" (EvDeleteThreadEntry file i)
-                    `styleBasic` [textSize 10, padding 3]
+                    `styleBasic` [textSize (10 * sc), padding 3]
                 ]
             , wrapLabel ("“" <> T.unwords (teText e) <> "”")
-                `styleBasic` [textSize 12, width (panelInnerW - 8)]
+                `styleBasic` [textSize (12 * sc), width (panelInnerW - 8)]
             , widgetMaybe (teNote e) $ \nt -> wrapLabel nt
-                `styleBasic` [ textSize 11, textColor muted
+                `styleBasic` [ textSize (11 * sc), textColor muted
                              , width (panelInnerW - 8) ]
             , separatorLine `styleBasic` [fgColor (rgbHex "#33363A")]
             ]
 
 -- ── weave panels ────────────────────────────────────────────────────────────
 
-kindRowW :: WeaveKind -> WidgetNode AppModel AppEvent
-kindRowW k = label (kindLabel k) `styleBasic` [textSize 12]
+kindRowW :: Double -> WeaveKind -> WidgetNode AppModel AppEvent
+kindRowW sc k = label (kindLabel k) `styleBasic` [textSize (12 * sc)]
 
 weavesPanel :: AppModel -> WidgetNode AppModel AppEvent
 weavesPanel model = panelBox
-    [ panelHeader "weaves" EvClosePanel
+    [ panelHeader sc "weaves" EvClosePanel
     , label "parallel passages — links between verses, drawn across panes"
-        `styleBasic` [textSize 10, textColor muted]
+        `styleBasic` [textSize (10 * sc), textColor muted]
     , if null lws
         then wrapLabel ("none yet — open two panes, select verses in each, "
                 <> "then \"+ link\"")
-            `styleBasic` [textSize 12, textColor muted, width panelInnerW]
+            `styleBasic` [textSize (12 * sc), textColor muted, width panelInnerW]
         else vscroll (vstack_ [childSpacing_ 6] (map row lws))
     , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
-    , label "kind for new links" `styleBasic` [textSize 10, textColor muted]
-    , dropdown amWeaveKind allKinds kindRowW kindRowW `styleBasic` [textSize 12]
-    , label "new empty weave" `styleBasic` [textSize 10, textColor muted]
+    , label "kind for new links" `styleBasic` [textSize (10 * sc), textColor muted]
+    , dropdown amWeaveKind allKinds (kindRowW sc) (kindRowW sc) `styleBasic` [textSize (12 * sc)]
+    , label "new empty weave" `styleBasic` [textSize (10 * sc), textColor muted]
     , textField_ amWeaveNew [placeholder "weave name"]
     , box_ [alignLeft] (button "Create" EvNewWeave
-        `styleBasic` [textSize 11, padding 4])
+        `styleBasic` [textSize (11 * sc), padding 4])
     ]
   where
+    sc = uiScaleOf model
     -- order by where each weave first lands in the canon (filters to come)
     lws = sortOn (weaveStartKey . lwWeave) (model ^. amWeaves)
     row lw =
@@ -1104,14 +1117,14 @@ weavesPanel model = panelBox
         in box_ [onClick (EvOpenWeave (lwFile lw)), alignLeft]
             (vstack_ [childSpacing_ 2]
                 [ label (wName w)
-                    `styleBasic` [textSize 13, textColor lightSkyBlue]
+                    `styleBasic` [textSize (13 * sc), textColor lightSkyBlue]
                 , label (kindLabel (wKind w) <> " · "
                     <> showt (length (wLinks w)) <> " links"
                     <> (if wApproved w then "" else " · ⚠ unapproved"))
-                    `styleBasic` [textSize 10, textColor
+                    `styleBasic` [textSize (10 * sc), textColor
                         (if wApproved w then gray else rgbHex "#C99A4B")]
                 , label (T.intercalate "  ↔  " (map spanText (weaveSpans w)))
-                    `styleBasic` [textSize 10, textColor muted]
+                    `styleBasic` [textSize (10 * sc), textColor muted]
                 ])
             `styleHover` [bgColor (rgbHex "#3A3F45")]
 
@@ -1119,88 +1132,89 @@ weaveViewPanel :: AppModel -> FilePath -> WidgetNode AppModel AppEvent
 weaveViewPanel model file =
     case find ((== file) . lwFile) (model ^. amWeaves) of
         Nothing -> panelBox
-            [ panelHeader "weave" EvClosePanel
-            , label "weave not found" `styleBasic` [textSize 12, textColor muted]
+            [ panelHeader sc "weave" EvClosePanel
+            , label "weave not found" `styleBasic` [textSize (12 * sc), textColor muted]
             ]
         Just lw -> render (lwWeave lw)
   where
+    sc = uiScaleOf model
     others = [wName (lwWeave o) | o <- model ^. amWeaves, lwFile o /= file]
     render w = panelBox $
-        [ panelHeader (wName w) EvClosePanel
+        [ panelHeader sc (wName w) EvClosePanel
         , hstack
             [ button "← all weaves" EvShowWeaves
-                `styleBasic` [textSize 10, padding 3]
+                `styleBasic` [textSize (10 * sc), padding 3]
             , filler
             , button "delete weave" (EvDeleteWeave file)
-                `styleBasic` [textSize 10, padding 3]
+                `styleBasic` [textSize (10 * sc), padding 3]
             ]
         , wrapLabel (if wApproved w
                 then "✓ reviewed and approved"
                 else "⚠ AI-generated for study — not reviewed or approved")
-            `styleBasic` [textSize 11, padding 5, width panelInnerW
+            `styleBasic` [textSize (11 * sc), padding 5, width panelInnerW
                 , textColor (if wApproved w
                     then rgbHex "#8FB88A" else rgbHex "#E0B05A")
                 , bgColor (rgbHex "#2A2620")]
         , hstack
             [ button (if wApproved w then "Clear approval" else "✓ Approve whole weave")
                 (EvApproveWeave (not (wApproved w)))
-                `styleBasic` [textSize 11, padding 4
+                `styleBasic` [textSize (11 * sc), padding 4
                     , textColor (rgbHex "#EAE6DE")
                     , bgColor (if wApproved w then rgbHex "#574A38" else rgbHex "#3E5239")]
                 `styleHover` [bgColor (if wApproved w then rgbHex "#6A5942" else rgbHex "#4B6344")]
             , filler
             , label (showt (approvedCount w) <> " / " <> showt (length (wLinks w))
                     <> " verse links approved")
-                `styleBasic` [textSize 10, textColor muted]
+                `styleBasic` [textSize (10 * sc), textColor muted]
             ]
         ]
         <> [ wrapLabel "opening a weave points the panes at its passages; its lines draw automatically"
-            `styleBasic` [textSize 10, textColor muted, width panelInnerW]
-        , label "comparing" `styleBasic` [textSize 10, textColor muted]
+            `styleBasic` [textSize (10 * sc), textColor muted, width panelInnerW]
+        , label "comparing" `styleBasic` [textSize (10 * sc), textColor muted]
         , vstack_ [childSpacing_ 1]
             [ label ("· " <> spanText s)
-                `styleBasic` [textSize 11, textColor (rgbHex "#C8C4BD")]
+                `styleBasic` [textSize (11 * sc), textColor (rgbHex "#C8C4BD")]
             | s <- weaveSpans w ]
-        , label "kind" `styleBasic` [textSize 10, textColor muted]
-        , dropdown_ amWeaveKind allKinds kindRowW kindRowW [onChange EvSetWeaveKind]
-            `styleBasic` [textSize 12]
-        , label "weave notes" `styleBasic` [textSize 10, textColor muted]
+        , label "kind" `styleBasic` [textSize (10 * sc), textColor muted]
+        , dropdown_ amWeaveKind allKinds (kindRowW sc) (kindRowW sc) [onChange EvSetWeaveKind]
+            `styleBasic` [textSize (12 * sc)]
+        , label "weave notes" `styleBasic` [textSize (10 * sc), textColor muted]
         , textArea amWeaveNotes
-            `styleBasic` [textSize 12, height 110]
+            `styleBasic` [textSize (12 * sc), height 110]
             `nodeKey` "weaveNotes"
         , box_ [alignLeft] (button "Save notes" EvSaveWeaveNotes
-            `styleBasic` [textSize 11, padding 4])
+            `styleBasic` [textSize (11 * sc), padding 4])
         , separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label (showt (length (wLinks w)) <> " links")
-            `styleBasic` [textSize 10, textColor muted]
+            `styleBasic` [textSize (10 * sc), textColor muted]
         , vscroll (vstack_ [childSpacing_ 4] (map linkRow (wLinks w)))
         ]
         <> combineSeg
     linkRow l@(Link a b lbl _) = hstack
         ( [ box_ [onClick (EvGoRef (fst3 a) (snd3 a)), alignLeft]
-            (label (refText a) `styleBasic` [textSize 11, textColor lightSkyBlue])
-          , label " ↔ " `styleBasic` [textSize 11, textColor muted]
+            (label (refText a) `styleBasic` [textSize (11 * sc), textColor lightSkyBlue])
+          , label " ↔ " `styleBasic` [textSize (11 * sc), textColor muted]
           , box_ [onClick (EvGoRef (fst3 b) (snd3 b)), alignLeft]
-            (label (refText b) `styleBasic` [textSize 11, textColor lightSkyBlue])
+            (label (refText b) `styleBasic` [textSize (11 * sc), textColor lightSkyBlue])
           ]
           <> [ label ("· " <> lbl)
-                 `styleBasic` [textSize 10, textColor (rgbHex "#D2B46E")]
+                 `styleBasic` [textSize (10 * sc), textColor (rgbHex "#D2B46E")]
              | not (T.null lbl) ]
           <> [ filler
              , button (if lApproved l then "✓" else "approve")
                  (EvApproveLink l (not (lApproved l)))
-                 `styleBasic` [textSize 10, padding 2, textColor (rgbHex "#EAE6DE")
+                 `styleBasic` [textSize (10 * sc), padding 2, textColor (rgbHex "#EAE6DE")
                      , bgColor (if lApproved l then rgbHex "#3E5239" else rgbHex "#403A30")]
                  `styleHover` [bgColor (if lApproved l then rgbHex "#4B6344" else rgbHex "#524A3C")]
-             , button "x" (EvRemoveLink l) `styleBasic` [textSize 10, padding 2]
+             , button "x" (EvRemoveLink l) `styleBasic` [textSize (10 * sc), padding 2]
              ] )
     combineSeg =
         [ separatorLine `styleBasic` [fgColor (rgbHex "#3A3A3A")]
         , label "combine another weave in (merge links)"
-            `styleBasic` [textSize 10, textColor muted]
-        , textDropdown amCombinePick others `styleBasic` [textSize 12]
+            `styleBasic` [textSize (10 * sc), textColor muted]
+        , textDropdown amCombinePick others `styleBasic` [textSize (12 * sc)]
         , box_ [alignLeft] (button "Combine" (EvCombineWeave (model ^. amCombinePick))
-            `styleBasic` [textSize 11, padding 4])
+            `styleBasic` [textSize (11 * sc), padding 4])
         ] `orEmpty` not (null others)
     orEmpty xs cond = if cond then xs else []
 
