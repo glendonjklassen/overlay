@@ -120,6 +120,15 @@ data RenderCand = RenderCand
 -- both a Hebrew and a Greek lemma. Each pair keeps its single most distinctive
 -- shared word, and the list is sorted strongest-first. Generic, low-content
 -- words (under four letters, or not purely alphabetic) are skipped.
+-- | Low-content English words the KJV uses as idiom/connective glue (\"for …
+-- sake\", \"in … stead\"). Their Strong's tag is the noun they modify, so they
+-- bridge unrelated lemmas (e.g. a Hebrew word ↔ G5547 \"Christ\" via \"stead\").
+-- Excluded from the rendering source regardless of rarity. Extend as needed.
+renderStopWords :: Set Text
+renderStopWords = S.fromList
+    [ "sake", "stead", "behalf", "midst", "manner", "thing", "things"
+    , "sort", "means", "intent", "cause", "account", "wise", "stead's" ]
+
 renderingCandidates :: Corpus -> [RenderCand]
 renderingCandidates corpus =
     sortBy (comparing (Down . rcScore)) (M.elems byPair)
@@ -131,7 +140,8 @@ renderingCandidates corpus =
     addTok m t =
         let w = T.toLower (tokWord t)
             (hs, gs) = partition ("H" `T.isPrefixOf`) (tokStrongs t)
-        in if T.length w < 4 || not (T.all isLetter w) || (null hs && null gs)
+        in if T.length w < 4 || not (T.all isLetter w)
+              || w `S.member` renderStopWords || (null hs && null gs)
             then m
             else M.insertWith mergeSets w (S.fromList hs, S.fromList gs) m
     mergeSets (h1, g1) (h2, g2) = (S.union h1 h2, S.union g1 g2)
