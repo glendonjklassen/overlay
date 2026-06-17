@@ -44,7 +44,7 @@ loadEnv = do
     strongs <- loadStrongs strongsPath >>= either dieLoad pure
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
-    extraIx <- sourceLinkIndex <$> loadBridgeSources bridgeSourcesFile
+    extraIx <- sourceLinkIndex <$> loadBridgeSources
     let bridge = etymologyBridge strongs            -- static; approvals live in the model
         candIx = candidateIndex (renderingCandidates corpus)
     Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx

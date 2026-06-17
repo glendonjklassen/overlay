@@ -54,7 +54,7 @@ module Overlay.Bridge
 import Data.Aeson
 import Data.Char (isDigit, isLetter)
 import Data.Either (fromRight)
-import Data.List (foldl', nub, partition, sortBy)
+import Data.List (foldl', isSuffixOf, nub, partition, sortBy)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
@@ -64,7 +64,8 @@ import qualified Data.Set as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Vector as V
-import System.Directory (doesFileExist)
+import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
+import System.FilePath ((</>))
 
 import Overlay.Concept (ConceptIx, ConceptStat (..), conceptStat)
 import Overlay.Corpus
@@ -309,19 +310,35 @@ instance FromJSON BridgeSources where
     parseJSON = withObject "BridgeSources" $ \o ->
         BridgeSources <$> o .:? "links" .!= []
 
--- | Where hydrated external bridge links live (gitignored; the hydrate script
--- builds it from STEPBible / LXX / … and rebuilds it locally).
+-- | Committed directory of redistributable bridge artifacts (e.g. the LXX
+-- alignment): CC-BY / public-domain-derived, attribution in each file's header.
+bridgeDir :: FilePath
+bridgeDir = "bridge"
+
+-- | Hydrated (gitignored) external links, for copyleft-derived sources (e.g.
+-- semantic domains) that must not be committed.
 bridgeSourcesFile :: FilePath
 bridgeSourcesFile = "data/bridge-sources.json"
 
--- | Load external source links, or none if the file is absent or unreadable
--- (the bridge then runs on the in-repo etymology + rendering sources alone).
-loadBridgeSources :: FilePath -> IO [SourceLink]
-loadBridgeSources path = do
-    present <- doesFileExist path
-    if not present
-        then pure []
-        else bsLinks . fromRight (BridgeSources []) <$> eitherDecodeFileStrict path
+-- | Load all external source links: every @*.json@ in the committed
+-- 'bridgeDir', plus the hydrated 'bridgeSourcesFile'. Missing or unreadable
+-- files are skipped, so the bridge falls back to the in-repo etymology +
+-- rendering sources when nothing external is present.
+loadBridgeSources :: IO [SourceLink]
+loadBridgeSources = do
+    dirFiles <- do
+        present <- doesDirectoryExist bridgeDir
+        if not present
+            then pure []
+            else map (bridgeDir </>) . filter (".json" `isSuffixOf`)
+                    <$> listDirectory bridgeDir
+    concat <$> mapM loadOne (dirFiles <> [bridgeSourcesFile])
+  where
+    loadOne path = do
+        present <- doesFileExist path
+        if not present
+            then pure []
+            else bsLinks . fromRight (BridgeSources []) <$> eitherDecodeFileStrict path
 
 -- | Index source links under both endpoints, for per-lemma lookup.
 sourceLinkIndex :: [SourceLink] -> Map Text [SourceLink]
