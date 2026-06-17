@@ -230,7 +230,7 @@ buildUI env wenv model = widgetTree
         POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env sc panelPW
+            [strongsPanel env (model ^. amBridgeExtraOn) sc panelPW
                 (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
         PPatches -> [patchesPanel model panelPW]
         PThreads -> [threadsPanel model panelPW]
@@ -259,7 +259,8 @@ buildUI env wenv model = widgetTree
     conceptSeriesFor r =
         let cix = envConcept env
             partners = nub (crossPartners (envBridge env) (envBridgeCands env) 6 r
-                            <> extraPartners (envBridgeExtra env) r)
+                            <> [ p | model ^. amBridgeExtraOn
+                                   , p <- extraPartners (envBridgeExtra env) r ])
         in ConceptSeries r (unionByBook cix [r])
             : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
               | not (null partners) ]

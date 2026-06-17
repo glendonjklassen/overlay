@@ -141,6 +141,10 @@ optionsPanel model pw = panelBox pw $
     , labeledCheckbox "1769 margin notes" amNotesOn `styleBasic` [textSize (12 * sc)]
     , labeledCheckbox "weave heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
     , labeledCheckbox "weave links" amLinesOn `styleBasic` [textSize (12 * sc)]
+    , labeledCheckbox "cross-testament extras (LXX, domains)" amBridgeExtraOn
+        `styleBasic` [textSize (12 * sc)]
+    , panelHint sc piw "Off by default. Adds opt-in external bridge sources, each\
+        \ tagged with its provenance; etymology and 1769 renderings always show."
     , hrule
     , sectionLabel sc "Reading columns"
     , dropdown_ amMaxCols [1 .. maxColsCap] colRow colRow [onChange EvSetMaxCols]
@@ -182,9 +186,9 @@ optionsPanel model pw = panelBox pw $
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> Double -> Double -> [((Text, Int, Int), Text)]
+    :: Env -> Bool -> Double -> Double -> [((Text, Int, Int), Text)]
     -> (Text, Int, Int) -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env sc pw witnesses vref (word, ref) = panel
+strongsPanel env extraOn sc pw witnesses vref (word, ref) = panel
   where
     piw = pw - 24
     entry = M.lookup ref (envStrongs env)
@@ -249,7 +253,7 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
            | c <- M.findWithDefault [] ref (envBridgeCands env) ]
         <> [ (if slHeb l == ref then slGrk l else slHeb l
              , sourcePrior (slSource l), sourceLabel (slSource l))
-           | l <- M.findWithDefault [] ref (envBridgeExtra env) ]
+           | extraOn, l <- M.findWithDefault [] ref (envBridgeExtra env) ]
     -- drop links below a confidence floor, so low-content translation glue (a
     -- word like "sake" tagged on many unrelated lemmas) doesn't surface absurd
     -- pairings; distinctive single-source words and etymology links clear it.

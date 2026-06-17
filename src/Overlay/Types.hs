@@ -102,6 +102,8 @@ data AppModel = AppModel
     , _amConcepts    :: [Text]   -- ^ active Strong's numbers shown on the concept
                                   -- dispersion strip (1…4); empty hides it
     , _amBridge      :: BridgeStore  -- ^ user's OT↔NT rendering-link approvals
+    , _amBridgeExtraOn :: Bool   -- ^ include opt-in external bridge sources
+                                  -- (LXX, semantic domains); off by default
     } deriving (Eq, Show)
 
 data AppEvent
