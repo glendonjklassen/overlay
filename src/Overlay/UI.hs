@@ -78,7 +78,8 @@ buildUI env wenv model = widgetTree
         , navTab "threads" (length threads) threadPanelOpen EvToggleThreads
         , navTab "weaves" (length (model ^. amWeaves)) weavePanelOpen EvToggleWeaves
         , navTab "parallels"
-            (length (pendingSuggestions (model ^. amWeaves) (envSuggestions env)))
+            (length (pendingSuggestions (model ^. amDismissed) (model ^. amWeaves)
+                (envSuggestions env)))
             (model ^. amPanel == PSuggestions) EvToggleSuggestions
         ]
         <> [ flatBtn "+ link" (rgbHex "#C9A24B") EvLink | canLink ]

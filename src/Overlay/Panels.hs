@@ -563,16 +563,20 @@ weavesPanel model pw = panelBox pw
             ]
 
 -- | Suggested parallels still awaiting review: those whose verse pair is not
--- already captured by some weave. Accepting a suggestion writes a weave linking
--- the pair, so it drops out of the list (and stays out across restarts); a pair
--- the user wove by hand drops out too.
-pendingSuggestions :: [LoadedWeave] -> [Suggestion] -> [Suggestion]
-pendingSuggestions lws = filter (\s -> (sgA s, sgB s) `Set.notMember` woven)
+-- already captured by some weave and has not been dismissed. Accepting a
+-- suggestion writes a weave linking the pair, so it drops out of the list (and
+-- stays out across restarts); a pair the user wove by hand drops out too; and a
+-- dismissed pair is hidden for good.
+pendingSuggestions
+    :: [((Text, Int, Int), (Text, Int, Int))] -> [LoadedWeave]
+    -> [Suggestion] -> [Suggestion]
+pendingSuggestions dismissed lws =
+    filter (\s -> (sgA s, sgB s) `Set.notMember` hidden)
   where
-    woven = Set.fromList
-        [ pair
-        | lw <- lws, l <- wLinks (lwWeave lw)
-        , pair <- [(lA l, lB l), (lB l, lA l)] ]
+    hidden = Set.fromList $
+        [ pair | (a, b) <- dismissed, pair <- [(a, b), (b, a)] ] <>
+        [ pair | lw <- lws, l <- wLinks (lwWeave lw)
+               , pair <- [(lA l, lB l), (lB l, lA l)] ]
 
 -- | Review panel for auto-detected within-language parallels (Phase 4): verse
 -- pairs sharing a contiguous run of original-language words. Tap a row to lay
@@ -593,7 +597,8 @@ suggestionsPanel env model pw = panelBox pw
   where
     sc = uiScaleOf model
     piw = pw - 24
-    sgs = pendingSuggestions (model ^. amWeaves) (envSuggestions env)
+    sgs = pendingSuggestions (model ^. amDismissed) (model ^. amWeaves)
+        (envSuggestions env)
     row sg = vstack_ [childSpacing_ 2]
         [ listCard sc (EvOpenSuggestion (sgA sg) (sgB sg))
             (refLabel (sgA sg) <> "   \x2194   " <> refLabel (sgB sg))
@@ -602,7 +607,13 @@ suggestionsPanel env model pw = panelBox pw
             , wrapLabel (sgLabel sg)
                 `styleBasic` [textSize (10 * sc), textColor muted, width piw]
             ]
-        , box_ [alignLeft] (primaryBtn sc "accept \x2192 weave" (EvAcceptSuggestion sg))
+        , hstack_ [childSpacing_ 8]
+            [ primaryBtn sc "accept \x2192 weave" (EvAcceptSuggestion sg)
+            , button "dismiss" (EvDismissSuggestion (sgA sg) (sgB sg))
+                `styleBasic` [textSize (11 * sc), padding 4, bgColor (rgba 0 0 0 0)
+                    , textColor muted]
+                `styleHover` [bgColor (rgbHex "#3A3F45"), textColor (rgbHex "#EAE6DE")]
+            ]
         ]
 
 weaveViewPanel :: AppModel -> Double -> FilePath -> WidgetNode AppModel AppEvent

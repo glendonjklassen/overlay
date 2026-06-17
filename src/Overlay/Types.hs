@@ -108,6 +108,9 @@ data AppModel = AppModel
                                   -- (LXX, semantic domains); off by default
     , _amPinnedConcepts :: [Text]  -- ^ concepts pinned onto the dispersion strip
                                   -- for comparison (persist as you browse)
+    , _amDismissed   :: [((Text, Int, Int), (Text, Int, Int))]
+                                  -- ^ parallels dismissed from review; hidden
+                                  -- from the list and persisted across restarts
     } deriving (Eq, Show)
 
 data AppEvent
@@ -155,6 +158,7 @@ data AppEvent
     | EvToggleSuggestions
     | EvOpenSuggestion (Text, Int, Int) (Text, Int, Int)  -- ^ show the pair in panes
     | EvAcceptSuggestion Suggestion  -- ^ accept → a new unapproved weave
+    | EvDismissSuggestion (Text, Int, Int) (Text, Int, Int)  -- ^ hide for good
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves

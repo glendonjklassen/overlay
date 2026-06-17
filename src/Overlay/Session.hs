@@ -82,6 +82,47 @@ loadSession = do
         raw <- BC.readFile path
         pure $ fromRight (Session [] defaultMaxCols False) (eitherDecodeStrict raw)
 
+-- ── dismissed parallels ─────────────────────────────────────────────────────
+
+-- | A verse pair the user dismissed from the suggested-parallels list, stored
+-- as two verse keys — the same shape a weave link uses.
+newtype DismissedPair = DismissedPair ((Text, Int, Int), (Text, Int, Int))
+
+instance FromJSON DismissedPair where
+    parseJSON = withObject "dismissed" $ \o -> do
+        aT <- o .: "a"
+        bT <- o .: "b"
+        a <- maybe (fail ("bad ref: " <> show aT)) pure (parseRefKey aT)
+        b <- maybe (fail ("bad ref: " <> show bT)) pure (parseRefKey bT)
+        pure (DismissedPair (a, b))
+
+dismissedPath :: IO FilePath
+dismissedPath = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    pure (dir </> "dismissed-parallels.json")
+
+-- | Persist the dismissed pairs so a dismissed parallel never returns to the
+-- review list. Best-effort, like 'saveSession'.
+saveDismissed :: [((Text, Int, Int), (Text, Int, Int))] -> IO ()
+saveDismissed prs = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    path <- dismissedPath
+    let val = [ object ["a" .= refKey a, "b" .= refKey b] | (a, b) <- prs ]
+    _ <- try (createDirectoryIfMissing True dir
+        >> BL.writeFile path (encode val <> "\n")) :: IO (Either SomeException ())
+    pure ()
+
+-- | Read the dismissed pairs. Missing or unreadable falls back to none.
+loadDismissed :: IO [((Text, Int, Int), (Text, Int, Int))]
+loadDismissed = do
+    path <- dismissedPath
+    exists <- doesFileExist path
+    if not exists then pure [] else do
+        raw <- BC.readFile path
+        pure $ either (const []) (map unwrap) (eitherDecodeStrict raw)
+  where
+    unwrap (DismissedPair p) = p
+
 -- | Build the initial panes from a saved session, validated against the corpus:
 -- unknown books are dropped, chapters clamped to range, capped at the saved
 -- column limit. An empty or invalid session falls back to a single Genesis 1

@@ -199,6 +199,11 @@ handleEvent env _wenv _node model evt = case evt of
         let name = refLabel (sgA sg) <> " \x2194 " <> refLabel (sgB sg)
             link = canonLinkL (sgA sg) (sgB sg) (sgLabel sg)
         in [Task (newWeaveTask name Retelling (cTokVersion (envCorpus env)) [link])]
+    EvDismissSuggestion a b ->
+        -- hide a trivial/obvious parallel for good; persisted beside the session
+        let m = model & amDismissed %~ ((a, b) :)
+        in [Model (m & amStatus .~ "dismissed parallel")
+           , Task (saveDismissed (m ^. amDismissed) >> pure EvNoop)]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

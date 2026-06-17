@@ -66,6 +66,7 @@ guiMain = do
     (sansR, sansB) <- resolveSans
     session <- loadSession
     bridgeStore <- loadApprovals bridgeFile
+    dismissed <- loadDismissed
     let maxCols = clampMaxCols (sessMaxCols session)
         panes = restorePanes (envCorpus env) maxCols (sessPanes session)
         status = T.intercalate " · " (filter (not . T.null)
@@ -74,7 +75,7 @@ guiMain = do
         model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
             status panes Nothing weaves "" Retelling Retelling "" "" Nothing
             (sBodySize (envSettings env)) maxCols 0 (sLineSpacing (envSettings env)) []
-            bridgeStore (sessBridgeExtra session) []
+            bridgeStore (sessBridgeExtra session) [] dismissed
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized
