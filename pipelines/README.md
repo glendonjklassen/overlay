@@ -21,62 +21,52 @@ Each source emits the shared format the app loads:
   (Louw-Nida/SDBH are CC-BY-**SA** copyleft, so the derived artifact isn't
   committed; rebuild locally).
 
-> ⚠️ **Status:** v1, written but **not yet run end-to-end** — it needs your
-> machine (eflomal + the texts). Expect to iterate, especially the Greek tagging
-> (step 2). Validate any output with `overlay --analyze` before committing it.
+> **Status:** the **LXX source is built and committed** (`bridge/lxx-alignment.json`,
+> 1557 links over 20,038 verses). The semantic-domains source was evaluated and
+> rejected (see below).
 
 ---
 
-## LXX co-occurrence — `lxx_bridge.py` — VALIDATED
+## LXX co-occurrence — `lxx_bridge.py` — BUILT
 
 **Why it's trustworthy:** the Septuagint is a translation of the Hebrew, so each
 OT verse has the same content in both languages. A Hebrew Strong's number and a
 Greek one that keep co-occurring in the same verse are translation equivalents.
-We score each pair by Dice overlap and keep the strong ones; one-off
-coincidences (the "sake/stead" class) can't clear the floor.
+Each pair is scored by Dice overlap; one-off coincidences (the "sake/stead"
+class) can't clear the floor.
 
-**Validated 2026-06-16** on the real Swete LXX vs the KJV Hebrew tags (Ruth,
-Hosea, Amos, Micah, Esther — the books then available):
+**Full-run result** (protocanonical OT, 20,038 aligned verses): the theological
+links etymology + renderings can't see all surface clearly —
 
-| | G2316 *theos*/God | G2962 *kyrios*/Lord |
+| link | dice | co-occur |
 |---|---|---|
-| **H3068 YHWH** | dice 0.29 | **dice 0.91** |
-| **H430 elohim** | **dice 0.78** | dice 0.27 |
+| H3068 → G2962  (YHWH → *kyrios*) | 0.55 | 2351 |
+| H430 → G2316  (elohim → *theos*) | 0.72 | 1599 |
+| H4899 → G5547  (Messiah → *Christos*) | 0.66 | 22 |
+| H1285 → G1242  (covenant → *diathēkē*) | 0.79 | 206 |
+| H7965 → G1515  (shalom → *eirēnē*) | 0.61 | 102 |
 
-The diagonal dominates — exactly the theological links etymology + renderings
-miss. (No aligner needed; per-verse co-occurrence + Dice is enough and lighter
-than eflomal.)
+Top links by dice are clean proper-noun transliterations (Enoch, Seth, Lamech,
+Jephthah…). **Known weakness:** co-occurrence also links a few tightly-bound
+collocations (fixed name pairs like *Pedahzur*↔*Gamaliel* that always share a
+verse) — contextually related, not strict equivalents; the Dice floor limits it
+and word-level alignment would refine it later.
 
-### Ownership
-Use a **public-domain** Greek LXX (Swete, or Rahlfs-1935 — **not** Rahlfs-Hanhart
-2006) and **lemmatize it yourself**, so the artifact is yours to license openly.
-Hebrew comes from the tagged KJV already in `data/kjv.jsonl` (public domain), so
-the only external input is the PD Greek text + your lemmatizer.
-
-### Step 1 — Greek sequences (`greek.tsv`): self-lemmatize the PD LXX
-Tokenize the PD Greek text, lemmatize (cltk≥2 via Stanza, or spaCy-grc — needs a
-Python the model supports, ≤3.11), and map each lemma → Greek Strong's via
-`data/strongs.json` (verified: θεός→G2316, κύριος→G2962, χριστός→G5547, 5495
-lemmas). Emit one verse per line:
-```
-Ruth	1	1	G2962 G1096 G2424 ...
-```
-Mapping note: Strong's only covers NT-attested Greek, which is exactly the Greek
-we want to bridge to; LXX-only words simply have no `G####` and are skipped.
-
-### Step 2 — build + emit  (Hebrew defaults to the tagged KJV)
+### Reproduce (one command; outputs are yours to license openly)
 ```sh
-python pipelines/lxx_bridge.py --greek greek.tsv \
-    --min-dice 0.30 --min-co 3 --out bridge/lxx-alignment.json
+python pipelines/lxx_bridge.py        # fetches PD Swete + MIT lemma dict, builds
+overlay --check                       # confirms the artifact loads
 ```
+Inputs cache under `pipelines/.lxx-cache/` (gitignored). Provenance: Swete LXX
+text (public domain) + cltk lemma dictionary (MIT) + Strong's numbers (facts) +
+the tagged KJV Hebrew (public domain) → **no copyleft**, so `bridge/lxx-alignment.json`
+is committed and free to relicense.
 
-### Step 3 — validate, then commit
-```sh
-overlay --analyze        # reports bridge link counts + sample pairs
-```
-Spot-check the obvious links (H3068→G2962, H430→G2316) top the list and nothing
-absurd does. Then `git add bridge/lxx-alignment.json` — clean to commit, since
-PD text + your lemmatization + Strong's-number facts impose no copyleft.
+**Scope / documented exclusions:** the protocanonical OT books whose versification
+matches the KJV. Psalms is excluded (LXX numbering differs — needs a mapping) and
+the apocrypha / LXX-only books are excluded (no Hebrew counterpart). A
+context-free dictionary lemmatizes a few high-frequency divine forms wrongly
+(e.g. θεοῦ→θεάομαι); `OVERRIDE` in the script corrects the θεός paradigm.
 
 ---
 

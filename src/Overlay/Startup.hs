@@ -154,7 +154,8 @@ checkMain = do
         , "concepts: " <> showt (M.size cix) <> " Strong's numbers tagged, "
             <> showt (length (hapaxes cix)) <> " hapax"
         , "bridge:   " <> showt (bridgeSize (envBridge env))
-            <> " linked Strong's numbers (etymology + approvals)"
+            <> " etymology-linked Strong's numbers; "
+            <> showt (M.size (envBridgeExtra env)) <> " with external (LXX) links"
         , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"

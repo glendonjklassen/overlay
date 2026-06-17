@@ -7,3 +7,6 @@ data/
 *~
 .ghc.environment.*
 stack.yaml.lock
+
+# LXX build cache (downloaded inputs, large)
+pipelines/.lxx-cache/
