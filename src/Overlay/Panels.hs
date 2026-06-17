@@ -218,15 +218,11 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
     dispersionSection = case cstat of
         Nothing -> []
         Just cs ->
-            let (ot, nt) = testamentSplit cs
-                rarity = case rarityTier cs of
+            let rarity = case rarityTier cs of
                     Hapax  -> Just "hapax — occurs once (among tagged words)"
                     Rare k -> Just ("rare — " <> showt k <> " occurrences")
                     Common -> Nothing
-            in  [ panelSection sc "distribution"
-                , label ("OT " <> showt ot <> "   ·   NT " <> showt nt)
-                    `styleBasic` [textSize (13 * sc), textColor lightGray]
-                ]
+            in  [ panelSection sc "distribution" ]
                 <> [ label r `styleBasic`
                         [textSize (11 * sc), textColor (rgbHex "#D2B46E")]
                    | Just r <- [rarity] ]

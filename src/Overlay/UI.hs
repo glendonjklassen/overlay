@@ -291,7 +291,7 @@ buildUI env wenv model = widgetTree
     verseTextOf ref = maybe "" (T.unwords . map renderToken . vTokens)
         (M.lookup ref (cByRef corpus) >>= (cVerses corpus V.!?))
 
-    compareRow (other, lbl, file, l) = vstack_ [childSpacing_ 2] $
+    compareRow (other, _lbl, file, l) = vstack_ [childSpacing_ 2]
         [ hstack
             [ box_ [onClick (EvGoRef (fst3 other) (snd3 other)), alignLeft]
                 (label (refText other)
@@ -303,8 +303,6 @@ buildUI env wenv model = widgetTree
         , wrapLabel (verseTextOf other)
             `styleBasic` [textSize (model ^. amBodySize), textColor lightGray, width 336]
         ]
-        <> [ wrapLabel ("· " <> lbl) `styleBasic`
-                 [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
 
     -- header pinned; the verse + parallels scroll, so a verse with many
     -- witnesses never runs off the bottom of the screen
