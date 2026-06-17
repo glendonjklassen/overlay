@@ -41,6 +41,14 @@ module Overlay.Bridge
     , candidateIndex
     , crossPartners
     , unionByBook
+      -- * External (hydrated) source links
+    , SourceLink (..)
+    , bridgeSourcesFile
+    , loadBridgeSources
+    , sourceLinkIndex
+    , extraPartners
+    , sourcePrior
+    , sourceLabel
     ) where
 
 import Data.Aeson
@@ -268,3 +276,63 @@ crossPartners br candIx n s =
 unionByBook :: ConceptIx -> [Text] -> Map Text Int
 unionByBook cix ps =
     M.unionsWith (+) [ maybe M.empty csByBook (conceptStat cix p) | p <- ps ]
+
+-- ── external (hydrated) source links ─────────────────────────────────────────
+
+-- | A Hebrew↔Greek link asserted by an external FOSS source, hydrated offline
+-- into 'bridgeSourcesFile'. @slSource@ names the witness (e.g. "stepbible-tbesg")
+-- so its trust and label resolve via 'sourcePrior' / 'sourceLabel'.
+data SourceLink = SourceLink
+    { slHeb    :: !Text
+    , slGrk    :: !Text
+    , slSource :: !Text
+    } deriving (Eq, Show)
+
+instance FromJSON SourceLink where
+    parseJSON = withObject "SourceLink" $ \o ->
+        SourceLink <$> o .: "h" <*> o .: "g" <*> o .: "source"
+
+newtype BridgeSources = BridgeSources { bsLinks :: [SourceLink] }
+instance FromJSON BridgeSources where
+    parseJSON = withObject "BridgeSources" $ \o ->
+        BridgeSources <$> o .:? "links" .!= []
+
+-- | Where hydrated external bridge links live (gitignored; the hydrate script
+-- builds it from STEPBible / LXX / … and rebuilds it locally).
+bridgeSourcesFile :: FilePath
+bridgeSourcesFile = "data/bridge-sources.json"
+
+-- | Load external source links, or none if the file is absent or unreadable
+-- (the bridge then runs on the in-repo etymology + rendering sources alone).
+loadBridgeSources :: FilePath -> IO [SourceLink]
+loadBridgeSources path = do
+    present <- doesFileExist path
+    if not present
+        then pure []
+        else bsLinks . fromRight (BridgeSources []) <$> eitherDecodeFileStrict path
+
+-- | Index source links under both endpoints, for per-lemma lookup.
+sourceLinkIndex :: [SourceLink] -> Map Text [SourceLink]
+sourceLinkIndex = foldr add M.empty
+  where add l = M.insertWith (<>) (slHeb l) [l] . M.insertWith (<>) (slGrk l) [l]
+
+-- | The other-testament lemmas an external source ties to this one.
+extraPartners :: Map Text [SourceLink] -> Text -> [Text]
+extraPartners ix s =
+    nub [ if slHeb l == s then slGrk l else slHeb l | l <- M.findWithDefault [] s ix ]
+
+-- | Trust prior for a source tag (seed weights from the bridge research).
+sourcePrior :: Text -> Double
+sourcePrior s = case s of
+    "stepbible-tbesg" -> 0.90
+    "stepbible-tipnr" -> 0.92
+    "lxx"             -> 0.80
+    _                 -> 0.50
+
+-- | Human label for a source tag, shown as provenance.
+sourceLabel :: Text -> Text
+sourceLabel s = case s of
+    "stepbible-tbesg" -> "STEPBible"
+    "stepbible-tipnr" -> "STEPBible names"
+    "lxx"             -> "LXX"
+    _                 -> s

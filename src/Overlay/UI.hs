@@ -12,7 +12,7 @@ import qualified Data.Vector as V
 import Monomer
 import qualified Monomer.Lens as L
 
-import Overlay.Bridge (crossPartners, unionByBook)
+import Overlay.Bridge (crossPartners, extraPartners, unionByBook)
 import Overlay.Canon (bookIds)
 import Overlay.CanonMap
 import Overlay.ConceptMap
@@ -258,7 +258,8 @@ buildUI env wenv model = widgetTree
     -- still shows its bridged lemmas across the seam instead of a bare gap.
     conceptSeriesFor r =
         let cix = envConcept env
-            partners = crossPartners (envBridge env) (envBridgeCands env) 6 r
+            partners = nub (crossPartners (envBridge env) (envBridgeCands env) 6 r
+                            <> extraPartners (envBridgeExtra env) r)
         in ConceptSeries r (unionByBook cix [r])
             : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
               | not (null partners) ]

@@ -663,6 +663,14 @@ main = hspec $ do
             spannedByBook br cix "H6664"
                 `shouldBe` M.fromList [("Ps", 5), ("Rom", 3)]
 
+        it "indexes external source links by both endpoints" $ do
+            let ix = sourceLinkIndex
+                    [ SourceLink "H1" "G2" "lxx"
+                    , SourceLink "H1" "G3" "stepbible-tbesg" ]
+            extraPartners ix "H1" `shouldBe` ["G2", "G3"]
+            extraPartners ix "G2" `shouldBe` ["H1"]
+            extraPartners ix "H9" `shouldBe` []
+
     describe "canon" $ do
         it "holds all 66 books in canonical order" $ do
             length books `shouldBe` 66

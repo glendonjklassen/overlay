@@ -29,6 +29,7 @@ data Env = Env
     , envConcept  :: ConceptIx       -- ^ per-Strong's counts / distribution / rarity
     , envBridge   :: Bridge          -- ^ OT↔NT etymology links (static; approvals live in the model)
     , envBridgeCands :: M.Map Text [RenderCand]  -- ^ rendering candidates indexed by lemma
+    , envBridgeExtra :: M.Map Text [SourceLink]  -- ^ hydrated external source links by lemma
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings

@@ -251,6 +251,9 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         [ (o, 0.90, "etymology") | o <- bridgedPartners (envBridge env) ref ]
         <> [ (otherOf c, 0.55 * min 1 (2 * rcScore c), "1769 “" <> rcWord c <> "”")
            | c <- M.findWithDefault [] ref (envBridgeCands env) ]
+        <> [ (if slHeb l == ref then slGrk l else slHeb l
+             , sourcePrior (slSource l), sourceLabel (slSource l))
+           | l <- M.findWithDefault [] ref (envBridgeExtra env) ]
     fused = sortOn (Down . snd) $ M.toList $
         M.fromListWith comb [ (o, (c, [tag])) | (o, c, tag) <- attests ]
       where comb (c1, t1) (c2, t2) = (1 - (1 - c1) * (1 - c2), t1 <> t2)
