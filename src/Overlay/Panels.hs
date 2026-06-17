@@ -7,6 +7,7 @@ import Data.List (find, nub, sortOn)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import Data.Ord (Down (..))
+import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
 import Monomer
@@ -561,6 +562,18 @@ weavesPanel model pw = panelBox pw
                 `styleBasic` [textSize (10 * sc), textColor muted]
             ]
 
+-- | Suggested parallels still awaiting review: those whose verse pair is not
+-- already captured by some weave. Accepting a suggestion writes a weave linking
+-- the pair, so it drops out of the list (and stays out across restarts); a pair
+-- the user wove by hand drops out too.
+pendingSuggestions :: [LoadedWeave] -> [Suggestion] -> [Suggestion]
+pendingSuggestions lws = filter (\s -> (sgA s, sgB s) `Set.notMember` woven)
+  where
+    woven = Set.fromList
+        [ pair
+        | lw <- lws, l <- wLinks (lwWeave lw)
+        , pair <- [(lA l, lB l), (lB l, lA l)] ]
+
 -- | Review panel for auto-detected within-language parallels (Phase 4): verse
 -- pairs sharing a contiguous run of original-language words. Tap a row to lay
 -- the pair side by side; accept to seed a new, unapproved weave.
@@ -572,13 +585,15 @@ suggestionsPanel env model pw = panelBox pw
         \ Within one language only, so never an OT\x2192NT quotation. Tap to compare;\
         \ accept to seed an unapproved weave for review."
     , if null sgs
-        then panelHint sc piw "none — run \"overlay --analyze\" to build candidates"
+        then panelHint sc piw (if null (envSuggestions env)
+            then "none — run \"overlay --analyze\" to build candidates"
+            else "all reviewed — every detected parallel is now in a weave")
         else vscroll (vstack_ [childSpacing_ 8] (map row sgs))
     ]
   where
     sc = uiScaleOf model
     piw = pw - 24
-    sgs = envSuggestions env
+    sgs = pendingSuggestions (model ^. amWeaves) (envSuggestions env)
     row sg = vstack_ [childSpacing_ 2]
         [ listCard sc (EvOpenSuggestion (sgA sg) (sgB sg))
             (refLabel (sgA sg) <> "   \x2194   " <> refLabel (sgB sg))

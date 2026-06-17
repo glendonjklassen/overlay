@@ -77,7 +77,8 @@ buildUI env wenv model = widgetTree
             (model ^. amPanel == PPatches) EvTogglePatches
         , navTab "threads" (length threads) threadPanelOpen EvToggleThreads
         , navTab "weaves" (length (model ^. amWeaves)) weavePanelOpen EvToggleWeaves
-        , navTab "parallels" (length (envSuggestions env))
+        , navTab "parallels"
+            (length (pendingSuggestions (model ^. amWeaves) (envSuggestions env)))
             (model ^. amPanel == PSuggestions) EvToggleSuggestions
         ]
         <> [ flatBtn "+ link" (rgbHex "#C9A24B") EvLink | canLink ]
@@ -155,6 +156,8 @@ buildUI env wenv model = widgetTree
             in case m a of
                 Just v  -> Just v
                 Nothing -> m b
+        -- reviewing a parallel: line each pane up on the verse it opened to
+        Nothing | model ^. amPanel == PSuggestions -> _psAnchor p
         Nothing -> Nothing
 
     -- ambient: every weave link whose verses are both visible in some pane
