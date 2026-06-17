@@ -88,7 +88,26 @@ that nothing absurd tops the list. Then `git add bridge/lxx-alignment.json`.
 
 ---
 
-## Semantic domains (planned)
-Louw-Nida (Greek) + SDBH (Hebrew): two Strong's sharing a concept domain link
-(e.g. Yah↔God as "deity"). Needs a Louw-Nida↔SDBH crosswalk and respects the
-CC-BY-SA copyleft → emits to gitignored `data/bridge-domains.json`. Script to follow.
+## Semantic domains — `domains_bridge.py` — EVALUATED, NOT SHIPPED
+Louw-Nida (Greek, from UBS) + SDBH (Hebrew, from UBS), both CC-BY-SA via
+[`ubsicap/ubs-open-license`](https://github.com/ubsicap/ubs-open-license). The
+idea: two Strong's in the same semantic domain → a candidate link.
+
+**Verdict (built + audited 2026-06-16): too coarse to ship.** Running it on the
+real UBS data produced ~3,175 links, but:
+- They are **category-level, not concept-level** — broad domains (Metals 496,
+  Praise 493, Hear 448, Musical Instruments 360) cross-product every Hebrew
+  member with every Greek member ("same category", not "same concept").
+- The **theological links we wanted are absent** (`H430↔G2316` God, `H3068↔G2962`
+  Lord, `H4899↔G5547` Messiah↔Christ): they sit in broad domains ("Supernatural
+  Beings") whose per-pair specificity falls below any sane noise floor, even with
+  the Deities→Supernatural-Beings crosswalk.
+- Root cause: domain co-membership can't distinguish "same concept across
+  languages" from "same broad category", so it is not a clean bridge.
+
+The script is kept as a reproducible record of the investigation; it is **not
+wired into the build** and emits nothing into the repo. The theological links it
+was meant to provide come from the **LXX alignment** above (the LXX renders
+mashiach as christos, YHWH as kyrios — actual translation equivalents), which is
+the right vehicle. SDBH↔Louw-Nida is CC-BY-SA, so any future artifact would be
+gitignored `data/` only.
