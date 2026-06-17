@@ -51,8 +51,23 @@ Arch, `sudo apt install libsword-utils sword-text-kjv` on Debian/Ubuntu — plus
 - `data/kjv-notes.jsonl` — the 1769 translators' margin notes (kept for a
   future layer, not yet shown)
 
+It then builds two **optional derived artifacts** (each skipped if present, and
+the app degrades gracefully without them):
+
+- `data/concept-cache.json` — `overlay --analyze` precomputes the within-language
+  shared-lemma-run parallels behind the **parallels** review tab. Needs only
+  `cabal`.
+- `data/concept-vectors.vec` — [ml/train_concept2vec.py](ml/train_concept2vec.py)
+  trains concept embeddings (skip-gram, pure NumPy) and powers the *concepts near
+  this* / *verses like this* panel sections. Needs `python3` + `numpy`; skipped
+  with a warning if absent. **Trained only on the KJV and its Strong's tags**, so
+  it cannot drift toward modern English and the artifact is wholly owned — no
+  third-party model or corpus — and free to relicense. See
+  [ml/README.md](ml/README.md).
+
 `cabal run overlay -- --check` (or `.\util\windows_run.ps1 run overlay '--'
---check` from Windows) verifies the data pipeline headlessly.
+--check` from Windows) verifies the data pipeline headlessly, reporting the
+concept cache and embedding status.
 
 ## Using the reader
 

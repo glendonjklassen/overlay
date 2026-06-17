@@ -8,10 +8,14 @@
 #   data/raw/kjv.imp                       <- mod2imp dump of the SWORD module
 #   data/raw/strongs-{hebrew,greek}-*.js   <- Open Scriptures Strong's (CC-BY-SA)
 #   data/kjv.jsonl, data/strongs.json, data/kjv-notes.jsonl  <- overlay-import
+#   data/concept-cache.json                <- overlay --analyze (parallels)
+#   data/concept-vectors.vec               <- ml/train_concept2vec.py (embeddings)
 #
 # Requires: a SWORD install (installmgr, mod2imp), curl, and the Haskell
 # toolchain (cabal). On Arch: `sudo pacman -S sword`. On Debian/Ubuntu:
-# `sudo apt install libsword-utils sword-text-kjv`.
+# `sudo apt install libsword-utils sword-text-kjv`. The two derived artifacts
+# are optional enrichments: the analysis cache needs only cabal; the embeddings
+# need python3 + numpy (skipped with a warning if absent).
 #
 # Override defaults with env vars, e.g. KJV_MODULE=KJV ./util/hydrate-data.sh
 set -euo pipefail
@@ -42,17 +46,21 @@ mkdir -p data/raw
 
 if (( FORCE )); then
     log "force: removing generated data"
-    rm -f "$OUT" data/strongs.json data/kjv-notes.jsonl "$IMP" "$HEB_JS" "$GRK_JS"
+    rm -f "$OUT" data/strongs.json data/kjv-notes.jsonl "$IMP" "$HEB_JS" "$GRK_JS" \
+          data/concept-cache.json data/concept-vectors.vec
 fi
 
 # ── already done? ────────────────────────────────────────────────────────────
+# The corpus may already be hydrated; if so we skip steps 1-3 entirely (no SWORD
+# or network needed) and fall through to the optional derived data in 4-5.
+NEED_CORPUS=1
 if [[ -s "$OUT" && -s data/strongs.json ]]; then
-    log "data/ already hydrated (kjv.jsonl + strongs.json present). Use --force to rebuild."
-    exit 0
+    log "corpus present; building any missing derived data. Use --force to rebuild all."
+    NEED_CORPUS=0
 fi
 
 # ── 1. SWORD module -> data/raw/kjv.imp ──────────────────────────────────────
-if [[ ! -s "$IMP" ]]; then
+if (( NEED_CORPUS )) && [[ ! -s "$IMP" ]]; then
     need installmgr
     need mod2imp
 
@@ -88,13 +96,46 @@ fetch() { # url dest
     log "downloading $(basename "$2")"
     curl -fsSL "$1" -o "$2" || die "failed to download $1"
 }
-fetch "$STRONGS_BASE/hebrew/strongs-hebrew-dictionary.js" "$HEB_JS"
-fetch "$STRONGS_BASE/greek/strongs-greek-dictionary.js"   "$GRK_JS"
+if (( NEED_CORPUS )); then
+    fetch "$STRONGS_BASE/hebrew/strongs-hebrew-dictionary.js" "$HEB_JS"
+    fetch "$STRONGS_BASE/greek/strongs-greek-dictionary.js"   "$GRK_JS"
+fi
 
 # ── 3. build the canonical data files ────────────────────────────────────────
-need cabal
-log "running overlay-import"
-cabal run -v0 overlay-import
+if [[ ! -s "$OUT" ]]; then
+    need cabal
+    log "running overlay-import"
+    cabal run -v0 overlay-import
+    [[ -s "$OUT" ]] || die "overlay-import did not produce $OUT"
+else
+    log "$OUT present, skipping overlay-import"
+fi
 
-[[ -s "$OUT" ]] || die "overlay-import did not produce $OUT"
+# ── 4. concept-analysis cache (optional) -> data/concept-cache.json ──────────
+# Heavy within-language parallel detection; powers the "parallels" review tab.
+if [[ ! -s data/concept-cache.json ]]; then
+    need cabal
+    log "building concept-analysis cache (overlay --analyze)"
+    cabal run -v0 overlay -- --analyze \
+        || warn "analyze failed; the parallels tab will be empty until it succeeds"
+else
+    log "data/concept-cache.json present, skipping analyze"
+fi
+
+# ── 5. concept embeddings (optional) -> data/concept-vectors.vec ─────────────
+# Trained only on the KJV + its Strong's tags (owned, era-faithful); powers the
+# "concepts near this" / "verses like this" panel sections.
+if [[ ! -s data/concept-vectors.vec ]]; then
+    if command -v python3 >/dev/null 2>&1 && python3 -c 'import numpy' 2>/dev/null; then
+        log "training concept2vec embeddings (ml/train_concept2vec.py)"
+        python3 ml/train_concept2vec.py \
+            || warn "embedding training failed; semantic neighbours stay hidden"
+    else
+        warn "python3 + numpy not found — skipping concept embeddings (optional)."
+        warn "  install them, then run: python3 ml/train_concept2vec.py"
+    fi
+else
+    log "data/concept-vectors.vec present, skipping embedding training"
+fi
+
 log "done. data/ is hydrated."
