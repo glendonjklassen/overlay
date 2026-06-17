@@ -30,6 +30,7 @@ data Env = Env
     , envBridge   :: Bridge          -- ^ OT↔NT etymology links (static; approvals live in the model)
     , envBridgeCands :: M.Map Text [RenderCand]  -- ^ rendering candidates indexed by lemma
     , envBridgeExtra :: M.Map Text [SourceLink]  -- ^ hydrated external source links by lemma
+    , envSuggestions :: [Suggestion]  -- ^ cached shared-lemma-run parallels to review
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings

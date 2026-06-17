@@ -45,10 +45,11 @@ loadEnv = do
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
     extraIx <- sourceLinkIndex <$> loadBridgeSources
+    suggestions <- loadSuggestions corpus 300 conceptCachePath
     let bridge = etymologyBridge strongs            -- static; approvals live in the model
         candIx = candidateIndex (renderingCandidates corpus)
     Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx
-        extraIx keys notes <$> loadSettings
+        extraIx suggestions keys notes <$> loadSettings
   where
     dieLoad err = die $
         "could not load data: " <> err
@@ -156,6 +157,8 @@ checkMain = do
         , "bridge:   " <> showt (bridgeSize (envBridge env))
             <> " etymology-linked Strong's numbers; "
             <> showt (M.size (envBridgeExtra env)) <> " with external (LXX) links"
+        , "suggest:  " <> showt (length (envSuggestions env))
+            <> " shared-lemma-run parallels to review"
         , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"

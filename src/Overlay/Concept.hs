@@ -33,8 +33,12 @@ module Overlay.Concept
     , QuoteCand (..)
     , quotationCandidates
     , defaultMinRun
+      -- * Reviewable suggested parallels (from the cached candidates)
+    , Suggestion (..)
+    , loadSuggestions
     ) where
 
+import Data.Aeson
 import Data.List (foldl', sortBy, tails)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
@@ -42,7 +46,9 @@ import Data.Ord (Down (..), comparing)
 import Data.Set (Set)
 import qualified Data.Set as S
 import Data.Text (Text)
+import qualified Data.Text as T
 import qualified Data.Vector as V
+import System.Directory (doesFileExist)
 
 import Overlay.Canon (bookIds)
 import Overlay.Corpus
@@ -120,8 +126,8 @@ coOccurrence corpus = V.foldl' addVerse M.empty (cVerses corpus)
   where
     addVerse m v =
         let present = S.toAscList (S.fromList (concatMap tokStrongs (vTokens v)))
-            pairs = [ (a, b) | (a : rest) <- tails present, b <- rest ]
-        in foldl' (\acc p -> M.insertWith (+) p 1 acc) m pairs
+            prs = [ (a, b) | (a : rest) <- tails present, b <- rest ]
+        in foldl' (\acc p -> M.insertWith (+) p 1 acc) m prs
 
 -- ── within-language shared-lemma runs ───────────────────────────────────────
 
@@ -204,3 +210,51 @@ longestRun xs ys =
     longer best r = if length r > length best then r else best
     commonPrefix (a : as) (b : bs) | a == b = a : commonPrefix as bs
     commonPrefix _ _ = []
+
+-- ── reviewable suggested parallels ──────────────────────────────────────────
+
+-- | A candidate within-language parallel surfaced for review: two verses, the
+-- length of their shared lemma run, and a readable snippet of the shared words.
+data Suggestion = Suggestion
+    { sgA     :: !(Text, Int, Int)
+    , sgB     :: !(Text, Int, Int)
+    , sgLen   :: !Int
+    , sgLabel :: !Text
+    } deriving (Eq, Show)
+
+-- one raw candidate as written into the concept cache by --analyze
+data RawCand = RawCand !Text !Text ![Text] !Int
+
+instance FromJSON RawCand where
+    parseJSON = withObject "candidate" $ \o ->
+        RawCand <$> o .: "a" <*> o .: "b" <*> o .: "run" <*> o .: "len"
+
+newtype CandFile = CandFile [RawCand]
+instance FromJSON CandFile where
+    parseJSON = withObject "concept-cache" $ \o ->
+        CandFile <$> o .:? "candidates" .!= []
+
+-- | Load the cached shared-lemma-run candidates as 'Suggestion's, longest first.
+-- Each gets a readable label: the shared words as they read in the first verse.
+-- Returns none if the cache is absent (run @overlay --analyze@ to build it).
+loadSuggestions :: Corpus -> Int -> FilePath -> IO [Suggestion]
+loadSuggestions corpus topN path = do
+    present <- doesFileExist path
+    if not present
+        then pure []
+        else do
+            decoded <- decodeFileStrict path
+            let cands = maybe [] (\(CandFile cs) -> cs) decoded
+            pure $ take topN
+                [ s | RawCand a b run len <- cands
+                    , Just ra <- [parseRefKey a], Just rb <- [parseRefKey b]
+                    , let s = Suggestion ra rb len (sharedText ra run) ]
+  where
+    sharedText ref run =
+        case M.lookup ref (cByRef corpus) >>= (cVerses corpus V.!?) of
+            Nothing -> ""
+            Just v  ->
+                let runSet = S.fromList run
+                    ws = [ tokWord t | t <- vTokens v
+                         , any (`S.member` runSet) (tokStrongs t) ]
+                in T.unwords (take 9 ws)
