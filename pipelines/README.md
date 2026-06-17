@@ -27,64 +27,56 @@ Each source emits the shared format the app loads:
 
 ---
 
-## LXX alignment — `lxx_bridge.py`
+## LXX co-occurrence — `lxx_bridge.py` — VALIDATED
 
-**Why it's trustworthy:** the Septuagint is a translation of the Hebrew, so for
-~23,000 verses we have the same text in both languages. eflomal learns which
-Hebrew word maps to which Greek word from co-occurrence across the *whole*
-corpus; a pairing only earns weight by recurring (one-off coincidences like the
-"sake/stead" rendering glitches can't survive). Output is count-weighted and
-floored, then fused as one low-trust witness.
+**Why it's trustworthy:** the Septuagint is a translation of the Hebrew, so each
+OT verse has the same content in both languages. A Hebrew Strong's number and a
+Greek one that keep co-occurring in the same verse are translation equivalents.
+We score each pair by Dice overlap and keep the strong ones; one-off
+coincidences (the "sake/stead" class) can't clear the floor.
 
-### Prerequisites
+**Validated 2026-06-16** on the real Swete LXX vs the KJV Hebrew tags (Ruth,
+Hosea, Amos, Micah, Esther — the books then available):
+
+| | G2316 *theos*/God | G2962 *kyrios*/Lord |
+|---|---|---|
+| **H3068 YHWH** | dice 0.29 | **dice 0.91** |
+| **H430 elohim** | **dice 0.78** | dice 0.27 |
+
+The diagonal dominates — exactly the theological links etymology + renderings
+miss. (No aligner needed; per-verse co-occurrence + Dice is enough and lighter
+than eflomal.)
+
+### Ownership
+Use a **public-domain** Greek LXX (Swete, or Rahlfs-1935 — **not** Rahlfs-Hanhart
+2006) and **lemmatize it yourself**, so the artifact is yours to license openly.
+Hebrew comes from the tagged KJV already in `data/kjv.jsonl` (public domain), so
+the only external input is the PD Greek text + your lemmatizer.
+
+### Step 1 — Greek sequences (`greek.tsv`): self-lemmatize the PD LXX
+Tokenize the PD Greek text, lemmatize (cltk≥2 via Stanza, or spaCy-grc — needs a
+Python the model supports, ≤3.11), and map each lemma → Greek Strong's via
+`data/strongs.json` (verified: θεός→G2316, κύριος→G2962, χριστός→G5547, 5495
+lemmas). Emit one verse per line:
+```
+Ruth	1	1	G2962 G1096 G2424 ...
+```
+Mapping note: Strong's only covers NT-attested Greek, which is exactly the Greek
+we want to bridge to; LXX-only words simply have no `G####` and are skipped.
+
+### Step 2 — build + emit  (Hebrew defaults to the tagged KJV)
 ```sh
-pip install eflomal            # MIT statistical word aligner (CPU; not LLM-tier)
+python pipelines/lxx_bridge.py --greek greek.tsv \
+    --min-dice 0.30 --min-co 3 --out bridge/lxx-alignment.json
 ```
 
-### Step 1 — Hebrew sequences (`hebrew.tsv`)
-Source: **Open Scriptures morphhb** (WLC), CC-BY 4.0 — `github.com/openscriptures/morphhb`.
-Parse the OSIS XML; for each verse emit the content lemmas' Strong's in order,
-dropping the clitic prefixes/suffixes morphhb already separates:
-```
-Gen	1	1	H7225 H430 H1254 H8064 H776
-```
-(`<w lemma="b/7225 a">` → take the digits → `H7225`; skip conjunction/article/
-preposition particles.)
-
-### Step 2 — Greek sequences (`greek.tsv`) — the hard part, be honest
-You need a **public-domain** Greek LXX (Swete, or Rahlfs-1935 — **not**
-Rahlfs-Hanhart 2006) with each content word mapped to a Greek Strong's:
-```
-Gen	1	1	G1722 G746 G4160 G2316 G3772 G1093
-```
-There is no clean FOSS Strong's-tagged LXX (see the research notes), so you
-produce it one of two ways:
-- **Lemmatize + map:** tokenize the PD Greek text, lemmatize (e.g. CLTK), map
-  each lemma → Greek Strong's via `data/strongs.json`. Cleanest license, most
-  work.
-- **Export a tagged module** that carries Greek Strong's (e.g. the SWORD LXX
-  module uses `WG####`) — quick, but note its text lineage/licensing before you
-  redistribute anything derived from it.
-Drop articles/particles; keep content words in reading order.
-
-### Step 3 — align + emit
-```sh
-python pipelines/lxx_bridge.py \
-    --hebrew hebrew.tsv --greek greek.tsv \
-    --tvtms tvtms.tsv \            # optional: STEPBible versification (Psalms etc.)
-    --min-count 3 \
-    --out bridge/lxx-alignment.json
-```
-`--tvtms` reconciles MT-vs-LXX verse numbering (STEPBible TVTMS, CC-BY 4.0);
-omit it if your inputs already share numbering.
-
-### Step 4 — validate, then commit
+### Step 3 — validate, then commit
 ```sh
 overlay --analyze        # reports bridge link counts + sample pairs
 ```
-Spot-check that the obvious links are present and sane — e.g. **H3068→G2962**
-(YHWH→Lord), **H4899→G5547** (Messiah→Christ), **H430→G2316** (God→God) — and
-that nothing absurd tops the list. Then `git add bridge/lxx-alignment.json`.
+Spot-check the obvious links (H3068→G2962, H430→G2316) top the list and nothing
+absurd does. Then `git add bridge/lxx-alignment.json` — clean to commit, since
+PD text + your lemmatization + Strong's-number facts impose no copyleft.
 
 ---
 
