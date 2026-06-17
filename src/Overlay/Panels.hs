@@ -232,10 +232,14 @@ strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
                    | Just r <- [rarity] ]
                 <> map bookRow (topBooks 6 cs)
                 <> [ hstack_ [childSpacing_ 6] $
-                       [ ghostBtn sc (if ref `elem` pinned then "⊕ pinned"
-                                      else "⊕ compare on strip") (EvPinConcept ref) ]
-                       <> [ ghostBtn sc ("clear compare (" <> showt (length pinned) <> ")")
-                              EvClearPins | not (null pinned) ] ]
+                       [ button (if ref `elem` pinned then "+ pinned to strip"
+                                 else "+ compare on strip") (EvPinConcept ref)
+                           `styleBasic` [textSize (11 * sc), padding 4, radius 3
+                                        , textColor lightSkyBlue, border 1 (rgbHex "#3A3F45")]
+                           `styleHover` [bgColor (rgbHex "#3A3F45")] ]
+                       <> [ button ("clear (" <> showt (length pinned) <> ")") EvClearPins
+                              `styleBasic` [textSize (11 * sc), padding 4, textColor muted]
+                            | not (null pinned) ] ]
                 <> [hrule]
 
     -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,

@@ -245,7 +245,8 @@ handleEvent env _wenv _node model evt = case evt of
             & amStatus .~ msg)]
     EvStatus t -> [Model (model & amStatus .~ t)]
     EvSaveSession ->
-        [Task (EvNoop <$ saveSession (model ^. amMaxCols) (model ^. amPanes))]
+        [Task (EvNoop <$ saveSession (model ^. amMaxCols) (model ^. amPanes)
+            (model ^. amBridgeExtraOn))]
     EvVerseInspect ref x y ->
         -- open the compare card only for verses that actually have witnesses
         let touched = any (any (\l -> lA l == ref || lB l == ref)
