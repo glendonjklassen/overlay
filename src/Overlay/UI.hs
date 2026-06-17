@@ -264,22 +264,23 @@ buildUI env wenv model = widgetTree
     -- still shows its bridged lemmas across the seam instead of a bare gap.
     -- the active concept plus any pinned for comparison (dedup)
     stripConcepts = nub (model ^. amConcepts <> model ^. amPinnedConcepts)
-    -- one concept → its own footprint + its cross-testament bridge (distinct
-    -- colour); comparing several → own footprints only, so up to four fit
-    conceptSeriesFor single r =
+    -- each concept shows its own footprint plus, when ≤2 are on the strip, its
+    -- cross-testament bridge band (so a single concept spans both OT and NT);
+    -- at 3–4 concepts we drop the bridge bands so the four series still fit
+    conceptSeriesFor withBridge r =
         let cix = envConcept env
             partners = nub (crossPartners (envBridge env) (envBridgeCands env) 6 r
                             <> [ p | model ^. amBridgeExtraOn
                                    , p <- extraPartners (envBridgeExtra env) r ])
         in ConceptSeries r (unionByBook cix [r])
             : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
-              | single, not (null partners) ]
+              | withBridge, not (null partners) ]
     conceptStrip
         | null stripConcepts = []
         | otherwise =
             [ conceptMapView ConceptMapCfg
                 { cmpBooks = bookIds
-                , cmpSeries = concatMap (conceptSeriesFor (length stripConcepts == 1))
+                , cmpSeries = concatMap (conceptSeriesFor (length stripConcepts <= 2))
                     stripConcepts
                 , cmpDivider = 39 / fromIntegral (length bookIds)
                 , cmpOnClick = Just EvCanonGoto
