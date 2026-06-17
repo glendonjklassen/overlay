@@ -230,8 +230,8 @@ buildUI env wenv model = widgetTree
         POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env (model ^. amBridgeExtraOn) sc panelPW
-                (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
+            [strongsPanel env (model ^. amBridgeExtraOn) (model ^. amPinnedConcepts)
+                sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
         PPatches -> [patchesPanel model panelPW]
         PThreads -> [threadsPanel model panelPW]
         PThreadView f -> [threadViewPanel model panelPW f]
@@ -256,20 +256,25 @@ buildUI env wenv model = widgetTree
     -- Each concept paints its own footprint plus, in a distinct colour, the
     -- footprint of its cross-testament partners — so an OT-only (or NT-only) word
     -- still shows its bridged lemmas across the seam instead of a bare gap.
-    conceptSeriesFor r =
+    -- the active concept plus any pinned for comparison (dedup)
+    stripConcepts = nub (model ^. amConcepts <> model ^. amPinnedConcepts)
+    -- one concept → its own footprint + its cross-testament bridge (distinct
+    -- colour); comparing several → own footprints only, so up to four fit
+    conceptSeriesFor single r =
         let cix = envConcept env
             partners = nub (crossPartners (envBridge env) (envBridgeCands env) 6 r
                             <> [ p | model ^. amBridgeExtraOn
                                    , p <- extraPartners (envBridgeExtra env) r ])
         in ConceptSeries r (unionByBook cix [r])
             : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
-              | not (null partners) ]
+              | single, not (null partners) ]
     conceptStrip
-        | null (model ^. amConcepts) = []
+        | null stripConcepts = []
         | otherwise =
             [ conceptMapView ConceptMapCfg
                 { cmpBooks = bookIds
-                , cmpSeries = concatMap conceptSeriesFor (model ^. amConcepts)
+                , cmpSeries = concatMap (conceptSeriesFor (length stripConcepts == 1))
+                    stripConcepts
                 , cmpDivider = 39 / fromIntegral (length bookIds)
                 , cmpOnClick = Just EvCanonGoto
                 } ]

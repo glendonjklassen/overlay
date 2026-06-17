@@ -104,6 +104,8 @@ data AppModel = AppModel
     , _amBridge      :: BridgeStore  -- ^ user's OT↔NT rendering-link approvals
     , _amBridgeExtraOn :: Bool   -- ^ include opt-in external bridge sources
                                   -- (LXX, semantic domains); off by default
+    , _amPinnedConcepts :: [Text]  -- ^ concepts pinned onto the dispersion strip
+                                  -- for comparison (persist as you browse)
     } deriving (Eq, Show)
 
 data AppEvent
@@ -144,6 +146,9 @@ data AppEvent
     -- OT↔NT bridge approvals (canonical (Hebrew, Greek) pair)
     | EvBridgeApprove Text Text    -- ^ approve a rendering bridge link (H, G)
     | EvBridgeReject Text Text     -- ^ reject a rendering bridge link (H, G)
+    -- concept dispersion strip comparison
+    | EvPinConcept Text            -- ^ pin a Strong's number onto the strip
+    | EvClearPins                  -- ^ clear the pinned comparison
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves

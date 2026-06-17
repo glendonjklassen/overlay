@@ -170,6 +170,12 @@ handleEvent env _wenv _node model evt = case evt of
     EvBridgeReject h g ->
         let store' = rejectLink (h, g) (model ^. amBridge)
         in [Model (model & amBridge .~ store'), Task (saveBridgeTask store')]
+    EvPinConcept s ->
+        -- pin onto the strip for comparison; dedup, keep the most recent 3
+        -- (plus the active concept = up to 4 series)
+        [Model (model & amPinnedConcepts %~ \ps ->
+            take 3 (s : filter (/= s) ps))]
+    EvClearPins -> [Model (model & amPinnedConcepts .~ [])]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

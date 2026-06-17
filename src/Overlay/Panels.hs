@@ -186,9 +186,9 @@ optionsPanel model pw = panelBox pw $
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> Bool -> Double -> Double -> [((Text, Int, Int), Text)]
+    :: Env -> Bool -> [Text] -> Double -> Double -> [((Text, Int, Int), Text)]
     -> (Text, Int, Int) -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env extraOn sc pw witnesses vref (word, ref) = panel
+strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
   where
     piw = pw - 24
     entry = M.lookup ref (envStrongs env)
@@ -231,6 +231,11 @@ strongsPanel env extraOn sc pw witnesses vref (word, ref) = panel
                         [textSize (11 * sc), textColor (rgbHex "#D2B46E")]
                    | Just r <- [rarity] ]
                 <> map bookRow (topBooks 6 cs)
+                <> [ hstack_ [childSpacing_ 6] $
+                       [ ghostBtn sc (if ref `elem` pinned then "⊕ pinned"
+                                      else "⊕ compare on strip") (EvPinConcept ref) ]
+                       <> [ ghostBtn sc ("clear compare (" <> showt (length pinned) <> ")")
+                              EvClearPins | not (null pinned) ] ]
                 <> [hrule]
 
     -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,
