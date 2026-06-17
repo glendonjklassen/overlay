@@ -232,14 +232,15 @@ strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
                    | Just r <- [rarity] ]
                 <> map bookRow (topBooks 6 cs)
                 <> [ hstack_ [childSpacing_ 6] $
-                       [ button (if ref `elem` pinned then "+ pinned to strip"
-                                 else "+ compare on strip") (EvPinConcept ref)
-                           `styleBasic` [textSize (11 * sc), padding 4, radius 3
-                                        , textColor lightSkyBlue, border 1 (rgbHex "#3A3F45")]
-                           `styleHover` [bgColor (rgbHex "#3A3F45")] ]
-                       <> [ button ("clear (" <> showt (length pinned) <> ")") EvClearPins
-                              `styleBasic` [textSize (11 * sc), padding 4, textColor muted]
+                       [ primaryBtn sc (if ref `elem` pinned then "keeping on strip"
+                                        else "+ add to strip") (EvPinConcept ref) ]
+                       <> [ button ("remove all (" <> showt (length pinned) <> ")") EvClearPins
+                              `styleBasic` [textSize (11 * sc), padding 5, radius 3
+                                           , textColor lightGray, bgColor (rgbHex "#4A3F3F")]
                             | not (null pinned) ] ]
+                <> [ panelHint sc piw "Keeps this word's coloured band on the strip\
+                       \ above the canon map, so opening another word compares where\
+                       \ they each occur across the Bible." ]
                 <> [hrule]
 
     -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,
