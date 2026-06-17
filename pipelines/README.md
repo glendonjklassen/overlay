@@ -22,35 +22,37 @@ Each source emits the shared format the app loads:
   committed; rebuild locally).
 
 > **Status:** the **LXX source is built and committed** (`bridge/lxx-alignment.json`,
-> 1557 links over 20,038 verses). The semantic-domains source was evaluated and
-> rejected (see below).
+> 953 mutually-best IBM Model 1 links over ~22,440 verses, Psalms included). The
+> semantic-domains source was evaluated and rejected (see below).
 
 ---
 
-## LXX co-occurrence — `lxx_bridge.py` — BUILT
+## LXX alignment (IBM Model 1) — `lxx_bridge.py` — BUILT
 
 **Why it's trustworthy:** the Septuagint is a translation of the Hebrew, so each
-OT verse has the same content in both languages. A Hebrew Strong's number and a
-Greek one that keep co-occurring in the same verse are translation equivalents.
-Each pair is scored by Dice overlap; one-off coincidences (the "sake/stead"
-class) can't clear the floor.
+OT verse has the same content in both languages. We run **IBM Model 1** (EM word
+alignment, pure Python) in both directions and keep only **mutually-best** pairs —
+each side's single best translation of the other. This beats raw co-occurrence:
+it suppresses the trap where two words merely share a verse, and one-off
+coincidences (the "sake/stead" class) never surface.
 
-**Full-run result** (protocanonical OT, 20,038 aligned verses): the theological
-links etymology + renderings can't see all surface clearly —
+**Full-run result** (protocanonical OT **+ Psalms**, ~22,440 aligned verses):
+**953 high-precision links.** The theological links etymology + renderings can't
+see are all present and correct, and the top links by score are clean
+equivalents (Israel, woman↔*gynē*, Jerusalem, water↔*hydōr*, Jacob, daughter,
+people↔*laos*, angel↔*angelos*, forty↔*tessarakonta*…):
 
-| link | dice | co-occur |
-|---|---|---|
-| H3068 → G2962  (YHWH → *kyrios*) | 0.55 | 2351 |
-| H430 → G2316  (elohim → *theos*) | 0.72 | 1599 |
-| H4899 → G5547  (Messiah → *Christos*) | 0.66 | 22 |
-| H1285 → G1242  (covenant → *diathēkē*) | 0.79 | 206 |
-| H7965 → G1515  (shalom → *eirēnē*) | 0.61 | 102 |
+- H3068 ↔ G2962 (YHWH ↔ *kyrios*), H430 ↔ G2316 (elohim ↔ *theos*)
+- H4899 ↔ G5547 (Messiah ↔ *Christos*), H1285 ↔ G1242 (covenant ↔ *diathēkē*)
+- H7965 ↔ G1515 (shalom ↔ *eirēnē*), H6666/H6664 ↔ G1343 (righteousness)
 
-Top links by dice are clean proper-noun transliterations (Enoch, Seth, Lamech,
-Jephthah…). **Known weakness:** co-occurrence also links a few tightly-bound
-collocations (fixed name pairs like *Pedahzur*↔*Gamaliel* that always share a
-verse) — contextually related, not strict equivalents; the Dice floor limits it
-and word-level alignment would refine it later.
+**Honest residual:** a handful of *perfectly*-collocated genealogy names (e.g.
+*Pedahzur* and *Gamaliel*, which only ever appear in the same census verses)
+cannot be told apart by any co-occurrence/alignment statistic — they share
+identical contexts. Mutual-best removes the bulk of such noise but can still
+attach the wrong member of such a pair. Low-harm (related names, never
+theological), and it's why this stays an opt-in, off-by-default *witness*.
+Positional alignment (Model 2 / fast_align) could refine these later.
 
 ### Reproduce (one command; outputs are yours to license openly)
 ```sh
@@ -62,10 +64,10 @@ text (public domain) + cltk lemma dictionary (MIT) + Strong's numbers (facts) +
 the tagged KJV Hebrew (public domain) → **no copyleft**, so `bridge/lxx-alignment.json`
 is committed and free to relicense.
 
-**Scope / documented exclusions:** the protocanonical OT books whose versification
-matches the KJV. Psalms is excluded (LXX numbering differs — needs a mapping) and
-the apocrypha / LXX-only books are excluded (no Hebrew counterpart). A
-context-free dictionary lemmatizes a few high-frequency divine forms wrongly
+**Scope / documented exclusions:** the protocanonical OT books, **including Psalms**
+(LXX numbering remapped to MT via `ps_lxx_to_mt`; merges/splits approximated, which
+Model 1 tolerates). Apocrypha / LXX-only books are excluded (no Hebrew counterpart).
+A context-free dictionary lemmatizes a few high-frequency divine forms wrongly
 (e.g. θεοῦ→θεάομαι); `OVERRIDE` in the script corrects the θεός paradigm.
 
 ---
