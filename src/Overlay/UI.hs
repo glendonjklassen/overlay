@@ -110,10 +110,16 @@ buildUI env wenv model = widgetTree
     witAdj = witnessIndex (model ^. amWeaves)
     witCount = M.map length witAdj
     maxWit = if M.null witCount then 0 else maximum (M.elems witCount)
-    heatFor v = if model ^. amHeatmapOn
-        then heatTierFor maxWit
+    -- gutter heat: an active concept's per-verse density (the leitwort signal —
+    -- where a word clusters in the open chapter) takes priority; otherwise the
+    -- weave-witness heat when its toggle is on.
+    conceptCountIn v =
+        length [ () | t <- vTokens v, s <- tokStrongs t, s `elem` stripConcepts ]
+    heatFor v
+        | not (null stripConcepts) = min 4 (conceptCountIn v)
+        | model ^. amHeatmapOn = heatTierFor maxWit
             (M.findWithDefault 0 (vBook v, vChapter v, vVerse v) witCount)
-        else 0
+        | otherwise = 0
 
     paneColumn i p = ColumnCfg
         (showt i <> ":" <> _psBook p <> ":" <> showt (_psChapter p))
@@ -215,7 +221,7 @@ buildUI env wenv model = widgetTree
         , rcBodySize = model ^. amBodySize
         , rcLineSpacing = model ^. amLineSpacing
         , rcLinks = if model ^. amLinesOn then ambientLinks else []
-        , rcHeatOn = model ^. amHeatmapOn
+        , rcHeatOn = model ^. amHeatmapOn || not (null stripConcepts)
         , rcOnWordClick = EvWordClicked
         , rcOnWordAlt = EvWordAlt
         , rcOnSpanSelect = EvSpanSelected
