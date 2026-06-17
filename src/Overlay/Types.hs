@@ -55,6 +55,7 @@ data PanelMode
     | PThreadView FilePath
     | PWeaves
     | PWeaveView FilePath       -- ^ inspect / edit one weave
+    | PSuggestions              -- ^ review auto-detected parallel candidates
     deriving (Eq, Show)
 
 -- | A reading pane: where it points, plus the verses currently selected there
@@ -150,6 +151,10 @@ data AppEvent
     -- concept dispersion strip comparison
     | EvPinConcept Text            -- ^ pin a Strong's number onto the strip
     | EvClearPins                  -- ^ clear the pinned comparison
+    -- suggested parallels (auto-detected within-language shared-lemma runs)
+    | EvToggleSuggestions
+    | EvOpenSuggestion (Text, Int, Int) (Text, Int, Int)  -- ^ show the pair in panes
+    | EvAcceptSuggestion Suggestion  -- ^ accept → a new unapproved weave
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves

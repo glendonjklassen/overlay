@@ -13,6 +13,7 @@ import Monomer
 
 import Overlay.Bridge (approveLink, rejectLink)
 import Overlay.Canon (bookIds)
+import Overlay.Concept (sgA, sgB, sgLabel)
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Patch
@@ -20,6 +21,7 @@ import Overlay.ReaderView
 import Overlay.Refs
 import Overlay.Rule
 import Overlay.Session
+import Overlay.Strongs (refLabel)
 import Overlay.Tasks
 import Overlay.Thread
 import Overlay.Types
@@ -176,6 +178,27 @@ handleEvent env _wenv _node model evt = case evt of
         [Model (model & amPinnedConcepts %~ \ps ->
             take 3 (s : filter (/= s) ps))]
     EvClearPins -> [Model (model & amPinnedConcepts .~ [])]
+    EvToggleSuggestions ->
+        let pm' = if model ^. amPanel == PSuggestions then PNone else PSuggestions
+            m0 = model & amPanel .~ pm'
+        in [Model (if pm' == PNone then restoreReading m0 else m0), saveLater]
+    EvOpenSuggestion a@(ba, ca, va) b@(bb, cb, vb) ->
+        -- lay the two passages side by side without leaving the review list,
+        -- stashing the reading layout once so closing the panel restores it
+        let newPanes = [ PaneState ba ca (Just va) [va]
+                       , PaneState bb cb (Just vb) [vb] ]
+        in [Model (model
+                & amPrevPanes .~ (model ^. amPrevPanes <|> Just (model ^. amPanes))
+                & amPanes .~ newPanes
+                & amActivePane .~ 0
+                & amStatus .~ ("parallel: " <> refLabel a <> " \x2194 " <> refLabel b))
+           , saveLater]
+    EvAcceptSuggestion sg ->
+        -- born unapproved: a within-language parallel is a retelling/doublet,
+        -- surfaced for the human arbiter, never auto-blessed
+        let name = refLabel (sgA sg) <> " \x2194 " <> refLabel (sgB sg)
+            link = canonLinkL (sgA sg) (sgB sg) (sgLabel sg)
+        in [Task (newWeaveTask name Retelling (cTokVersion (envCorpus env)) [link])]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'

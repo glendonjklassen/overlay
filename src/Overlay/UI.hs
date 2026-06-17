@@ -77,6 +77,8 @@ buildUI env wenv model = widgetTree
             (model ^. amPanel == PPatches) EvTogglePatches
         , navTab "threads" (length threads) threadPanelOpen EvToggleThreads
         , navTab "weaves" (length (model ^. amWeaves)) weavePanelOpen EvToggleWeaves
+        , navTab "parallels" (length (envSuggestions env))
+            (model ^. amPanel == PSuggestions) EvToggleSuggestions
         ]
         <> [ flatBtn "+ link" (rgbHex "#C9A24B") EvLink | canLink ]
         <>
@@ -243,6 +245,7 @@ buildUI env wenv model = widgetTree
         PThreadView f -> [threadViewPanel model panelPW f]
         PWeaves -> [weavesPanel model panelPW]
         PWeaveView f -> [weaveViewPanel model panelPW f]
+        PSuggestions -> [suggestionsPanel env model panelPW]
 
     -- the shared canon overview strip: one map, a pin per pane
     canonMap = canonMapView CanonMapCfg

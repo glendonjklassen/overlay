@@ -561,6 +561,35 @@ weavesPanel model pw = panelBox pw
                 `styleBasic` [textSize (10 * sc), textColor muted]
             ]
 
+-- | Review panel for auto-detected within-language parallels (Phase 4): verse
+-- pairs sharing a contiguous run of original-language words. Tap a row to lay
+-- the pair side by side; accept to seed a new, unapproved weave.
+suggestionsPanel :: Env -> AppModel -> Double -> WidgetNode AppModel AppEvent
+suggestionsPanel env model pw = panelBox pw
+    [ panelHeader sc "parallels" EvClosePanel
+    , panelHint sc piw "Verse pairs that share a contiguous run of original-language\
+        \ words — synoptic parallels, Kings/Chronicles retellings, Psalm doublets.\
+        \ Within one language only, so never an OT\x2192NT quotation. Tap to compare;\
+        \ accept to seed an unapproved weave for review."
+    , if null sgs
+        then panelHint sc piw "none — run \"overlay --analyze\" to build candidates"
+        else vscroll (vstack_ [childSpacing_ 8] (map row sgs))
+    ]
+  where
+    sc = uiScaleOf model
+    piw = pw - 24
+    sgs = envSuggestions env
+    row sg = vstack_ [childSpacing_ 2]
+        [ listCard sc (EvOpenSuggestion (sgA sg) (sgB sg))
+            (refLabel (sgA sg) <> "   \x2194   " <> refLabel (sgB sg))
+            [ label (showt (sgLen sg) <> " shared words")
+                `styleBasic` [textSize (10 * sc), textColor gray]
+            , wrapLabel (sgLabel sg)
+                `styleBasic` [textSize (10 * sc), textColor muted, width piw]
+            ]
+        , box_ [alignLeft] (primaryBtn sc "accept \x2192 weave" (EvAcceptSuggestion sg))
+        ]
+
 weaveViewPanel :: AppModel -> Double -> FilePath -> WidgetNode AppModel AppEvent
 weaveViewPanel model pw file =
     case find ((== file) . lwFile) (model ^. amWeaves) of
