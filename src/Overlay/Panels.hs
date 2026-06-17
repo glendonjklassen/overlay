@@ -250,7 +250,10 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         <> [ (if slHeb l == ref then slGrk l else slHeb l
              , sourcePrior (slSource l), sourceLabel (slSource l))
            | l <- M.findWithDefault [] ref (envBridgeExtra env) ]
-    fused = sortOn (Down . snd) $ M.toList $
+    -- drop links below a confidence floor, so low-content translation glue (a
+    -- word like "sake" tagged on many unrelated lemmas) doesn't surface absurd
+    -- pairings; distinctive single-source words and etymology links clear it.
+    fused = filter ((>= 0.3) . fst . snd) $ sortOn (Down . snd) $ M.toList $
         M.fromListWith comb [ (o, (c, [tag])) | (o, c, tag) <- attests ]
       where comb (c1, t1) (c2, t2) = (1 - (1 - c1) * (1 - c2), t1 <> t2)
     confColor c

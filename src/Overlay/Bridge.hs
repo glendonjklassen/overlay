@@ -265,11 +265,13 @@ candidateIndex = foldr add M.empty
 -- | The cross-testament partner lemmas for a Strong's number: its etymology
 -- links plus its top-@n@ rendering candidates (the other-testament side of
 -- each), de-duplicated. Used to paint the bridge's footprint on the strip.
+-- Only reasonably distinctive rendering candidates count as bridge partners;
+-- low-content glue words (shared by many lemmas, tiny score) are dropped.
 crossPartners :: Bridge -> Map Text [RenderCand] -> Int -> Text -> [Text]
 crossPartners br candIx n s =
     nub (bridgedPartners br s <> take n
         [ if rcHeb c == s then rcGrk c else rcHeb c
-        | c <- M.findWithDefault [] s candIx ])
+        | c <- M.findWithDefault [] s candIx, rcScore c >= 0.3 ])
 
 -- | Per-book occurrence counts summed over a set of lemmas (e.g. a concept's
 -- bridged partners), for one combined footprint.
