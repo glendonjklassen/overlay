@@ -24,6 +24,7 @@ library
       Overlay.ConceptMap
       Overlay.Config
       Overlay.Corpus
+      Overlay.Embed
       Overlay.Events
       Overlay.Import
       Overlay.Panels

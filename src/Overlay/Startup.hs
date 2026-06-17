@@ -17,6 +17,7 @@ import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
+import Overlay.Embed (embDim, embSize, loadEmbedding)
 import Overlay.Events
 import Overlay.Patch
 import Overlay.ReaderView
@@ -31,10 +32,11 @@ import Overlay.Types
 import Overlay.UI
 import Overlay.Weave
 
-corpusPath, strongsPath, conceptCachePath :: FilePath
+corpusPath, strongsPath, conceptCachePath, conceptVectorsPath :: FilePath
 corpusPath = "data/kjv.jsonl"
 strongsPath = "data/strongs.json"
 conceptCachePath = "data/concept-cache.json"  -- ^ written by --analyze (gitignored)
+conceptVectorsPath = "data/concept-vectors.vec"  -- ^ ml/train_concept2vec.py (gitignored)
 
 -- ── startup ─────────────────────────────────────────────────────────────────
 
@@ -46,10 +48,11 @@ loadEnv = do
     notes <- loadNotes
     extraIx <- sourceLinkIndex <$> loadBridgeSources
     suggestions <- loadSuggestions corpus 300 conceptCachePath
+    embedding <- loadEmbedding conceptVectorsPath
     let bridge = etymologyBridge strongs            -- static; approvals live in the model
         candIx = candidateIndex (renderingCandidates corpus)
     Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx
-        extraIx suggestions keys notes <$> loadSettings
+        extraIx suggestions embedding keys notes <$> loadSettings
   where
     dieLoad err = die $
         "could not load data: " <> err
@@ -160,6 +163,9 @@ checkMain = do
             <> showt (M.size (envBridgeExtra env)) <> " with external (LXX) links"
         , "suggest:  " <> showt (length (envSuggestions env))
             <> " shared-lemma-run parallels to review"
+        , "embed:    " <> maybe "absent (run ml/train_concept2vec.py)"
+            (\e -> showt (embSize e) <> " concept vectors, dim "
+                <> showt (embDim e)) (envEmbed env)
         , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"

@@ -10,6 +10,7 @@ import Data.Text (Text)
 import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
+import Overlay.Embed (Embedding)
 import Overlay.Corpus
 import Overlay.Patch
 import Overlay.ReaderView
@@ -31,6 +32,7 @@ data Env = Env
     , envBridgeCands :: M.Map Text [RenderCand]  -- ^ rendering candidates indexed by lemma
     , envBridgeExtra :: M.Map Text [SourceLink]  -- ^ hydrated external source links by lemma
     , envSuggestions :: [Suggestion]  -- ^ cached shared-lemma-run parallels to review
+    , envEmbed    :: Maybe Embedding  -- ^ concept2vec vectors, if hydrated
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings

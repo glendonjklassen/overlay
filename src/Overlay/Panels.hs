@@ -10,11 +10,14 @@ import Data.Ord (Down (..))
 import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Vector as V
 import Monomer
 
 import Overlay.Bridge
 import Overlay.Canon (Book (..), bookById)
 import Overlay.Concept
+import Overlay.Corpus (cByRef, cVerses, verseBody)
+import Overlay.Embed (nearestConcepts, similarVerses)
 import Overlay.Patch
 import Overlay.Refs
 import Overlay.Render
@@ -339,11 +342,51 @@ strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
                 `styleBasic` [textSize (11 * sc), textColor muted]
            | occMore > 0]
 
+    -- concepts learned to share contexts with this one (concept2vec). These are
+    -- semantic neighbours, not co-occurrences: words that pattern alike across
+    -- the corpus even when they never appear in the same verse. Tap one to lay
+    -- its distribution beside this one on the strip. Absent without the vectors.
+    nonEmptyL xs = if null xs then Nothing else Just xs
+    sim2 x = T.pack (show (fromIntegral (round (x * 100) :: Int) / 100 :: Double))
+    nearRow (o, s) = box_ [onClick (EvPinConcept o), alignLeft]
+        (hstack_ [childSpacing_ 6]
+            [ label o `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , label (glossOf o) `styleBasic` [textSize (10 * sc), textColor muted]
+            , filler
+            , label (sim2 s) `styleBasic` [textSize (10 * sc), textColor muted] ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+    nearSection = case envEmbed env >>= \e -> nonEmptyL (nearestConcepts e 8 ref) of
+        Nothing   -> []
+        Just nbrs ->
+            [ panelSection sc "concepts near this"
+            , sectionLabel sc "learned from shared contexts · tap to compare on the strip" ]
+            <> map nearRow nbrs <> [hrule]
+
+    -- verses whose pooled concepts sit nearest this verse's (concept2vec) — a
+    -- semantic \"more like this\", complementing the weave cross-references above.
+    verseSnippet r = case M.lookup r (cByRef (envCorpus env))
+                          >>= (cVerses (envCorpus env) V.!?) of
+        Just v  -> T.unwords (take 14 (T.words (verseBody v)))
+        Nothing -> ""
+    simRow (r@(b, c, _), _) = box_ [onClick (EvGoRef b c), alignLeft]
+        (vstack_ [childSpacing_ 1]
+            [ label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , wrapLabel (verseSnippet r)
+                `styleBasic` [textSize (10 * sc), textColor muted, width piw] ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+    similarSection = case envEmbed env
+                          >>= \e -> nonEmptyL (similarVerses e (envCorpus env) 8 vref) of
+        Nothing   -> []
+        Just sims ->
+            [ panelSection sc "verses like this"
+            , sectionLabel sc "nearest by pooled concepts · click to jump" ]
+            <> map simRow sims <> [hrule]
+
     panel = panelBox pw
         [ panelHeader sc (refText vref <> " — " <> word) EvClosePanel
         , vscroll $ vstack_ [childSpacing_ 8]
-            (verseSection <> entrySection <> dispersionSection
-                <> bridgeSection <> occurrencesSection)
+            (verseSection <> entrySection <> dispersionSection <> nearSection
+                <> bridgeSection <> similarSection <> occurrencesSection)
         ]
 
 editorPanel :: AppModel -> Double -> EditTarget -> WidgetNode AppModel AppEvent
