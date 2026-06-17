@@ -248,8 +248,12 @@ loadSuggestions corpus topN path = do
             pure $ take topN
                 [ s | RawCand a b run len <- cands
                     , Just ra <- [parseRefKey a], Just rb <- [parseRefKey b]
+                    , differentChapter ra rb
                     , let s = Suggestion ra rb len (sharedText ra run) ]
   where
+    -- a same-chapter pair (e.g. Matt 5:29/5:30) is an adjacent restatement, not
+    -- an interesting parallel; require at least a chapter between the two verses
+    differentChapter (ba, ca, _) (bb, cb, _) = ba /= bb || ca /= cb
     sharedText ref run =
         case M.lookup ref (cByRef corpus) >>= (cVerses corpus V.!?) of
             Nothing -> ""
