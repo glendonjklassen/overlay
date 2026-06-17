@@ -17,7 +17,7 @@ import Overlay.Bridge
 import Overlay.Canon (Book (..), bookById)
 import Overlay.Concept
 import Overlay.Corpus (cByRef, cVerses, verseBody)
-import Overlay.Embed (nearestConcepts, similarVerses)
+import Overlay.Embed (nearestConcepts, similarVersesIn)
 import Overlay.Patch
 import Overlay.Refs
 import Overlay.Render
@@ -374,8 +374,8 @@ strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
             , wrapLabel (verseSnippet r)
                 `styleBasic` [textSize (10 * sc), textColor muted, width piw] ])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
-    similarSection = case envEmbed env
-                          >>= \e -> nonEmptyL (similarVerses e (envCorpus env) 8 vref) of
+    similarSection = case envVerseSim env
+                          >>= \vs -> nonEmptyL (similarVersesIn vs 8 vref) of
         Nothing   -> []
         Just sims ->
             [ panelSection sc "verses like this"

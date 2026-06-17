@@ -10,7 +10,7 @@ import Data.Text (Text)
 import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
-import Overlay.Embed (Embedding)
+import Overlay.Embed (Embedding, VerseSim)
 import Overlay.Corpus
 import Overlay.Patch
 import Overlay.ReaderView
@@ -33,6 +33,7 @@ data Env = Env
     , envBridgeExtra :: M.Map Text [SourceLink]  -- ^ hydrated external source links by lemma
     , envSuggestions :: [Suggestion]  -- ^ cached shared-lemma-run parallels to review
     , envEmbed    :: Maybe Embedding  -- ^ concept2vec vectors, if hydrated
+    , envVerseSim :: Maybe VerseSim   -- ^ SIF verse model for "verses like this"
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings

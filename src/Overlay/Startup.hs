@@ -17,7 +17,7 @@ import Overlay.Bridge
 import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
-import Overlay.Embed (embDim, embSize, loadEmbedding)
+import Overlay.Embed (buildVerseSim, embDim, embSize, loadEmbedding, vsCount)
 import Overlay.Events
 import Overlay.Patch
 import Overlay.ReaderView
@@ -49,10 +49,15 @@ loadEnv = do
     extraIx <- sourceLinkIndex <$> loadBridgeSources
     suggestions <- loadSuggestions corpus 300 conceptCachePath
     embedding <- loadEmbedding conceptVectorsPath
+    -- the SIF verse model is heavy; build it once now so "verses like this" is
+    -- instant on first use (forced via vsCount), and only when vectors exist
+    verseSim <- case embedding of
+        Nothing -> pure Nothing
+        Just e  -> let vs = buildVerseSim e corpus in vs `seq` vsCount vs `seq` pure (Just vs)
     let bridge = etymologyBridge strongs            -- static; approvals live in the model
         candIx = candidateIndex (renderingCandidates corpus)
     Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx
-        extraIx suggestions embedding keys notes <$> loadSettings
+        extraIx suggestions embedding verseSim keys notes <$> loadSettings
   where
     dieLoad err = die $
         "could not load data: " <> err
