@@ -1,0 +1,14 @@
+{
+  "format": "overlay-weave-v2",
+  "name": "Messiah, the Anointed One",
+  "kind": "type",
+  "tokenization": "kjv1769-tok2",
+  "notes": "The Hebrew title 'Messiah' (mashiach, H4899) and the word 'anointed' carry the very idea the Greek New Testament names 'Christ' (Christos, G5547) -- the Anointed One. The KJV keeps the words distinct in English ('Messiah'/'anointed' in the Old Testament, 'Christ' in the New), so the identity is easy to miss on the surface; John spells it out plainly. Psalm 2:2's 'his anointed' is taken up almost verbatim in Acts 4:26 ('his Christ'); Daniel 9:25-26's 'Messiah' is named 'Messias ... the Christ' in John 1:41 and 'Messias ... called Christ' in John 4:25. An AI-suggested starter weave -- review, adjust the kind, or extend it (e.g. 1 Samuel's 'the LORD's anointed', Isaiah 61:1 / Luke 4:18) as you see fit.",
+  "created": "2026-06-16T00:00:00Z",
+  "approved": false,
+  "links": [
+    {"a": "Ps 2:2", "b": "Acts 4:26", "label": "against the LORD, and against his anointed ... Christ"},
+    {"a": "Dan 9:25", "b": "John 1:41", "label": "Messiah ... Messias ... the Christ"},
+    {"a": "Dan 9:26", "b": "John 4:25", "label": "Messiah ... Messias ... called Christ"}
+  ]
+}

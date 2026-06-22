@@ -3,12 +3,21 @@
 module Overlay.Panels where
 
 import Control.Lens hiding ((.=))
-import Data.List (find, sortOn)
+import Data.List (find, nub, sortOn)
 import qualified Data.Map.Strict as M
+import Data.Maybe (fromMaybe)
+import Data.Ord (Down (..))
+import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Vector as V
 import Monomer
 
+import Overlay.Bridge
+import Overlay.Canon (Book (..), bookById)
+import Overlay.Concept
+import Overlay.Corpus (cByRef, cVerses, verseBody)
+import Overlay.Embed (nearestConcepts, similarVersesIn)
 import Overlay.Patch
 import Overlay.Refs
 import Overlay.Render
@@ -64,9 +73,15 @@ panelHeader sc title closeEvt = hstack
 -- One look per role, used by every panel so threads, weaves, patches and the
 -- editor read as one family: same section labels, help text, rules and buttons.
 
--- | A small muted section heading.
+-- | A small muted caption label (sub-headings within a section).
 sectionLabel :: Double -> Text -> WidgetNode AppModel AppEvent
 sectionLabel sc t = label t `styleBasic` [textSize (10 * sc), textColor muted]
+
+-- | A prominent block heading — uppercased and in a warm accent — so a busy
+-- panel reads as clearly separated sections rather than one undifferentiated run.
+panelSection :: Double -> Text -> WidgetNode AppModel AppEvent
+panelSection sc t = label (T.toUpper t)
+    `styleBasic` [textSize (10 * sc), textColor (rgbHex "#C9A86A")]
 
 -- | Wrapped muted help/explanatory text, sized to the panel's inner width.
 panelHint :: Double -> Double -> Text -> WidgetNode AppModel AppEvent
@@ -130,6 +145,10 @@ optionsPanel model pw = panelBox pw $
     , labeledCheckbox "1769 margin notes" amNotesOn `styleBasic` [textSize (12 * sc)]
     , labeledCheckbox "weave heatmap" amHeatmapOn `styleBasic` [textSize (12 * sc)]
     , labeledCheckbox "weave links" amLinesOn `styleBasic` [textSize (12 * sc)]
+    , labeledCheckbox "cross-testament extras (LXX, domains)" amBridgeExtraOn
+        `styleBasic` [textSize (12 * sc)]
+    , panelHint sc piw "Off by default. Adds opt-in external bridge sources, each\
+        \ tagged with its provenance; etymology and 1769 renderings always show."
     , hrule
     , sectionLabel sc "Reading columns"
     , dropdown_ amMaxCols [1 .. maxColsCap] colRow colRow [onChange EvSetMaxCols]
@@ -171,9 +190,9 @@ optionsPanel model pw = panelBox pw $
 -- | The Ctrl-click side panel: verse-level cross-references (weave witnesses)
 -- on top, then word-level Strong's detail below — both levels in one place.
 strongsPanel
-    :: Env -> Double -> Double -> [((Text, Int, Int), Text)] -> (Text, Int, Int)
-    -> (Text, Text) -> WidgetNode AppModel AppEvent
-strongsPanel env sc pw witnesses vref (word, ref) = panel
+    :: Env -> Bool -> [Text] -> Double -> Double -> [((Text, Int, Int), Text)]
+    -> (Text, Int, Int) -> (Text, Text) -> WidgetNode AppModel AppEvent
+strongsPanel env extraOn pinned sc pw witnesses vref (word, ref) = panel
   where
     piw = pw - 24
     entry = M.lookup ref (envStrongs env)
@@ -185,6 +204,95 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         (label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue])
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
+    -- where this concept lives across the canon: testament split, rarity, and
+    -- the books it occurs in most — each row jumps to its first occurrence
+    -- there. Counts are over the Strong's tag (the original-language lemma), so
+    -- the spread is era-faithful, not an artefact of the KJV's varied wording.
+    cstat = conceptStat (envConcept env) ref
+    bookDisplay b = maybe b bookName (M.lookup b bookById)
+    bookRow (b, n) = box_ (onClickRow <> [alignLeft])
+        (hstack
+            [ label (bookDisplay b)
+                `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , filler
+            , label (showt n) `styleBasic` [textSize (11 * sc), textColor muted]
+            ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+      where
+        onClickRow = case find (\(bb, _, _) -> bb == b) occs of
+            Just (bb, c, _) -> [onClick (EvGoRef bb c)]
+            Nothing         -> []
+
+    dispersionSection = case cstat of
+        Nothing -> []
+        Just cs ->
+            let rarity = case rarityTier cs of
+                    Hapax  -> Just "hapax — occurs once (among tagged words)"
+                    Rare k -> Just ("rare — " <> showt k <> " occurrences")
+                    Common -> Nothing
+            in  [ panelSection sc "distribution" ]
+                <> [ label r `styleBasic`
+                        [textSize (11 * sc), textColor (rgbHex "#D2B46E")]
+                   | Just r <- [rarity] ]
+                <> map bookRow (topBooks 6 cs)
+                <> [ hstack_ [childSpacing_ 6] $
+                       [ primaryBtn sc (if ref `elem` pinned then "keeping on strip"
+                                        else "+ add to strip") (EvPinConcept ref) ]
+                       <> [ button ("remove all (" <> showt (length pinned) <> ")") EvClearPins
+                              `styleBasic` [textSize (11 * sc), padding 5, radius 3
+                                           , textColor lightGray, bgColor (rgbHex "#4A3F3F")]
+                            | not (null pinned) ] ]
+                <> [ panelHint sc piw "Keeps this word's coloured band on the strip\
+                       \ above the canon map, so opening another word compares where\
+                       \ they each occur across the Bible." ]
+                <> [hrule]
+
+    -- cross-testament: Hebrew/Greek lemmas tied to this one by EXTERNAL sources,
+    -- not the reader's own judgement. Today that's Strong's 1890 etymology; the
+    -- LXX / semantic-corroboration sources land with the multi-source bridge.
+    -- not the reader's own judgement.
+    glossOf s = case M.lookup s (envStrongs env) of
+        Nothing -> ""
+        Just e  -> fromMaybe (fromMaybe "" (seXlit e)) (seKjv e)
+    otherOf c = if rcHeb c == ref then rcGrk c else rcHeb c
+
+    -- Fuse the sources into one ranked list. Each witness contributes a
+    -- confidence c_s = trust_s · weight; we combine by noisy-OR (1 - Π(1-c_s)),
+    -- so a link two sources vouch for outranks a single-source guess. As more
+    -- FOSS sources land they just add attestations here.
+    attests :: [(Text, Double, Text)]   -- (other lemma, confidence, source tag)
+    attests =
+        [ (o, 0.90, "etymology") | o <- bridgedPartners (envBridge env) ref ]
+        <> [ (otherOf c, 0.55 * min 1 (2 * rcScore c), "1769 “" <> rcWord c <> "”")
+           | c <- M.findWithDefault [] ref (envBridgeCands env) ]
+        <> [ (if slHeb l == ref then slGrk l else slHeb l
+             , sourcePrior (slSource l), sourceLabel (slSource l))
+           | extraOn, l <- M.findWithDefault [] ref (envBridgeExtra env) ]
+    -- drop links below a confidence floor, so low-content translation glue (a
+    -- word like "sake" tagged on many unrelated lemmas) doesn't surface absurd
+    -- pairings; distinctive single-source words and etymology links clear it.
+    fused = filter ((>= 0.3) . fst . snd) $ sortOn (Down . snd) $ M.toList $
+        M.fromListWith comb [ (o, (c, [tag])) | (o, c, tag) <- attests ]
+      where comb (c1, t1) (c2, t2) = (1 - (1 - c1) * (1 - c2), t1 <> t2)
+    confColor c
+        | c >= 0.7  = rgbHex "#8FB88A"   -- corroborated / etymology — strong
+        | c >= 0.4  = rgbHex "#C9A86A"   -- a distinctive single source — fair
+        | otherwise = rgbHex "#9A9488"   -- weak
+    xRow (o, (c, tags)) = box_ [alignLeft] $ vstack_ [childSpacing_ 1]
+        [ hstack_ [childSpacing_ 6]
+            [ label o `styleBasic` [textSize (12 * sc), textColor (confColor c)]
+            , label (glossOf o) `styleBasic` [textSize (10 * sc), textColor muted] ]
+        , label (T.intercalate " · " (nub tags))
+            `styleBasic` [textSize (9 * sc), textColor muted] ]
+
+    bridgeSection
+        | null fused = []
+        | otherwise =
+            [ panelSection sc "cross-testament"
+            , sectionLabel sc "Hebrew/Greek links by source · strongest first" ]
+            <> map xRow (take 8 fused)
+            <> [hrule]
+
     -- a cross-referenced verse: jump on click, shared wording underneath
     witRow (r@(b, c, _), lbl) = box_ [onClick (EvGoRef b c), alignLeft]
         (vstack_ [childSpacing_ 1] $
@@ -195,20 +303,20 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         `styleHover` [bgColor (rgbHex "#3A3F45")]
 
     verseSection =
-        [ sectionLabel sc "this verse"
+        [ panelSection sc "this verse"
         , label (refText vref) `styleBasic` [textSize (14 * sc), textColor lightGray]
-        , label (showt (length witnesses) <> " cross-reference"
-                <> (if length witnesses == 1 then "" else "s")
-                <> " (witnesses)")
-            `styleBasic` [textSize (11 * sc), textColor muted]
+        , sectionLabel sc (showt (length witnesses) <> " linked passage"
+                <> (if length witnesses == 1 then "" else "s") <> " (weave cross-references)")
         ]
         <> map witRow witnesses
         <> [ panelHint sc piw "no linked passages yet — add weave links to build them"
            | null witnesses ]
         <> [hrule]
 
-    wordSection =
-        [ sectionLabel sc ("word — " <> ref)
+    -- the lexical entry for this Strong's number: lemma, transliteration, and
+    -- the 1890 dictionary's derivation / definition / KJV renderings.
+    entrySection =
+        [ panelSection sc ("Strong's " <> ref)
         , widgetMaybe (entry >>= seLemma) $ \l ->
             label l `styleBasic` [textSize (22 * sc)]
         , hstack_ [childSpacing_ 8]
@@ -220,17 +328,65 @@ strongsPanel env sc pw witnesses vref (word, ref) = panel
         , captionField sc piw "derivation" (entry >>= seDeriv)
         , captionField sc piw "definition" (entry >>= seDef)
         , captionField sc piw "KJV renderings" (entry >>= seKjv)
-        , label (showt (length occs) <> " occurrences")
-            `styleBasic` [textSize (11 * sc), textColor muted]
+        , hrule
+        ]
+
+    -- every verse carrying this Strong's number (the concordance), listed last
+    -- since it can be long; its own heading so it never blurs into the analysis.
+    occurrencesSection =
+        [ panelSection sc ("occurrences — " <> showt (length occs))
+        , sectionLabel sc "every verse with this word; click to jump"
         ]
         <> [occRow r | r <- occShown]
         <> [label ("… and " <> showt occMore <> " more")
                 `styleBasic` [textSize (11 * sc), textColor muted]
            | occMore > 0]
 
+    -- concepts learned to share contexts with this one (concept2vec). These are
+    -- semantic neighbours, not co-occurrences: words that pattern alike across
+    -- the corpus even when they never appear in the same verse. Tap one to lay
+    -- its distribution beside this one on the strip. Absent without the vectors.
+    nonEmptyL xs = if null xs then Nothing else Just xs
+    sim2 x = T.pack (show (fromIntegral (round (x * 100) :: Int) / 100 :: Double))
+    nearRow (o, s) = box_ [onClick (EvPinConcept o), alignLeft]
+        (hstack_ [childSpacing_ 6]
+            [ label o `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , label (glossOf o) `styleBasic` [textSize (10 * sc), textColor muted]
+            , filler
+            , label (sim2 s) `styleBasic` [textSize (10 * sc), textColor muted] ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+    nearSection = case envEmbed env >>= \e -> nonEmptyL (nearestConcepts e 8 ref) of
+        Nothing   -> []
+        Just nbrs ->
+            [ panelSection sc "concepts near this"
+            , sectionLabel sc "learned from shared contexts · tap to compare on the strip" ]
+            <> map nearRow nbrs <> [hrule]
+
+    -- verses whose pooled concepts sit nearest this verse's (concept2vec) — a
+    -- semantic \"more like this\", complementing the weave cross-references above.
+    verseSnippet r = case M.lookup r (cByRef (envCorpus env))
+                          >>= (cVerses (envCorpus env) V.!?) of
+        Just v  -> T.unwords (take 14 (T.words (verseBody v)))
+        Nothing -> ""
+    simRow (r@(b, c, _), _) = box_ [onClick (EvGoRef b c), alignLeft]
+        (vstack_ [childSpacing_ 1]
+            [ label (refLabel r) `styleBasic` [textSize (12 * sc), textColor lightSkyBlue]
+            , wrapLabel (verseSnippet r)
+                `styleBasic` [textSize (10 * sc), textColor muted, width piw] ])
+        `styleHover` [bgColor (rgbHex "#3A3F45")]
+    similarSection = case envVerseSim env
+                          >>= \vs -> nonEmptyL (similarVersesIn vs 8 vref) of
+        Nothing   -> []
+        Just sims ->
+            [ panelSection sc "verses like this"
+            , sectionLabel sc "nearest by pooled concepts · click to jump" ]
+            <> map simRow sims <> [hrule]
+
     panel = panelBox pw
         [ panelHeader sc (refText vref <> " — " <> word) EvClosePanel
-        , vscroll $ vstack_ [childSpacing_ 8] (verseSection <> wordSection)
+        , vscroll $ vstack_ [childSpacing_ 8]
+            (verseSection <> entrySection <> dispersionSection <> nearSection
+                <> bridgeSection <> similarSection <> occurrencesSection)
         ]
 
 editorPanel :: AppModel -> Double -> EditTarget -> WidgetNode AppModel AppEvent
@@ -448,6 +604,60 @@ weavesPanel model pw = panelBox pw
             , label (T.intercalate "  ↔  " (map spanText (weaveSpans w)))
                 `styleBasic` [textSize (10 * sc), textColor muted]
             ]
+
+-- | Suggested parallels still awaiting review: those whose verse pair is not
+-- already captured by some weave and has not been dismissed. Accepting a
+-- suggestion writes a weave linking the pair, so it drops out of the list (and
+-- stays out across restarts); a pair the user wove by hand drops out too; and a
+-- dismissed pair is hidden for good.
+pendingSuggestions
+    :: [((Text, Int, Int), (Text, Int, Int))] -> [LoadedWeave]
+    -> [Suggestion] -> [Suggestion]
+pendingSuggestions dismissed lws =
+    filter (\s -> (sgA s, sgB s) `Set.notMember` hidden)
+  where
+    hidden = Set.fromList $
+        [ pair | (a, b) <- dismissed, pair <- [(a, b), (b, a)] ] <>
+        [ pair | lw <- lws, l <- wLinks (lwWeave lw)
+               , pair <- [(lA l, lB l), (lB l, lA l)] ]
+
+-- | Review panel for auto-detected within-language parallels (Phase 4): verse
+-- pairs sharing a contiguous run of original-language words. Tap a row to lay
+-- the pair side by side; accept to seed a new, unapproved weave.
+suggestionsPanel :: Env -> AppModel -> Double -> WidgetNode AppModel AppEvent
+suggestionsPanel env model pw = panelBox pw
+    [ panelHeader sc "parallels" EvClosePanel
+    , panelHint sc piw "Verse pairs that share a contiguous run of original-language\
+        \ words — synoptic parallels, Kings/Chronicles retellings, Psalm doublets.\
+        \ Within one language only, so never an OT\x2192NT quotation. Tap to compare;\
+        \ accept to seed an unapproved weave for review."
+    , if null sgs
+        then panelHint sc piw (if null (envSuggestions env)
+            then "none — run \"overlay --analyze\" to build candidates"
+            else "all reviewed — every detected parallel is now in a weave")
+        else vscroll (vstack_ [childSpacing_ 8] (map row sgs))
+    ]
+  where
+    sc = uiScaleOf model
+    piw = pw - 24
+    sgs = pendingSuggestions (model ^. amDismissed) (model ^. amWeaves)
+        (envSuggestions env)
+    row sg = vstack_ [childSpacing_ 2]
+        [ listCard sc (EvOpenSuggestion (sgA sg) (sgB sg))
+            (refLabel (sgA sg) <> "   \x2194   " <> refLabel (sgB sg))
+            [ label (showt (sgLen sg) <> " shared words")
+                `styleBasic` [textSize (10 * sc), textColor gray]
+            , wrapLabel (sgLabel sg)
+                `styleBasic` [textSize (10 * sc), textColor muted, width piw]
+            ]
+        , hstack_ [childSpacing_ 8]
+            [ primaryBtn sc "accept \x2192 weave" (EvAcceptSuggestion sg)
+            , button "dismiss" (EvDismissSuggestion (sgA sg) (sgB sg))
+                `styleBasic` [textSize (11 * sc), padding 4, bgColor (rgba 0 0 0 0)
+                    , textColor muted]
+                `styleHover` [bgColor (rgbHex "#3A3F45"), textColor (rgbHex "#EAE6DE")]
+            ]
+        ]
 
 weaveViewPanel :: AppModel -> Double -> FilePath -> WidgetNode AppModel AppEvent
 weaveViewPanel model pw file =

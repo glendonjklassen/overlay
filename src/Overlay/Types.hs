@@ -7,7 +7,10 @@ import Control.Lens
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
 
+import Overlay.Bridge
+import Overlay.Concept
 import Overlay.Config
+import Overlay.Embed (Embedding, VerseSim)
 import Overlay.Corpus
 import Overlay.Patch
 import Overlay.ReaderView
@@ -24,6 +27,13 @@ data Env = Env
     { envCorpus   :: Corpus
     , envStrongs  :: StrongsDict
     , envOccIx    :: OccurrenceIx
+    , envConcept  :: ConceptIx       -- ^ per-Strong's counts / distribution / rarity
+    , envBridge   :: Bridge          -- ^ OT↔NT etymology links (static; approvals live in the model)
+    , envBridgeCands :: M.Map Text [RenderCand]  -- ^ rendering candidates indexed by lemma
+    , envBridgeExtra :: M.Map Text [SourceLink]  -- ^ hydrated external source links by lemma
+    , envSuggestions :: [Suggestion]  -- ^ cached shared-lemma-run parallels to review
+    , envEmbed    :: Maybe Embedding  -- ^ concept2vec vectors, if hydrated
+    , envVerseSim :: Maybe VerseSim   -- ^ SIF verse model for "verses like this"
     , envKeys     :: Keys
     , envNotes    :: M.Map (Text, Int, Int) [Text]
     , envSettings :: Settings
@@ -48,6 +58,7 @@ data PanelMode
     | PThreadView FilePath
     | PWeaves
     | PWeaveView FilePath       -- ^ inspect / edit one weave
+    | PSuggestions              -- ^ review auto-detected parallel candidates
     deriving (Eq, Show)
 
 -- | A reading pane: where it points, plus the verses currently selected there
@@ -93,6 +104,16 @@ data AppModel = AppModel
     , _amActivePane  :: Int      -- ^ last pane the user acted in; cross-reference
                                  -- jumps and the canon map target it
     , _amLineSpacing :: Double   -- ^ live line spacing, persisted to config.json
+    , _amConcepts    :: [Text]   -- ^ active Strong's numbers shown on the concept
+                                  -- dispersion strip (1…4); empty hides it
+    , _amBridge      :: BridgeStore  -- ^ user's OT↔NT rendering-link approvals
+    , _amBridgeExtraOn :: Bool   -- ^ include opt-in external bridge sources
+                                  -- (LXX, semantic domains); off by default
+    , _amPinnedConcepts :: [Text]  -- ^ concepts pinned onto the dispersion strip
+                                  -- for comparison (persist as you browse)
+    , _amDismissed   :: [((Text, Int, Int), (Text, Int, Int))]
+                                  -- ^ parallels dismissed from review; hidden
+                                  -- from the list and persisted across restarts
     } deriving (Eq, Show)
 
 data AppEvent
@@ -130,6 +151,17 @@ data AppEvent
     | EvSetMaxCols Int             -- ^ change the live reading-column limit
     | EvCanonGoto Double           -- ^ jump the active pane to a canon fraction 0…1
     | EvLineSpacing Double         -- ^ nudge line spacing by a delta (0 = reset)
+    -- OT↔NT bridge approvals (canonical (Hebrew, Greek) pair)
+    | EvBridgeApprove Text Text    -- ^ approve a rendering bridge link (H, G)
+    | EvBridgeReject Text Text     -- ^ reject a rendering bridge link (H, G)
+    -- concept dispersion strip comparison
+    | EvPinConcept Text            -- ^ pin a Strong's number onto the strip
+    | EvClearPins                  -- ^ clear the pinned comparison
+    -- suggested parallels (auto-detected within-language shared-lemma runs)
+    | EvToggleSuggestions
+    | EvOpenSuggestion (Text, Int, Int) (Text, Int, Int)  -- ^ show the pair in panes
+    | EvAcceptSuggestion Suggestion  -- ^ accept → a new unapproved weave
+    | EvDismissSuggestion (Text, Int, Int) (Text, Int, Int)  -- ^ hide for good
     -- weaves
     | EvToggleWeaves
     | EvShowWeaves

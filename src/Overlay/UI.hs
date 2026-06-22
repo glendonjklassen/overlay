@@ -12,8 +12,10 @@ import qualified Data.Vector as V
 import Monomer
 import qualified Monomer.Lens as L
 
+import Overlay.Bridge (crossPartners, extraPartners, unionByBook)
 import Overlay.Canon (bookIds)
 import Overlay.CanonMap
+import Overlay.ConceptMap
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Panels
@@ -75,6 +77,10 @@ buildUI env wenv model = widgetTree
             (model ^. amPanel == PPatches) EvTogglePatches
         , navTab "threads" (length threads) threadPanelOpen EvToggleThreads
         , navTab "weaves" (length (model ^. amWeaves)) weavePanelOpen EvToggleWeaves
+        , navTab "parallels"
+            (length (pendingSuggestions (model ^. amDismissed) (model ^. amWeaves)
+                (envSuggestions env)))
+            (model ^. amPanel == PSuggestions) EvToggleSuggestions
         ]
         <> [ flatBtn "+ link" (rgbHex "#C9A24B") EvLink | canLink ]
         <>
@@ -108,10 +114,16 @@ buildUI env wenv model = widgetTree
     witAdj = witnessIndex (model ^. amWeaves)
     witCount = M.map length witAdj
     maxWit = if M.null witCount then 0 else maximum (M.elems witCount)
-    heatFor v = if model ^. amHeatmapOn
-        then heatTierFor maxWit
+    -- gutter heat: an active concept's per-verse density (the leitwort signal —
+    -- where a word clusters in the open chapter) takes priority; otherwise the
+    -- weave-witness heat when its toggle is on.
+    conceptCountIn v =
+        length [ () | t <- vTokens v, s <- tokStrongs t, s `elem` stripConcepts ]
+    heatFor v
+        | not (null stripConcepts) = min 4 (conceptCountIn v)
+        | model ^. amHeatmapOn = heatTierFor maxWit
             (M.findWithDefault 0 (vBook v, vChapter v, vVerse v) witCount)
-        else 0
+        | otherwise = 0
 
     paneColumn i p = ColumnCfg
         (showt i <> ":" <> _psBook p <> ":" <> showt (_psChapter p))
@@ -145,6 +157,8 @@ buildUI env wenv model = widgetTree
             in case m a of
                 Just v  -> Just v
                 Nothing -> m b
+        -- reviewing a parallel: line each pane up on the verse it opened to
+        Nothing | model ^. amPanel == PSuggestions -> _psAnchor p
         Nothing -> Nothing
 
     -- ambient: every weave link whose verses are both visible in some pane
@@ -213,7 +227,7 @@ buildUI env wenv model = widgetTree
         , rcBodySize = model ^. amBodySize
         , rcLineSpacing = model ^. amLineSpacing
         , rcLinks = if model ^. amLinesOn then ambientLinks else []
-        , rcHeatOn = model ^. amHeatmapOn
+        , rcHeatOn = model ^. amHeatmapOn || not (null stripConcepts)
         , rcOnWordClick = EvWordClicked
         , rcOnWordAlt = EvWordAlt
         , rcOnSpanSelect = EvSpanSelected
@@ -228,13 +242,14 @@ buildUI env wenv model = widgetTree
         POptions -> [optionsPanel model panelPW]
         PEdit et -> [editorPanel model panelPW et]
         PStrongs word ref vref ->
-            [strongsPanel env sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj))
-                vref (word, ref)]
+            [strongsPanel env (model ^. amBridgeExtraOn) (model ^. amPinnedConcepts)
+                sc panelPW (sortOnCanon (M.findWithDefault [] vref witAdj)) vref (word, ref)]
         PPatches -> [patchesPanel model panelPW]
         PThreads -> [threadsPanel model panelPW]
         PThreadView f -> [threadViewPanel model panelPW f]
         PWeaves -> [weavesPanel model panelPW]
         PWeaveView f -> [weaveViewPanel model panelPW f]
+        PSuggestions -> [suggestionsPanel env model panelPW]
 
     -- the shared canon overview strip: one map, a pin per pane
     canonMap = canonMapView CanonMapCfg
@@ -249,7 +264,36 @@ buildUI env wenv model = widgetTree
       where nb = fromIntegral (length bookIds)
             otNT = 39  -- Matthew is the 40th book (index 39)
 
-    mainArea = vstack [navRow, reader, canonMap]
+    -- the concept dispersion strip: shown above the canon map while a Strong's
+    -- number is active, sharing its book-fraction coordinates so the two line up.
+    -- Each concept paints its own footprint plus, in a distinct colour, the
+    -- footprint of its cross-testament partners — so an OT-only (or NT-only) word
+    -- still shows its bridged lemmas across the seam instead of a bare gap.
+    -- the active concept plus any pinned for comparison (dedup)
+    stripConcepts = nub (model ^. amConcepts <> model ^. amPinnedConcepts)
+    -- each concept shows its own footprint plus, when ≤2 are on the strip, its
+    -- cross-testament bridge band (so a single concept spans both OT and NT);
+    -- at 3–4 concepts we drop the bridge bands so the four series still fit
+    conceptSeriesFor withBridge r =
+        let cix = envConcept env
+            partners = nub (crossPartners (envBridge env) (envBridgeCands env) 6 r
+                            <> [ p | model ^. amBridgeExtraOn
+                                   , p <- extraPartners (envBridgeExtra env) r ])
+        in ConceptSeries r (unionByBook cix [r])
+            : [ ConceptSeries (r <> "  ↔ bridge") (unionByBook cix partners)
+              | withBridge, not (null partners) ]
+    conceptStrip
+        | null stripConcepts = []
+        | otherwise =
+            [ conceptMapView ConceptMapCfg
+                { cmpBooks = bookIds
+                , cmpSeries = concatMap (conceptSeriesFor (length stripConcepts <= 2))
+                    stripConcepts
+                , cmpDivider = 39 / fromIntegral (length bookIds)
+                , cmpOnClick = Just EvCanonGoto
+                } ]
+
+    mainArea = vstack ([navRow, reader] <> conceptStrip <> [canonMap])
 
     baseTree = vstack
         [ header `styleBasic` [padding 10]
@@ -267,7 +311,7 @@ buildUI env wenv model = widgetTree
     verseTextOf ref = maybe "" (T.unwords . map renderToken . vTokens)
         (M.lookup ref (cByRef corpus) >>= (cVerses corpus V.!?))
 
-    compareRow (other, lbl, file, l) = vstack_ [childSpacing_ 2] $
+    compareRow (other, _lbl, file, l) = vstack_ [childSpacing_ 2]
         [ hstack
             [ box_ [onClick (EvGoRef (fst3 other) (snd3 other)), alignLeft]
                 (label (refText other)
@@ -279,8 +323,6 @@ buildUI env wenv model = widgetTree
         , wrapLabel (verseTextOf other)
             `styleBasic` [textSize (model ^. amBodySize), textColor lightGray, width 336]
         ]
-        <> [ wrapLabel ("· " <> lbl) `styleBasic`
-                 [textSize (10 * sc), textColor (rgbHex "#D2B46E"), width 336] | not (T.null lbl) ]
 
     -- header pinned; the verse + parallels scroll, so a verse with many
     -- witnesses never runs off the bottom of the screen

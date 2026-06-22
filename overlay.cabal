@@ -17,10 +17,14 @@ build-type:     Simple
 library
   exposed-modules:
       Overlay
+      Overlay.Bridge
       Overlay.Canon
       Overlay.CanonMap
+      Overlay.Concept
+      Overlay.ConceptMap
       Overlay.Config
       Overlay.Corpus
+      Overlay.Embed
       Overlay.Events
       Overlay.Import
       Overlay.Panels

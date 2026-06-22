@@ -2,15 +2,22 @@
 
 module Overlay.Startup where
 
-import Data.List (findIndex)
+import Data.Aeson (Value, decodeFileStrict, encodeFile, object, (.=))
+import Data.List (findIndex, sortBy)
 import qualified Data.Map.Strict as M
+import Data.Ord (Down (..), comparing)
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import Monomer
+import System.Directory (doesFileExist)
 import System.Exit (die)
 
+import Overlay.Bridge
+import Overlay.Concept
 import Overlay.Config
 import Overlay.Corpus
+import Overlay.Embed (buildVerseSim, embDim, embSize, loadEmbedding, vsCount)
 import Overlay.Events
 import Overlay.Patch
 import Overlay.ReaderView
@@ -25,9 +32,11 @@ import Overlay.Types
 import Overlay.UI
 import Overlay.Weave
 
-corpusPath, strongsPath :: FilePath
+corpusPath, strongsPath, conceptCachePath, conceptVectorsPath :: FilePath
 corpusPath = "data/kjv.jsonl"
 strongsPath = "data/strongs.json"
+conceptCachePath = "data/concept-cache.json"  -- ^ written by --analyze (gitignored)
+conceptVectorsPath = "data/concept-vectors.vec"  -- ^ ml/train_concept2vec.py (gitignored)
 
 -- ── startup ─────────────────────────────────────────────────────────────────
 
@@ -37,7 +46,18 @@ loadEnv = do
     strongs <- loadStrongs strongsPath >>= either dieLoad pure
     keys <- loadOrCreateKeys >>= either (die . ("key setup failed: " <>)) pure
     notes <- loadNotes
-    Env corpus strongs (occurrenceIndex corpus) keys notes <$> loadSettings
+    extraIx <- sourceLinkIndex <$> loadBridgeSources
+    suggestions <- loadSuggestions corpus 300 conceptCachePath
+    embedding <- loadEmbedding conceptVectorsPath
+    -- the SIF verse model is heavy; build it once now so "verses like this" is
+    -- instant on first use (forced via vsCount), and only when vectors exist
+    verseSim <- case embedding of
+        Nothing -> pure Nothing
+        Just e  -> let vs = buildVerseSim e corpus in vs `seq` vsCount vs `seq` pure (Just vs)
+    let bridge = etymologyBridge strongs            -- static; approvals live in the model
+        candIx = candidateIndex (renderingCandidates corpus)
+    Env corpus strongs (occurrenceIndex corpus) (buildConceptIx corpus) bridge candIx
+        extraIx suggestions embedding verseSim keys notes <$> loadSettings
   where
     dieLoad err = die $
         "could not load data: " <> err
@@ -53,6 +73,8 @@ guiMain = do
     (serifR, serifI) <- resolveFonts (envSettings env)
     (sansR, sansB) <- resolveSans
     session <- loadSession
+    bridgeStore <- loadApprovals bridgeFile
+    dismissed <- loadDismissed
     let maxCols = clampMaxCols (sessMaxCols session)
         panes = restorePanes (envCorpus env) maxCols (sessPanes session)
         status = T.intercalate " · " (filter (not . T.null)
@@ -60,7 +82,8 @@ guiMain = do
             , if null werrs then "" else weaveErrText werrs ])
         model = AppModel PNone False False True patches rules threads "" "" False "" "" ""
             status panes Nothing weaves "" Retelling Retelling "" "" Nothing
-            (sBodySize (envSettings env)) maxCols 0 (sLineSpacing (envSettings env))
+            (sBodySize (envSettings env)) maxCols 0 (sLineSpacing (envSettings env)) []
+            bridgeStore (sessBridgeExtra session) [] dismissed
         config =
             [ appWindowTitle "overlay — KJV 1769"
             , appWindowState MainWindowMaximized
@@ -89,6 +112,16 @@ checkMain = do
                 in (if T.null title then "" else "[" <> title <> "] ")
                     <> verseBody vr
         lordOccs = M.findWithDefault [] "H3068" (envOccIx env)
+        cix = envConcept env
+    cacheLine <- do
+        present <- doesFileExist conceptCachePath
+        if not present
+            then pure "concept:  cache absent (run --analyze to build it)"
+            else do
+                parsed <- decodeFileStrict conceptCachePath :: IO (Maybe Value)
+                pure $ case parsed of
+                    Just _  -> "concept:  cache present & parses"
+                    Nothing -> "concept:  cache present but UNPARSEABLE"
     st <- selfTest (envKeys env) (cTokVersion corpus)
     patches <- loadPatches (envKeys env) corpus
     rules <- loadRules (envKeys env) corpus
@@ -128,6 +161,17 @@ checkMain = do
         , "tokens:   " <> showt nTokens
         , "tokver:   " <> cTokVersion corpus
         , "strongs:  " <> showt (M.size (envStrongs env))
+        , "concepts: " <> showt (M.size cix) <> " Strong's numbers tagged, "
+            <> showt (length (hapaxes cix)) <> " hapax"
+        , "bridge:   " <> showt (bridgeSize (envBridge env))
+            <> " etymology-linked Strong's numbers; "
+            <> showt (M.size (envBridgeExtra env)) <> " with external (LXX) links"
+        , "suggest:  " <> showt (length (envSuggestions env))
+            <> " shared-lemma-run parallels to review"
+        , "embed:    " <> maybe "absent (run ml/train_concept2vec.py)"
+            (\e -> showt (embSize e) <> " concept vectors, dim "
+                <> showt (embDim e)) (envEmbed env)
+        , cacheLine
         , "notes:    " <> showt (sum (map length (M.elems (envNotes env))))
             <> " margin notes on " <> showt (M.size (envNotes env)) <> " verses"
         , "fonts:    " <> serifR <> " / " <> serifI
@@ -166,6 +210,70 @@ checkMain = do
            , "Ps 3:1    " <> render "Ps" 3 1
            , "John 11:35  " <> render "John" 11 35
            ]
+
+-- | Build the heavy concept indices, cache them to disk, and print a report
+-- (--analyze). The light per-concept stats already live in 'envConcept'; this
+-- adds the full co-occurrence matrix and the within-language shared-lemma-run
+-- candidates, written to a gitignored cache for later phases to load.
+analyzeMain :: IO ()
+analyzeMain = do
+    env <- loadEnv
+    let corpus = envCorpus env
+        cix = envConcept env
+        co = coOccurrence corpus
+        coSorted = sortBy (comparing (Down . snd)) (M.toList co)
+        cands = quotationCandidates defaultMinRun corpus
+        topCoN = 20000 :: Int
+        topCandN = 2000 :: Int
+        topCo = take topCoN coSorted
+        topCand = take topCandN cands
+        -- OT↔NT bridge: Strong's etymology (auto) + 1769-rendering candidates
+        ety = etymologyLinks (envStrongs env)
+        rends = renderingCandidates corpus
+        topRend = take topCandN rends
+        cacheVal = object
+            [ "format" .= ("overlay-concept-cache-v1" :: Text)
+            , "tokenization" .= cTokVersion corpus
+            , "topCooccur" .=
+                [ object ["a" .= a, "b" .= b, "n" .= n] | ((a, b), n) <- topCo ]
+            , "candidates" .=
+                [ object [ "a" .= refKey (qcA c), "b" .= refKey (qcB c)
+                         , "run" .= qcRun c, "len" .= qcLen c ]
+                | c <- topCand ]
+            , "bridgeEtymology" .=
+                [ object ["h" .= blHeb l, "g" .= blGrk l] | l <- ety ]
+            , "bridgeRenderCandidates" .=
+                [ object [ "h" .= rcHeb c, "g" .= rcGrk c
+                         , "word" .= rcWord c, "score" .= rcScore c ]
+                | c <- topRend ]
+            ]
+    encodeFile conceptCachePath cacheVal
+    putStrLn $ T.unpack $ T.unlines $
+        [ "concepts:   " <> showt (M.size cix) <> " Strong's numbers tagged"
+        , "hapax:      " <> showt (length (hapaxes cix))
+        , "co-occur:   " <> showt (M.size co) <> " distinct pairs ("
+            <> showt (length topCo) <> " cached)"
+        , "candidates: " <> showt (length cands)
+            <> " within-language parallels (run ≥ " <> showt defaultMinRun
+            <> "; " <> showt (length topCand) <> " cached)"
+        , "wrote:      " <> T.pack conceptCachePath
+        , ""
+        , "top co-occurring lemmas (share a verse):"
+        ]
+        <> [ "  " <> a <> " + " <> b <> "  ×" <> showt n
+           | ((a, b), n) <- take 12 coSorted ]
+        <> [ "", "longest within-language shared-lemma runs:" ]
+        <> [ "  " <> refKey (qcA c) <> " ↔ " <> refKey (qcB c)
+             <> "  (" <> showt (qcLen c) <> " lemmas)"
+           | c <- take 12 cands ]
+        <> [ ""
+           , "bridge:     " <> showt (length ety) <> " etymology links, "
+               <> showt (length rends) <> " rendering candidates ("
+               <> showt (length topRend) <> " cached)"
+           , ""
+           , "top OT↔NT rendering-bridge candidates (1769 equivalences):" ]
+        <> [ "  " <> rcHeb c <> " ↔ " <> rcGrk c <> "  “" <> rcWord c <> "”"
+           | c <- take 12 rends ]
 
 -- | Dev helper: create a signed patch from the command line.
 -- Usage: overlay --mkpatch <book> <chapter> <verse> <original-word> <replacement...>

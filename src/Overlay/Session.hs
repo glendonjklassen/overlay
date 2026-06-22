@@ -22,14 +22,16 @@ import Overlay.Types
 -- where you left it instead of resetting to Genesis 1. Selections and scroll
 -- offsets are transient and not persisted.
 data Session = Session
-    { sessPanes   :: [(Text, Int)]
-    , sessMaxCols :: Int
+    { sessPanes       :: [(Text, Int)]
+    , sessMaxCols     :: Int
+    , sessBridgeExtra :: Bool   -- ^ whether the opt-in external bridge sources were on
     }
 
 instance ToJSON Session where
-    toJSON (Session ps mc) = object
+    toJSON (Session ps mc be) = object
         [ "panes" .= [ object ["book" .= b, "chapter" .= c] | (b, c) <- ps ]
-        , "maxColumns" .= mc ]
+        , "maxColumns" .= mc
+        , "bridgeExtra" .= be ]
 
 instance FromJSON Session where
     parseJSON = withObject "Session" $ \o -> do
@@ -37,7 +39,8 @@ instance FromJSON Session where
         ps  <- mapM (withObject "pane" $ \p ->
             (,) <$> p .: "book" <*> p .: "chapter") arr
         mc  <- o .:? "maxColumns" .!= defaultMaxCols
-        pure (Session ps mc)
+        be  <- o .:? "bridgeExtra" .!= False
+        pure (Session ps mc be)
 
 -- | The absolute ceiling on reading columns: panes cycle colours and layout
 -- caps at four. The user's live limit (amMaxCols) is clamped into 1…this.
@@ -60,11 +63,11 @@ sessionPath = do
 
 -- | Persist the panes' passages. Best-effort: a write failure must never crash
 -- the app on close, so errors are swallowed.
-saveSession :: Int -> [PaneState] -> IO ()
-saveSession maxCols panes = do
+saveSession :: Int -> [PaneState] -> Bool -> IO ()
+saveSession maxCols panes bridgeExtra = do
     dir <- getXdgDirectory XdgConfig "overlay"
     path <- sessionPath
-    let sess = Session [ (_psBook p, _psChapter p) | p <- panes ] maxCols
+    let sess = Session [ (_psBook p, _psChapter p) | p <- panes ] maxCols bridgeExtra
     _ <- try (createDirectoryIfMissing True dir
         >> BL.writeFile path (encode sess <> "\n")) :: IO (Either SomeException ())
     pure ()
@@ -75,9 +78,50 @@ loadSession :: IO Session
 loadSession = do
     path <- sessionPath
     exists <- doesFileExist path
-    if not exists then pure (Session [] defaultMaxCols) else do
+    if not exists then pure (Session [] defaultMaxCols False) else do
         raw <- BC.readFile path
-        pure $ fromRight (Session [] defaultMaxCols) (eitherDecodeStrict raw)
+        pure $ fromRight (Session [] defaultMaxCols False) (eitherDecodeStrict raw)
+
+-- ── dismissed parallels ─────────────────────────────────────────────────────
+
+-- | A verse pair the user dismissed from the suggested-parallels list, stored
+-- as two verse keys — the same shape a weave link uses.
+newtype DismissedPair = DismissedPair ((Text, Int, Int), (Text, Int, Int))
+
+instance FromJSON DismissedPair where
+    parseJSON = withObject "dismissed" $ \o -> do
+        aT <- o .: "a"
+        bT <- o .: "b"
+        a <- maybe (fail ("bad ref: " <> show aT)) pure (parseRefKey aT)
+        b <- maybe (fail ("bad ref: " <> show bT)) pure (parseRefKey bT)
+        pure (DismissedPair (a, b))
+
+dismissedPath :: IO FilePath
+dismissedPath = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    pure (dir </> "dismissed-parallels.json")
+
+-- | Persist the dismissed pairs so a dismissed parallel never returns to the
+-- review list. Best-effort, like 'saveSession'.
+saveDismissed :: [((Text, Int, Int), (Text, Int, Int))] -> IO ()
+saveDismissed prs = do
+    dir <- getXdgDirectory XdgConfig "overlay"
+    path <- dismissedPath
+    let val = [ object ["a" .= refKey a, "b" .= refKey b] | (a, b) <- prs ]
+    _ <- try (createDirectoryIfMissing True dir
+        >> BL.writeFile path (encode val <> "\n")) :: IO (Either SomeException ())
+    pure ()
+
+-- | Read the dismissed pairs. Missing or unreadable falls back to none.
+loadDismissed :: IO [((Text, Int, Int), (Text, Int, Int))]
+loadDismissed = do
+    path <- dismissedPath
+    exists <- doesFileExist path
+    if not exists then pure [] else do
+        raw <- BC.readFile path
+        pure $ either (const []) (map unwrap) (eitherDecodeStrict raw)
+  where
+    unwrap (DismissedPair p) = p
 
 -- | Build the initial panes from a saved session, validated against the corpus:
 -- unknown books are dropped, chapters clamped to range, capped at the saved

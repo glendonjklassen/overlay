@@ -11,7 +11,9 @@ import qualified Data.Text as T
 import qualified Data.Vector as V
 import Monomer
 
+import Overlay.Bridge (approveLink, rejectLink)
 import Overlay.Canon (bookIds)
+import Overlay.Concept (sgA, sgB, sgLabel)
 import Overlay.Config
 import Overlay.Corpus
 import Overlay.Patch
@@ -19,6 +21,7 @@ import Overlay.ReaderView
 import Overlay.Refs
 import Overlay.Rule
 import Overlay.Session
+import Overlay.Strongs (refLabel)
 import Overlay.Tasks
 import Overlay.Thread
 import Overlay.Types
@@ -36,8 +39,10 @@ handleEvent
 handleEvent env _wenv _node model evt = case evt of
     EvInit -> [SetFocusOnKey "reader", saveLater]
     EvWordClicked rt -> case tokStrongs (rtTok rt) of
+        -- open the Strong's panel and light up that concept's canon dispersion
         (r : _) -> [Model (model & amPanel
-            .~ PStrongs (tokWord (rtTok rt)) r (rtRef rt))]
+            .~ PStrongs (tokWord (rtTok rt)) r (rtRef rt)
+            & amConcepts .~ [r])]
         [] -> []
     EvWordAlt rt -> altClickAt (rtRef rt) (rtIx rt)
     EvSpanSelected ref span_ -> openEditor ref span_
@@ -50,8 +55,9 @@ handleEvent env _wenv _node model evt = case evt of
         , SetFocusOnKey "reader"
         ]
     EvClosePanel ->
-        -- closing the weave list/detail brings the pre-weave reading layout back
-        let m0 = model & amPanel .~ PNone
+        -- closing the weave list/detail brings the pre-weave reading layout back;
+        -- closing the Strong's panel also clears its concept dispersion strip
+        let m0 = model & amPanel .~ PNone & amConcepts .~ []
             m1 = if inWeaveContext (model ^. amPanel) then restoreReading m0 else m0
         in [ Model m1, SetFocusOnKey "reader", saveLater ]
     EvToggleOptions ->
@@ -160,6 +166,44 @@ handleEvent env _wenv _node model evt = case evt of
             s' = (envSettings env) { sLineSpacing = new }
         in [ Model (model & amLineSpacing .~ new)
            , Task (EvNoop <$ saveSettings s') ]
+    EvBridgeApprove h g ->
+        let store' = approveLink (h, g) (model ^. amBridge)
+        in [Model (model & amBridge .~ store'), Task (saveBridgeTask store')]
+    EvBridgeReject h g ->
+        let store' = rejectLink (h, g) (model ^. amBridge)
+        in [Model (model & amBridge .~ store'), Task (saveBridgeTask store')]
+    EvPinConcept s ->
+        -- pin onto the strip for comparison; dedup, keep the most recent 3
+        -- (plus the active concept = up to 4 series)
+        [Model (model & amPinnedConcepts %~ \ps ->
+            take 3 (s : filter (/= s) ps))]
+    EvClearPins -> [Model (model & amPinnedConcepts .~ [])]
+    EvToggleSuggestions ->
+        let pm' = if model ^. amPanel == PSuggestions then PNone else PSuggestions
+            m0 = model & amPanel .~ pm'
+        in [Model (if pm' == PNone then restoreReading m0 else m0), saveLater]
+    EvOpenSuggestion a@(ba, ca, va) b@(bb, cb, vb) ->
+        -- lay the two passages side by side without leaving the review list,
+        -- stashing the reading layout once so closing the panel restores it
+        let newPanes = [ PaneState ba ca (Just va) [va]
+                       , PaneState bb cb (Just vb) [vb] ]
+        in [Model (model
+                & amPrevPanes .~ (model ^. amPrevPanes <|> Just (model ^. amPanes))
+                & amPanes .~ newPanes
+                & amActivePane .~ 0
+                & amStatus .~ ("parallel: " <> refLabel a <> " \x2194 " <> refLabel b))
+           , saveLater]
+    EvAcceptSuggestion sg ->
+        -- born unapproved: a within-language parallel is a retelling/doublet,
+        -- surfaced for the human arbiter, never auto-blessed
+        let name = refLabel (sgA sg) <> " \x2194 " <> refLabel (sgB sg)
+            link = canonLinkL (sgA sg) (sgB sg) (sgLabel sg)
+        in [Task (newWeaveTask name Retelling (cTokVersion (envCorpus env)) [link])]
+    EvDismissSuggestion a b ->
+        -- hide a trivial/obvious parallel for good; persisted beside the session
+        let m = model & amDismissed %~ ((a, b) :)
+        in [Model (m & amStatus .~ "dismissed parallel")
+           , Task (saveDismissed (m ^. amDismissed) >> pure EvNoop)]
     EvToggleWeaves ->
         let pm' = toggleWeaves (model ^. amPanel)
             m0 = model & amPanel .~ pm'
@@ -229,7 +273,8 @@ handleEvent env _wenv _node model evt = case evt of
             & amStatus .~ msg)]
     EvStatus t -> [Model (model & amStatus .~ t)]
     EvSaveSession ->
-        [Task (EvNoop <$ saveSession (model ^. amMaxCols) (model ^. amPanes))]
+        [Task (EvNoop <$ saveSession (model ^. amMaxCols) (model ^. amPanes)
+            (model ^. amBridgeExtraOn))]
     EvVerseInspect ref x y ->
         -- open the compare card only for verses that actually have witnesses
         let touched = any (any (\l -> lA l == ref || lB l == ref)

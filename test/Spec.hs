@@ -5,6 +5,7 @@ module Main (main) where
 import Data.Aeson (Value, decode, encode, object, (.=))
 import Data.Either (isLeft)
 import Data.Functor (void)
+import Data.List (find)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
@@ -14,8 +15,10 @@ import System.FilePath ((</>))
 import Test.Hspec
 
 import Overlay (toRVerse)
+import Overlay.Bridge
 import Overlay.Canon
     (Book (..), books, bookById, bookByImpName, bookIds)
+import Overlay.Concept
 import Overlay.Corpus
 import Overlay.Import (parseBlock, splitBlocks, tokenize)
 import Overlay.Patch
@@ -41,6 +44,48 @@ testCorpus = mkCorpus "test-tok1" $ V.fromList
     , Verse "Gen" 1 2 [tok "And" [], tok "the" [], tok "earth" ["H776"]]
     , Verse "Gen" 2 1 [tok "Thus" [], tok "the" [], tok "heavens" ["H8064"]]
     , Verse "Exod" 1 1 [tok "Now" [], tok "these" []]
+    ]
+
+-- A fixture for the concept engine: a 5-lemma Hebrew run shared by Exod 20:4 and
+-- Deut 5:8 (a Decalogue-style parallel, with an untagged word in Deut to prove
+-- the function-word drop), H6213 recurring across three OT books, a hapax
+-- (H9999), and a Greek (NT) verse so the testament split has something on each
+-- side. OT carries H-numbers, NT carries G-numbers, so the two never run together.
+conceptCorpus :: Corpus
+conceptCorpus = mkCorpus "test-tok1" $ V.fromList
+    [ Verse "Exod" 20 4
+        [ tok "make" ["H6213"], tok "thee" ["H6459"], tok "any" ["H3605"]
+        , tok "graven" ["H5566"], tok "image" ["H8544"] ]
+    , Verse "Deut" 5 8
+        [ tok "make" ["H6213"], tok "to" [], tok "thee" ["H6459"]
+        , tok "any" ["H3605"], tok "graven" ["H5566"], tok "image" ["H8544"] ]
+    , Verse "Gen" 1 1 [tok "God" ["H430"], tok "made" ["H6213"], tok "alone" ["H9999"]]
+    , Verse "John" 3 16 [tok "loved" ["G25"], tok "God" ["G2316"], tok "world" ["G2889"]]
+    ]
+
+-- Fixtures for the OT↔NT bridge. The dictionary exercises the etymology layer
+-- (one Greek entry cites a Hebrew origin, one does not). The corpus exercises
+-- the rendering layer: "love" bridges H157↔G26 distinctively; the generic word
+-- "things" bridges several pairs but scores lower; "god" is too short to count;
+-- "earth" never appears with a Greek lemma so yields no candidate.
+bridgeDict :: M.Map Text StrongsEntry
+bridgeDict = M.fromList
+    [ ("G10", StrongsEntry (Just "A") Nothing Nothing
+        (Just "of Hebrew origin (H0031);") Nothing (Just "Abiud"))
+    , ("G26", StrongsEntry (Just "a") Nothing Nothing
+        (Just "from G25;") Nothing (Just "love"))
+    , ("H31", StrongsEntry (Just "x") Nothing Nothing Nothing Nothing (Just "Abihud"))
+    ]
+
+bridgeCorpus :: Corpus
+bridgeCorpus = mkCorpus "test-tok1" $ V.fromList
+    [ Verse "Gen" 1 1 [tok "love" ["H157"]]
+    , Verse "John" 3 16 [tok "love" ["G26"]]
+    , Verse "Exod" 1 1 [tok "things" ["H1"], tok "things" ["H3"]]
+    , Verse "Acts" 1 1 [tok "things" ["G2"], tok "things" ["G4"]]
+    , Verse "Gen" 1 3 [tok "God" ["H430"]]   -- "god" is 3 letters, filtered
+    , Verse "John" 1 1 [tok "God" ["G2316"]]
+    , Verse "Gen" 1 2 [tok "earth" ["H776"]] -- OT-only, no Greek partner
     ]
 
 unsignedPatch :: Patch
@@ -506,6 +551,125 @@ main = hspec $ do
             M.lookup "H7225" ix `shouldBe` Just [("Gen", 1, 1)]
             M.lookup "H776" ix `shouldBe` Just [("Gen", 1, 2)]
             refLabel ("Gen", 1, 2) `shouldBe` "Genesis 1:2"
+
+    describe "concept engine" $ do
+        let cix = buildConceptIx conceptCorpus
+
+        it "counts token instances per concept and per book" $ do
+            -- H6213 appears once each in Exod, Deut, Gen
+            fmap csTotal (conceptStat cix "H6213") `shouldBe` Just 3
+            fmap csByBook (conceptStat cix "H6213")
+                `shouldBe` Just (M.fromList [("Exod", 1), ("Deut", 1), ("Gen", 1)])
+            -- a token tagged with one Strong's in two verses
+            fmap csTotal (conceptStat cix "H6459") `shouldBe` Just 2
+            conceptStat cix "H0000" `shouldBe` Nothing
+
+        it "splits occurrences across the testaments" $ do
+            -- H6213 is Old Testament only; G2316 is New Testament only
+            fmap testamentSplit (conceptStat cix "H6213") `shouldBe` Just (3, 0)
+            fmap testamentSplit (conceptStat cix "G2316") `shouldBe` Just (0, 1)
+
+        it "ranks the books a concept occurs in" $
+            fmap (map fst . topBooks 2) (conceptStat cix "H6213")
+                `shouldBe` Just ["Deut", "Exod"]  -- alphabetical tie-break at count 1
+
+        it "classifies rarity by total occurrences" $ do
+            rarityTier (ConceptStat 1 mempty) `shouldBe` Hapax
+            rarityTier (ConceptStat 3 mempty) `shouldBe` Rare 3
+            rarityTier (ConceptStat 9 mempty) `shouldBe` Common
+            -- H9999 occurs exactly once across the corpus
+            "H9999" `elem` hapaxes cix `shouldBe` True
+            "H6213" `elem` hapaxes cix `shouldBe` False
+
+        it "counts co-occurring lemma pairs within a verse" $ do
+            let co = coOccurrence conceptCorpus
+            -- H6213+H6459 share Exod 20:4 and Deut 5:8
+            M.lookup ("H6213", "H6459") co `shouldBe` Just 2
+            -- H430+H6213 share only Gen 1:1; pair key is in ascending order
+            M.lookup ("H430", "H6213") co `shouldBe` Just 1
+            -- a cross-verse, never-together pair is absent
+            M.lookup ("H8544", "G2316") co `shouldBe` Nothing
+
+        it "detects a within-language shared-lemma run, dropping function words" $ do
+            let cands = quotationCandidates defaultMinRun conceptCorpus
+            length cands `shouldBe` 1
+            let c = head cands
+            (qcA c, qcB c) `shouldBe` (("Exod", 20, 4), ("Deut", 5, 8))
+            qcLen c `shouldBe` 5
+            qcRun c `shouldBe` ["H6213", "H6459", "H3605", "H5566", "H8544"]
+
+        it "never runs a lemma sequence across the Hebrew/Greek divide" $
+            -- the Greek verse shares no Strong's numbers with any Hebrew verse
+            all (\c -> qcA c /= ("John", 3, 16) && qcB c /= ("John", 3, 16))
+                (quotationCandidates 1 conceptCorpus) `shouldBe` True
+
+    describe "OT↔NT bridge" $ do
+        it "extracts and normalises Hebrew refs from free text" $ do
+            hebRefsIn "of Hebrew origin (H0031);" `shouldBe` ["H31"]
+            hebRefsIn "compare H1234 and H56" `shouldBe` ["H1234", "H56"]
+            hebRefsIn "Hebrew" `shouldBe` []   -- no digits, no false match
+
+        it "links a Greek entry to its Strong's-cited Hebrew origin only" $
+            etymologyLinks bridgeDict `shouldBe` [BridgeLink "H31" "G10"]
+
+        it "proposes rendering candidates from shared 1769 words" $ do
+            let cs = renderingCandidates bridgeCorpus
+                pairOf c = (rcHeb c, rcGrk c)
+            -- "love" bridges H157↔G26 distinctively
+            map pairOf cs `shouldContain` [("H157", "G26")]
+            -- and it is the strongest candidate (fewest lemmas share the word)
+            pairOf (head cs) `shouldBe` ("H157", "G26")
+            rcWord (head cs) `shouldBe` "love"
+
+        it "scores distinctive renderings above generic ones" $ do
+            let cs = renderingCandidates bridgeCorpus
+                score p = rcScore <$> find ((== p) . \c -> (rcHeb c, rcGrk c)) cs
+            -- "love" (1 H + 1 G) beats "things" (2 H + 2 G)
+            score ("H157", "G26") `shouldSatisfy` (> score ("H1", "G2"))
+
+        it "skips short words and lemmas with no cross-testament partner" $ do
+            let cs = renderingCandidates bridgeCorpus
+                heb = map rcHeb cs
+            -- "god" (3 letters) is filtered, so H430 never bridges
+            heb `shouldNotContain` ["H430"]
+            -- "earth" only ever appears with a Hebrew lemma, so H776 has no partner
+            heb `shouldNotContain` ["H776"]
+
+        it "resolves a bidirectional bridge from etymology + approvals" $ do
+            let store = approveLink ("H157", "G26") emptyStore
+                br = buildBridge bridgeDict store
+            -- etymology link, both directions
+            bridgedPartners br "H31" `shouldBe` ["G10"]
+            bridgedPartners br "G10" `shouldBe` ["H31"]
+            -- approved rendering link, both directions
+            bridgedPartners br "H157" `shouldBe` ["G26"]
+            bridgedPartners br "G26" `shouldBe` ["H157"]
+
+        it "honours rejection over an approval" $ do
+            let store = rejectLink ("H31", "G10") (approveLink ("H31", "G10") emptyStore)
+                br = buildBridge bridgeDict store
+            bridgedPartners br "H31" `shouldBe` []
+
+        it "round-trips the approval store through JSON" $ do
+            let store = rejectLink ("H1", "G2")
+                    (approveLink ("H157", "G26") emptyStore)
+            decode (encode store) `shouldBe` Just store
+
+        it "spans per-book counts across bridged partners" $ do
+            let cix = M.fromList
+                    [ ("H6664", ConceptStat 5 (M.singleton "Ps" 5))
+                    , ("G1343", ConceptStat 3 (M.singleton "Rom" 3)) ]
+                br = buildBridge bridgeDict (approveLink ("H6664", "G1343") emptyStore)
+            spannedByBook br cix "H6664"
+                `shouldBe` M.fromList [("Ps", 5), ("Rom", 3)]
+
+        it "indexes external source links by both endpoints" $ do
+            let ix = sourceLinkIndex
+                    [ SourceLink "H1" "G2" "lxx"
+                    , SourceLink "H1" "G3" "stepbible-tbesg" ]
+            extraPartners ix "H1" `shouldBe` ["G2", "G3"]
+            extraPartners ix "G2" `shouldBe` ["H1"]
+            extraPartners ix "H9" `shouldBe` []
 
     describe "canon" $ do
         it "holds all 66 books in canonical order" $ do
